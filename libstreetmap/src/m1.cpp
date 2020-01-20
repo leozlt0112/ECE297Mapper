@@ -24,11 +24,11 @@
 bool load_map(std::string /*map_path*/) {
     bool load_successful = false; //Indicates whether the map has loaded 
                                   //successfully
-
+    
     //
     //Load your map related data structures here
     //
-
+    
     
 
     load_successful = true; //Make sure this is updated to reflect whether
@@ -40,4 +40,67 @@ bool load_map(std::string /*map_path*/) {
 void close_map() {
     //Clean-up your map related data structures here
     
+}
+
+double find_distance_between_two_points(std::pair<LatLon, LatLon> points){
+    return 0;
+}
+
+double find_street_segment_length(int street_segment_id){
+    return 0;
+}
+
+double find_street_segment_travel_time(int street_segment_id){
+    return 0;
+}
+
+int find_closest_intersection(LatLon my_position){
+    return 0;
+}
+
+std::vector<int> find_street_segments_of_intersection(int intersection_id){
+    std::vector<int> temp(1,0);
+    return temp;
+}
+
+std::vector<std::string> find_street_names_of_intersection(int intersection_id){
+    std::vector<std::string> temp(1,0);
+    return temp;
+}
+
+bool are_directly_connected(std::pair<int, int> intersection_ids){
+    return true;
+}
+
+std::vector<int> find_adjacent_intersections(int intersection_id){
+    std::vector<int> temp(1,0);
+    return temp;
+}
+
+std::vector<int> find_street_segments_of_street(int street_id){
+    std::vector<int> temp(1,0);
+    return temp;
+}
+
+std::vector<int> find_intersections_of_street(int street_id){
+    std::vector<int> temp(1,0);
+    return temp;
+}
+
+std::vector<int> find_intersections_of_two_streets(std::pair<int, int> street_ids){
+    std::vector<int> temp(1,0);
+    return temp;
+}
+
+std::vector<int> find_street_ids_from_partial_street_name(std::string street_prefix){
+    std::vector<int> temp(1,0);
+    return temp;
+}
+
+double find_feature_area(int feature_id){
+    return 0;
+}
+
+double find_way_length(OSMID way_id){
+    return 0;
 }
