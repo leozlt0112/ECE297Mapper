@@ -20,6 +20,9 @@
  */
 #include "m1.h"
 #include "StreetsDatabaseAPI.h"
+#include "math.h"
+
+int earth_radius=6378100;
 
 bool load_map(std::string /*map_path*/) {
     bool load_successful = false; //Indicates whether the map has loaded 
@@ -42,8 +45,15 @@ void close_map() {
     
 }
 
+//
 double find_distance_between_two_points(std::pair<LatLon, LatLon> points){
-    return 0;
+    double lat_avg=0.5*(points.first.lat()+points.second.lat());
+    double x1=points.first.lon() * cos(lat_avg);
+    double y1=points.first.lat();
+    double x2=points.second.lon() * cos(lat_avg);
+    double y2=points.second.lat();
+    double d=earth_radius * sqrt(pow(y2-y1,2)+pow(x2-x1,2));
+    return d;
 }
 
 double find_street_segment_length(int street_segment_id){
@@ -63,6 +73,7 @@ std::vector<int> find_street_segments_of_intersection(int intersection_id){
     return temp;
 }
 
+//
 std::vector<std::string> find_street_names_of_intersection(int intersection_id){
     std::vector<std::string> temp(1,0);
     return temp;
