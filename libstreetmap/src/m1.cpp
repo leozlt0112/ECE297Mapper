@@ -22,7 +22,6 @@
 #include "StreetsDatabaseAPI.h"
 #include "math.h"
 
-int earth_radius=6378100;
 
 bool load_map(std::string /*map_path*/) {
     bool load_successful = false; //Indicates whether the map has loaded 
@@ -47,12 +46,16 @@ void close_map() {
 
 //
 double find_distance_between_two_points(std::pair<LatLon, LatLon> points){
-    double lat_avg=0.5*(points.first.lat()+points.second.lat());
-    double x1=points.first.lon() * cos(lat_avg);
-    double y1=points.first.lat();
-    double x2=points.second.lon() * cos(lat_avg);
-    double y2=points.second.lat();
-    double d=earth_radius * sqrt(pow(y2-y1,2)+pow(x2-x1,2));
+    double lat_first = DEGREE_TO_RADIAN * points.first.lat();
+    double lon_first = DEGREE_TO_RADIAN * points.first.lon();
+    double lat_second = DEGREE_TO_RADIAN * points.second.lat();
+    double lon_second = DEGREE_TO_RADIAN * points.second.lon();
+    double lat_avg=0.5*(lat_first+lat_second);
+    double x1=lon_first * cos(lat_avg);
+    double y1=lat_first;
+    double x2=lon_second * cos(lat_avg);
+    double y2=lat_second;
+    double d=EARTH_RADIUS_METERS * sqrt(pow(y2-y1,2)+pow(x2-x1,2));
     return d;
 }
 
