@@ -66,21 +66,28 @@ double find_street_segment_length(int street_segment_id){
     
     double total_length=0;
     std::pair<LatLon, LatLon> two_points;
-    // distance between "from" and "0'th point"
-    two_points.first = getIntersectionPosition(from);
-    two_points.second = getStreetSegmentCurvePoint(0, street_segment_id);
-    total_length += find_distance_between_two_points(two_points);       
-    // distance between "0th" and "curvePointCount-1'th point"
-    for (int i=1; i<(curvePointCount-1); i++){
+    
+    if (curvePointCount){
+        // distance between "from" and "0'th point"
+        two_points.first = getIntersectionPosition(from);
+        two_points.second = getStreetSegmentCurvePoint(0, street_segment_id);
+        total_length += find_distance_between_two_points(two_points);       
+        // distance between "0th" and "curvePointCount-1'th point"
+        for (int i=1; i<(curvePointCount-1); i++){
         two_points.first = getStreetSegmentCurvePoint(i, street_segment_id);
         two_points.second = getStreetSegmentCurvePoint(i+1, street_segment_id);
         total_length += find_distance_between_two_points(two_points);
+        }
+        //distance between "curvePointCount-1'th point" and "to"
+        two_points.first = getStreetSegmentCurvePoint(curvePointCount-1, street_segment_id);
+        two_points.second = getIntersectionPosition(to);
+        total_length += find_distance_between_two_points(two_points);
     }
-    //distance between "curvePointCount-1'th point" and "to"
-    two_points.first = getStreetSegmentCurvePoint(curvePointCount-1, street_segment_id);
-    two_points.second = getIntersectionPosition(to);
-    total_length += find_distance_between_two_points(two_points);
-    
+    else{
+        two_points.first = getIntersectionPosition(from);
+        two_points.second = getIntersectionPosition(to);
+        total_length += find_distance_between_two_points(two_points);
+    }
     return total_length;
 }
 
