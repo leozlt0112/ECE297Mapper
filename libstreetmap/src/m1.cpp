@@ -21,6 +21,7 @@
 #include "m1.h"
 #include "StreetsDatabaseAPI.h"
 #include "math.h"
+std::pair<std::pair<int, int>,std::pair<int, int>> pair_of_LatLon_to_XY(std::pair<LatLon,LatLon> points);
 
 
 bool load_map(std::string /*map_path*/) {
@@ -46,16 +47,8 @@ void close_map() {
 
 //
 double find_distance_between_two_points(std::pair<LatLon, LatLon> points){
-    double lat_first = DEGREE_TO_RADIAN * points.first.lat();
-    double lon_first = DEGREE_TO_RADIAN * points.first.lon();
-    double lat_second = DEGREE_TO_RADIAN * points.second.lat();
-    double lon_second = DEGREE_TO_RADIAN * points.second.lon();
-    double lat_avg=0.5*(lat_first+lat_second);
-    double x1=lon_first * cos(lat_avg);
-    double y1=lat_first;
-    double x2=lon_second * cos(lat_avg);
-    double y2=lat_second;
-    double d=EARTH_RADIUS_METERS * sqrt(pow(y2-y1,2)+pow(x2-x1,2));
+    std::pair<std::pair<int, int>,std::pair<int, int>> points_XY=pair_of_LatLon_to_XY(points);
+    double d=EARTH_RADIUS_METERS * sqrt(pow(points_XY.first.first-points_XY.second.first,2)+pow(points_XY.first.second-points_XY.second.second,2));
     return d;
 }
 
@@ -145,4 +138,19 @@ double find_feature_area(int feature_id){
 
 double find_way_length(OSMID way_id){
     return 0;
+}
+
+//send in a pair of LatLon, give out a pair of XY(int pair))
+std::pair<std::pair<int, int>,std::pair<int, int>> pair_of_LatLon_to_XY(std::pair<LatLon,LatLon> points){
+    double lat_first = DEGREE_TO_RADIAN * points.first.lat();
+    double lon_first = DEGREE_TO_RADIAN * points.first.lon();
+    double lat_second = DEGREE_TO_RADIAN * points.second.lat();
+    double lon_second = DEGREE_TO_RADIAN * points.second.lon();
+    double lat_avg=0.5*(lat_first+lat_second);
+    std::pair<std::pair<int, int>,std::pair<int, int>> points_XY;
+    points_XY.first.first=lon_first * cos(lat_avg);
+    points_XY.first.second=lat_first;
+    points_XY.second.first=lon_second * cos(lat_avg);
+    points_XY.second.second=lat_second;
+    return points_XY;
 }
