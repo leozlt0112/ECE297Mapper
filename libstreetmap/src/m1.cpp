@@ -89,12 +89,23 @@ double find_street_segment_travel_time(int street_segment_id){
 }
 
 int find_closest_intersection(LatLon my_position){
-    return 0;
+    double closest_distance= 2000000;
+    int closest_intersection= 0;
+    std::pair<LatLon, LatLon> two_points;
+    two_points.first=my_position;
+    for (int i=0; i<getNumIntersections(); ++i){
+        two_points.second = getIntersectionPosition(i);
+        double current_distance = find_distance_between_two_points(two_points);
+        if (current_distance<closest_distance){
+            closest_distance=current_distance;
+            closest_intersection=i;
+        }
+    }
+    return closest_intersection;
 }
 
 std::vector<int> find_street_segments_of_intersection(int intersection_id){
-    std::vector<int> temp(1,0);
-    return temp;
+    return intersection_street_segments[intersection_id];
 }
 
 //
