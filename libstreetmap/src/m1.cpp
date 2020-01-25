@@ -22,6 +22,7 @@
 #include "m1_more.h"
 #include "StreetsDatabaseAPI.h"
 #include "math.h"
+#include <algorithm>    // std::sort
 
 
 bool load_map(std::string map_path) {
@@ -112,15 +113,31 @@ std::vector<int> find_adjacent_intersections(int intersection_id){
     std::vector<int> temp(1,0);
     return temp;
 }
-
+// Leo 
 std::vector<int> find_street_segments_of_street(int street_id){
     std::vector<int> temp(1,0);
     return temp;
 }
 
 std::vector<int> find_intersections_of_street(int street_id){
-    std::vector<int> temp(1,0);
-    return temp;
+    std::vector<int> result_d;
+    //loop thru all intersections 
+    for (int i=0; i<getNumStreetSegments(); ++i) {
+        InfoStreetSegment streetSeg = getInfoStreetSegment(i);
+        if(streetSeg.streetID==street_id) {
+            result_d.push_back(streetSeg.to);
+            result_d.push_back(streetSeg.from);
+        }
+    }
+    //remove duplicates
+    std::sort(result_d.begin(),result_d.end());
+    /*
+    std::vector<int>::iterator it;
+    it=std::unique(result_d.begin(), result_d.end());
+    result_d.resize(std::distance(result_d.begin(),it));
+     */
+    result_d.erase( std::unique(result_d.begin(),result_d.end()), result_d.end());
+    return result_d;
 }
 
 std::vector<int> find_intersections_of_two_streets(std::pair<int, int> street_ids){
