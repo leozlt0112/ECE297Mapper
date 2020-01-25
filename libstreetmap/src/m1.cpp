@@ -29,16 +29,15 @@ bool load_map(std::string map_path) {
     //Indicates whether the map has loaded successfully
     bool load_successful = loadStreetsDatabaseBIN(map_path); 
     
+    if (!load_successful) return false;
     intersection_street_segments.resize(getNumIntersections());
-    
     for (int intersection =0; intersection < getNumIntersections(); ++intersection){
         for (int i=0; i<getIntersectionStreetSegmentCount(intersection); ++i){
             int ss_id = getIntersectionStreetSegment(intersection,i);
             intersection_street_segments[intersection].push_back(ss_id);
         }
     }
-    //Make sure this is updated to reflect whether loading the map succeeded or failed
-    return load_successful;
+    return true;
 }
 
 void close_map() {
@@ -118,23 +117,23 @@ std::vector<int> find_street_segments_of_street(int street_id){
 }
 
 std::vector<int> find_intersections_of_street(int street_id){
-    std::vector<int> result_d;
-    //loop thru all intersections 
-    for (int i=0; i<getNumStreetSegments(); ++i) {
-        InfoStreetSegment streetSeg = getInfoStreetSegment(i);
-        if(streetSeg.streetID==street_id) {
-            result_d.push_back(streetSeg.to);
-            result_d.push_back(streetSeg.from);
-        }
-    }
-    //remove duplicates
-    std::sort(result_d.begin(),result_d.end());
-    /*
-    std::vector<int>::iterator it;
-    it=std::unique(result_d.begin(), result_d.end());
-    result_d.resize(std::distance(result_d.begin(),it));
-     */
-    result_d.erase( std::unique(result_d.begin(),result_d.end()), result_d.end());
+    std::vector<int> result_d(1,0);
+//    //loop thru all intersections 
+//    for (int i=0; i<getNumStreetSegments(); ++i) {
+//        InfoStreetSegment streetSeg = getInfoStreetSegment(i);
+//        if(streetSeg.streetID==street_id) {
+//            result_d.push_back(streetSeg.to);
+//            result_d.push_back(streetSeg.from);
+//        }
+//    }
+//    //remove duplicates
+//    std::sort(result_d.begin(),result_d.end());
+//    /*
+//    std::vector<int>::iterator it;
+//    it=std::unique(result_d.begin(), result_d.end());
+//    result_d.resize(std::distance(result_d.begin(),it));
+//     */
+//    result_d.erase( std::unique(result_d.begin(),result_d.end()), result_d.end());
     return result_d;
 }
 
