@@ -37,7 +37,6 @@ bool load_map(std::string map_path) {
             intersection_street_segments[intersection].push_back(ss_id);
         }
     }
-    
     //Make sure this is updated to reflect whether loading the map succeeded or failed
     return load_successful;
 }
@@ -50,8 +49,7 @@ void close_map() {
 //
 double find_distance_between_two_points(std::pair<LatLon, LatLon> points){
     std::pair<XY_,XY_> points_XY=pair_of_LatLon_to_XY(points);
-    double d=EARTH_RADIUS_METERS * std::sqrt(std::pow(points_XY.first.x_-points_XY.second.x_,2)+std::pow(points_XY.first.y_-points_XY.second.y_,2));
-    return d;
+    return EARTH_RADIUS_METERS * std::sqrt(std::pow(points_XY.first.x_-points_XY.second.x_,2)+std::pow(points_XY.first.y_-points_XY.second.y_,2));
 }
 
 double find_street_segment_length(int street_segment_id){
