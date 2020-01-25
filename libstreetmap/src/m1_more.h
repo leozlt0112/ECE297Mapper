@@ -12,7 +12,7 @@
 #include <limits>
 #include <iostream>
 #include <array>
-class XY_;
+struct XY_;
 
 
 //it converts a pair of LatLon to a pair of XY_
@@ -26,15 +26,9 @@ std::pair<XY_,XY_> pair_of_LatLon_to_XY(std::pair<LatLon,LatLon> points);
  * The usage is almost exactly the same as LatLon                                          *
  *                                                                                  *
  ************************************************************************************/
-
 struct XY_
 {
     int x_;
     int y_;
 };
-
-
-// Convert two (lat,lon) pairs to 4 corners of a bounding box.
-std::array<XY_,4> bounds_to_corners(std::pair<XY_,XY_> bounds);
-
 /******************************End of XY_ Definition********************************/
