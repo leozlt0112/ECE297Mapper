@@ -33,8 +33,6 @@ struct XY_
     int y_;
 };
 
-std::ostream& operator<<(std::ostream& os,XY_);
-
 
 // Convert two (lat,lon) pairs to 4 corners of a bounding box.
 std::array<XY_,4> bounds_to_corners(std::pair<XY_,XY_> bounds);
