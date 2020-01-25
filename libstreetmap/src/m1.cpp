@@ -52,9 +52,10 @@ double find_distance_between_two_points(std::pair<LatLon, LatLon> points){
 }
 
 double find_street_segment_length(int street_segment_id){
-    int from = getInfoStreetSegment(street_segment_id).from;
-    int to = getInfoStreetSegment(street_segment_id).to;
-    int curvePointCount = getInfoStreetSegment(street_segment_id).curvePointCount;
+    InfoStreetSegment infoStreetSeg=getInfoStreetSegment(street_segment_id);
+    IntersectionIndex from = infoStreetSeg.from;
+    IntersectionIndex to = infoStreetSeg.to;
+    int curvePointCount = infoStreetSeg.curvePointCount;
     
     double total_length=0;
     std::pair<LatLon, LatLon> two_points;
@@ -63,9 +64,9 @@ double find_street_segment_length(int street_segment_id){
         // distance between "from" and "0'th point"
         two_points.first = getIntersectionPosition(from);
         two_points.second = getStreetSegmentCurvePoint(0, street_segment_id);
-        total_length += find_distance_between_two_points(two_points);       
+        total_length += find_distance_between_two_points(two_points);
         // distance between "0th" and "curvePointCount-1'th point"
-        for (int i=1; i<(curvePointCount-1); i++){
+        for (int i=0; i<(curvePointCount-1); i++){
         two_points.first = getStreetSegmentCurvePoint(i, street_segment_id);
         two_points.second = getStreetSegmentCurvePoint(i+1, street_segment_id);
         total_length += find_distance_between_two_points(two_points);
@@ -84,7 +85,7 @@ double find_street_segment_length(int street_segment_id){
 }
 
 double find_street_segment_travel_time(int street_segment_id){
-    return find_street_segment_length(street_segment_id)/(getInfoStreetSegment(street_segment_id).speedLimit);
+    return find_street_segment_length(street_segment_id)/(getInfoStreetSegment(street_segment_id).speedLimit)*3.6;
 }
 
 int find_closest_intersection(LatLon my_position){
@@ -161,7 +162,7 @@ std::pair<XY_,XY_> pair_of_LatLon_to_XY(std::pair<LatLon,LatLon> points){
     double lon_first = DEGREE_TO_RADIAN * points.first.lon();
     double lat_second = DEGREE_TO_RADIAN * points.second.lat();
     double lon_second = DEGREE_TO_RADIAN * points.second.lon();
-    double lat_avg=0.5*(lat_first+lat_second);
+    double lat_avg=(lat_first+lat_second)/2;
     std::pair<XY_,XY_> points_XY;
     points_XY.first.x_=lon_first * std::cos(lat_avg);
     points_XY.first.y_=lat_first;
