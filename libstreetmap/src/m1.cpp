@@ -24,9 +24,9 @@
 #include "math.h"
 
 
-bool load_map(std::string /*map_path*/) {
-    bool load_successful = false; //Indicates whether the map has loaded 
-                                  //successfully
+bool load_map(std::string map_path) {
+    //Indicates whether the map has loaded successfully
+    bool load_successful = loadStreetsDatabaseBIN(map_path); 
     
     //
     //Load your map related data structures here
@@ -42,7 +42,7 @@ bool load_map(std::string /*map_path*/) {
 
 void close_map() {
     //Clean-up your map related data structures here
-    
+    closeStreetDatabase(); 
 }
 
 //
