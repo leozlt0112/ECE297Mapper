@@ -28,15 +28,16 @@ bool load_map(std::string map_path) {
     //Indicates whether the map has loaded successfully
     bool load_successful = loadStreetsDatabaseBIN(map_path); 
     
-    //
-    //Load your map related data structures here
-    //
+    intersection_street_segments.resize(getNumIntersections());
     
+    for (int intersection =0; intersection < getNumIntersections(); ++intersection){
+        for (int i=0; i<getIntersectionStreetSegmentCount(intersection); ++i){
+            int ss_id = getIntersectionStreetSegment(intersection,i);
+            intersection_street_segments[intersection].push_back(ss_id);
+        }
+    }
     
-
-    load_successful = true; //Make sure this is updated to reflect whether
-                            //loading the map succeeded or failed
-
+    //Make sure this is updated to reflect whether loading the map succeeded or failed
     return load_successful;
 }
 
@@ -85,7 +86,7 @@ double find_street_segment_length(int street_segment_id){
 }
 
 double find_street_segment_travel_time(int street_segment_id){
-    return 0;
+    return find_street_segment_length(street_segment_id)/(getInfoStreetSegment(street_segment_id).speedLimit);
 }
 
 int find_closest_intersection(LatLon my_position){
