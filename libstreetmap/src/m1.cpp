@@ -110,14 +110,17 @@ std::vector<int> find_street_segments_of_intersection(int intersection_id){
 
 
 std::vector<std::string> find_street_names_of_intersection(int intersection_id){
-    std::vector<std::string> street_name;
-    std::vector<int> street_segments_id = intersection_street_segments[intersection_id];
-    for(int i = 0; i < street_segments_id.size(); i++){
-        street_name.push_back(getStreetName(street_segments_id[i])); 
-    }
-    return street_name;
+    std::vector<std::string> street_names;
+    std::vector<int> street_segments_ids = intersection_street_segments[intersection_id];
+    for(int i = 0; i < street_segments_ids.size(); i++)
+        street_names.push_back(getStreetName(getInfoStreetSegment(street_segments_ids[i]).streetID)); 
+    
+    return street_names;
 }
 
+//Returns true if you can get from intersection_ids.first to intersection_ids.second using a single 
+//street segment (hint: check for 1-way streets too)
+//corner case: an intersection is considered to be connected to itself
 bool are_directly_connected(std::pair<int, int> intersection_ids){
     return true;
 }
