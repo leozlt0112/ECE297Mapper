@@ -26,31 +26,34 @@
 
  
 bool load_map(std::string map_path) {
-    std::cout << "LOADING\n";
+    //std::cout << "LOADING\n";
     //Indicates whether the map has loaded successfully
     bool load_successful = loadStreetsDatabaseBIN(map_path); 
     
     if (!load_successful) return false;
     intersection_street_segments.resize(getNumIntersections());
+    street_street_segments.resize(getNumStreets());
+
     for (int intersection = 0; intersection < getNumIntersections(); ++intersection){
         for (int i = 0; i < getIntersectionStreetSegmentCount(intersection); ++i){
             int ss_id = getIntersectionStreetSegment(intersection, i);
             intersection_street_segments[intersection].push_back(ss_id);
+            
         }
+    }
+
+    for (int streetSegment = 0; streetSegment < getNumStreetSegments(); ++streetSegment){
+        int street_id = getInfoStreetSegment(streetSegment).streetID; 
+        street_street_segments[street_id].push_back(streetSegment);
     }
     return true;
 }
 
 void close_map() {
-    std::cout << "CLOSING\n";
+    //std::cout << "CLOSING\n";
     //Clean-up your map related data structures here
-    std::vector<int>  streetSegmentsOfIntersection;
     for (int intersection = 0; intersection < getNumIntersections(); ++intersection){   
-       /*for (int i = 0; i < getIntersectionStreetSegmentCount(intersection); ++i){
-          streetSegmentsOfIntersection = intersection_street_segments[intersection];
-          streetSegmentsOfIntersection[i].clear();
-       }*/
-       intersection_street_segments[intersection].clear();
+         intersection_street_segments[intersection].clear();
     }  
     closeStreetDatabase(); 
 }
@@ -118,24 +121,39 @@ std::vector<int> find_street_segments_of_intersection(int intersection_id){
     return intersection_street_segments[intersection_id];
 }
 
-//Returns the street names at the given intersection (includes duplicate street 
-//names in returned vector)
 std::vector<std::string> find_street_names_of_intersection(int intersection_id){
     std::vector<std::string> street_names;
+    std::string streetName;
     std::vector<int> street_segments_ids = intersection_street_segments[intersection_id];
     for(int i = 0; i < street_segments_ids.size(); i++) {
-        std::string street_name = getStreetName(getInfoStreetSegment(street_segments_ids[i]).streetID);
+        streetName = getStreetName(getInfoStreetSegment(street_segments_ids[i]).streetID);
 //        std::cout << street_segments_ids.size() << ", " << i << ": " << street_name << std::endl;
-        street_names.push_back(street_name);
+        street_names.push_back(streetName);
     }   
     return street_names;
 }
 
 //Returns true if you can get from intersection_ids.first to intersection_ids.second using a single 
 //street segment (hint: check for 1-way streets too)
-//corner case: an intersection is considered to be connected to itself
 bool are_directly_connected(std::pair<int, int> intersection_ids){
-    return true;
+    //get the street segments
+    int streetSegmentCount1 = getIntersectionStreetSegmentCount(intersection_ids.first);
+    int streetSegmentCount2 = getIntersectionStreetSegmentCount(intersection_ids.second); 
+    std::vector<int> streetSegmentId1 = intersection_street_segments[intersection_ids.first];
+    std::vector<int> streetSegmentId2 = intersection_street_segments[intersection_ids.second];
+    
+    //check for all street segments 
+    for(int i = 0; i < streetSegmentCount1; i++){
+        for(int j = 0;j < streetSegmentCount2; j++){
+        //if same street segment
+        if(streetSegmentId1[i] == streetSegmentId2[j])
+            return true;
+        }
+    }
+    //corner case: an intersection is considered to be connected to itself
+    if(intersection_ids.first == intersection_ids.second)
+        return true;
+    
 }
 
 std::vector<int> find_adjacent_intersections(int intersection_id){
@@ -144,8 +162,7 @@ std::vector<int> find_adjacent_intersections(int intersection_id){
 }
 
 std::vector<int> find_street_segments_of_street(int street_id){
-    std::vector<int> temp(1,0);
-    return temp;
+    return street_street_segments[street_id];
 }
 
 std::vector<int> find_intersections_of_street(int street_id){
