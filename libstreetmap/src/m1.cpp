@@ -25,6 +25,7 @@
 #include <algorithm>    // std::sort
 
 
+<<<<<<< HEAD
 bool load_map(std::string map_path) {
     //Indicates whether the map has loaded successfully
     bool load_successful = loadStreetsDatabaseBIN(map_path); 
@@ -38,6 +39,33 @@ bool load_map(std::string map_path) {
         }
     }
     return true;
+=======
+
+//load example form lecture 
+std::vector<std::vector<int>> intersection_street_segments;
+bool load_map(std::string /*map_path*/) {
+    bool load_successful = false; //Indicates whether the map has loaded 
+                                  //successfully
+    //Load your map related data structures here
+    //create empty vector for each intersection
+    intersection_street_segments.resize(getNumIntersections());
+    //iterate through all intersections
+    for(int intersection = 0; intersection< getNumIntersections(); ++intersection){
+        //iterate through all segments at intersection 
+        for(int i = 0; i < getIntersectionStreetSegmentCount(intersection); ++i){
+          int ss_id = getIntersectionStreetSegment(intersection, i);
+          //save segments connected to intersection
+          intersection_street_segments[intersection].push_back(ss_id);
+        }
+    }
+    
+    
+
+    load_successful = true; //Make sure this is updated to reflect whether
+                            //loading the map succeeded or failed
+
+    return load_successful;
+>>>>>>> Modified m1.cpp by adding the load funciton example form the tutorial.
 }
 
 void close_map() {
@@ -108,26 +136,43 @@ std::vector<int> find_street_segments_of_intersection(int intersection_id){
     return intersection_street_segments[intersection_id];
 }
 
+<<<<<<< HEAD
 //
+=======
+//Returns the street names at the given intersection (includes duplicate street 
+//names in returned vector)
+>>>>>>> Modified m1.cpp by adding the load funciton example form the tutorial.
 std::vector<std::string> find_street_names_of_intersection(int intersection_id){
-    std::vector<std::string> temp(1,0);
+  
     return temp;
 }
 
+//Returns true if you can get from intersection_ids.first to intersection_ids.second using a single 
+//street segment (hint: check for 1-way streets too)
+//corner case: an intersection is considered to be connected to itself
 bool are_directly_connected(std::pair<int, int> intersection_ids){
     return true;
 }
 
+//Returns all intersections reachable by traveling down one street segment 
+//from given intersection (hint: you can't travel the wrong way on a 1-way street)
+//the returned vector should NOT contain duplicate intersections
 std::vector<int> find_adjacent_intersections(int intersection_id){
     std::vector<int> temp(1,0);
     return temp;
 }
+<<<<<<< HEAD
 // Leo 
+=======
+
+//Returns all street segments for the given street
+>>>>>>> Modified m1.cpp by adding the load funciton example form the tutorial.
 std::vector<int> find_street_segments_of_street(int street_id){
     std::vector<int> temp(1,0);
     return temp;
 }
 
+//Returns all intersections along the a given street
 std::vector<int> find_intersections_of_street(int street_id){
     std::vector<int> result_d(1,0);
 //    //loop thru all intersections 
