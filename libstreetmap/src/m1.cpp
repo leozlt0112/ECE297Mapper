@@ -188,7 +188,8 @@ std::vector<int> find_adjacent_intersections(int intersection_id){
                 adjacentIntersections.push_back(to);
         }
     //remove duplicate intersections
-        
+     std::sort(adjacentIntersections.begin(), adjacentIntersections.end());
+     adjacentIntersections.erase( std::unique(adjacentIntersections.begin(), adjacentIntersections.end()), adjacentIntersections.end());
  
     } 
     return adjacentIntersections;
