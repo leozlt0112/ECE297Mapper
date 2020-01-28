@@ -12,6 +12,9 @@ std::pair<XY_,XY_> pair_of_LatLon_to_XY(std::pair<LatLon,LatLon> points);
 //this is a vector[IntersectionIndex], each intersection vector stores StreetSegID ints
 std::vector<std::vector<int>> intersection_street_segments;
 
+//a vector[StreetIndex], each street vector stores streetSegmentIDs
+std::vector<std::vector<int>> street_street_segments;
+
 //This is a new class XY_, similar to LatLon but it holds x,y coordinates instead
 class XY_{
 public:
