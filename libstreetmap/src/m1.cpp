@@ -54,9 +54,7 @@ void close_map() {
     //std::cout << "CLOSING\n";
     //Clean-up your map related data structures here  
          intersection_street_segments.clear();
-         street_street_segments.clear();
- 
-  
+         street_street_segments.clear(); 
     closeStreetDatabase(); 
 }
 
@@ -129,7 +127,6 @@ std::vector<std::string> find_street_names_of_intersection(int intersection_id){
     std::vector<int> street_segments_ids = intersection_street_segments[intersection_id];
     for(int i = 0; i < street_segments_ids.size(); i++) {
         streetName = getStreetName(getInfoStreetSegment(street_segments_ids[i]).streetID);
-//        std::cout << street_segments_ids.size() << ", " << i << ": " << street_name << std::endl;
         street_names.push_back(streetName);
     }   
     return street_names;
@@ -138,30 +135,32 @@ std::vector<std::string> find_street_names_of_intersection(int intersection_id){
 //Returns true if you can get from intersection_ids.first to intersection_ids.second using a single 
 //street segment (hint: check for 1-way streets too)
 bool are_directly_connected(std::pair<int, int> intersection_ids){
-   /* //for the intersections find the street segments
+   //for the intersections find the street segments
     int streetSegmentCount1 = getIntersectionStreetSegmentCount(intersection_ids.first);
-    int streetSegmentCount2 = getIntersectionStreetSegmentCount(intersection_ids.second); 
     std::vector<int> streetSegmentId1 = intersection_street_segments[intersection_ids.first];
-    std::vector<int> streetSegmentId2 = intersection_street_segments[intersection_ids.second];
-
+    
+    //corner case: an intersection is considered to be connected to itself  
+    if(intersection_ids.first == intersection_ids.second)
+        return true;
+    
     for(int i = 0; i < streetSegmentCount1; ++i){
          IntersectionIndex from = getInfoStreetSegment(streetSegmentId1[i]).from;
          IntersectionIndex to = getInfoStreetSegment(streetSegmentId1[i]).to;
-        //one way?
-       // if (getInfoStreetSegment(streetSegmentId1[i]).oneWay){
-            //return false;
-            //corner case: an intersection is considered to be connected to itself
-            if(from == to)
-               return true; 
+                          
             if((from == intersection_ids.first) && (to == intersection_ids.second) )
-               return true;
-            if((from == intersection_ids.second) && (to == intersection_ids.first) )
-               return true; 
-        }
-    } 
-    */
-    return true; 
-}
+                    return true; 
+            if((from == intersection_ids.second) && (to == intersection_ids.first) ){
+                   if(getInfoStreetSegment(streetSegmentId1[i]).oneWay){
+                        return false; 
+                   }
+                   else 
+                       return true;
+            }
+    }
+    
+    return false;
+} 
+    
 
 //Returns all intersections reachable by traveling down one street segment 
 //from given intersection (hint: you can't travel the wrong way on a 1-way street)
@@ -169,22 +168,29 @@ bool are_directly_connected(std::pair<int, int> intersection_ids){
 std::vector<int> find_adjacent_intersections(int intersection_id){
     //find all street segments of the intersection 
     std::vector<int> adjacentIntersections;
-   /* StreetSegmentIndex streetSegment_id;
+    StreetSegmentIndex streetSegment_id;
     IntersectionIndex from;
     IntersectionIndex to;
     bool oneway;
-    std::vector<int> adjacentIntersections;
     for (int i = 0; i < getIntersectionStreetSegmentCount(intersection_id); ++i){
         streetSegment_id = getIntersectionStreetSegment(intersection_id, i);
         from = getInfoStreetSegment(streetSegment_id).from;
         to = getInfoStreetSegment(streetSegment_id).to;
         oneway = getInfoStreetSegment(streetSegment_id).oneWay;
-        if(oneway)
-            adjacentIntersections;
-       
+        if(oneway){
+            if(from == intersection_id)
+                adjacentIntersections.push_back(to);
+        }
+        else{
+            if(from != intersection_id)
+                adjacentIntersections.push_back(from);
+            else
+                adjacentIntersections.push_back(to);
+        }
+    //remove duplicate intersections
         
  
-    }*/
+    } 
     return adjacentIntersections;
 }
 
