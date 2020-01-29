@@ -270,7 +270,7 @@ std::vector<int> find_adjacent_intersections(int intersection_id){
     //remove duplicate intersections
      std::sort(adjacentIntersections.begin(), adjacentIntersections.end());
      adjacentIntersections.erase( std::unique(adjacentIntersections.begin(), adjacentIntersections.end()), adjacentIntersections.end());
- 
+        
     } 
     return adjacentIntersections;
 }
