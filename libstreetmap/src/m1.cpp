@@ -198,16 +198,16 @@ std::vector<int> find_adjacent_intersections(int intersection_id){
 std::vector<int> find_street_segments_of_street(int street_id){
     return street_street_segments[street_id];
 }
-
+//  Leo
 std::vector<int> find_intersections_of_street(int street_id){
     std::vector<int> result_d;
 //    //loop thru all intersections 
-    for (int i=0; i<getNumStreetSegments(); ++i) {
-        InfoStreetSegment streetSeg = getInfoStreetSegment(i);
-        if(streetSeg.streetID==street_id) {
-            result_d.push_back(streetSeg.to);
-            result_d.push_back(streetSeg.from);
-        }
+    std::vector<int> Segments=street_street_segments[street_id];
+    int NumSegments=Segments.size();
+    for (int i=0; i<NumSegments;++i) {
+        InfoStreetSegment streetSeg = getInfoStreetSegment(Segments[i]);
+        result_d.push_back(streetSeg.to);
+        result_d.push_back(streetSeg.from);
     }
     //remove duplicates
     //std::cout<<result_d.size()<<std::endl;
@@ -220,8 +220,19 @@ std::vector<int> find_intersections_of_street(int street_id){
 }
 
 std::vector<int> find_intersections_of_two_streets(std::pair<int, int> street_ids){
-    std::vector<int> temp(1,0);
-    return temp;
+    std::vector<int> all_intsersections=find_intersections_of_street(street_ids.first);
+    std::vector<int> result; 
+    auto second=street_ids.second;
+    int NumSegmentsForStreet=all_intsersections.size();
+    for(int i=0; i<NumSegmentsForStreet;i++) {
+        std::vector<int> all_segments_of_onepoint=intersection_street_segments[all_intsersections[i]];
+        for (int j=0;j<all_segments_of_onepoint.size();j++) {
+            if(getInfoStreetSegment(all_segments_of_onepoint[i]).streetID==second) {
+                result.push_back(all_intsersections[i]);
+            }
+        }
+    }
+    return result;
 }
 
 std::vector<int> find_street_ids_from_partial_street_name(std::string street_prefix){
