@@ -34,6 +34,7 @@ bool load_map(std::string map_path) {
     if (!load_successful) return false;
     intersection_street_segments.resize(getNumIntersections());
     street_street_segments.resize(getNumStreets());
+    featureID_featurePts.resize(getNumFeatures());
 
     for (int intersection = 0; intersection < getNumIntersections(); ++intersection){
         for (int i = 0; i < getIntersectionStreetSegmentCount(intersection); ++i){
@@ -53,6 +54,12 @@ bool load_map(std::string map_path) {
         streetID_streetName[streetNum].push_back(streetName);
     }
     */
+    for (int feature = 0; feature < getNumFeatures(); ++feature) {
+        for(int i = 0; i < getFeaturePointCount(feature); ++i) {
+            LatLon featurePoint = getFeaturePoint(i, feature);       
+            featureID_featurePts[feature].push_back(featurePoint);  
+        }
+    }
     return true;
 }
 
@@ -61,7 +68,8 @@ void close_map() {
     //std::cout << "CLOSING\n";
     //Clean-up your map related data structures here  
          intersection_street_segments.clear();
-         street_street_segments.clear(); 
+         street_street_segments.clear();
+         featureID_featurePts.clear();
     closeStreetDatabase(); 
 }
 
@@ -273,6 +281,19 @@ std::vector<int> find_street_ids_from_partial_street_name(std::string street_pre
 }
 
 double find_feature_area(int feature_id){
+    // check if closed 
+    /*
+    int totalPtsCount=getFeaturePointCount(feature_id);
+    LatLon latLonPoint0= getFeaturePoint(0, feature_id);
+    LatLon latLonPointLast= getFeaturePoint(totalPtsCount-1, feature_id);
+    if((latLonPoint0.lat()==latLonPointLast.lat()) && (latLonPoint0.lon()==latLonPointLast.lon())) {
+        std::pair<XY_,XY_> startPoint_XY= pair_of_LatLon_to_XY(latLonPoint0);
+        std::pair<XY_,XY_> startPoint_XY= pair_of_LatLon_to_XY(latLonPoint0);
+    }
+    else {
+        return 0;
+    }
+    */
     return 0;
 }
 
