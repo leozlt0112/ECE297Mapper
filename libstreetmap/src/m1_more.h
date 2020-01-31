@@ -15,6 +15,9 @@ std::vector<std::vector<int>> intersection_street_segments;
 //a vector[StreetIndex], each street vector stores streetSegmentIDs
 std::vector<std::vector<int>> street_street_segments;
 
+//a map<Street_Name,StreetIndex> for all streets
+std::vector<std::string> streetID_streetName;
+
 //This is a new class XY_, similar to LatLon but it holds x,y coordinates instead
 class XY_{
 public:
