@@ -47,12 +47,12 @@ bool load_map(std::string map_path) {
         int street_id = getInfoStreetSegment(streetSegment).streetID; 
         street_street_segments[street_id].push_back(streetSegment);
     }
-    
+    /*
     for (int streetNum =0; streetNum < getNumStreets(); ++streetNum) {
         std::string streetName = getStreetName(streetNum);
         streetID_streetName[streetNum].push_back(streetName);
     }
-    
+    */
     return true;
 }
 
@@ -246,6 +246,7 @@ std::vector<int> find_intersections_of_two_streets(std::pair<int, int> street_id
 
 std::vector<int> find_street_ids_from_partial_street_name(std::string street_prefix){
     std::vector<int> result_d;
+    /*
     street_prefix.erase(remove(street_prefix.begin(), street_prefix.end(), " "), street_prefix.end());
     
     int street_prefix_size=street_prefix.size();
@@ -267,6 +268,7 @@ std::vector<int> find_street_ids_from_partial_street_name(std::string street_pre
         }
     }
     //std::map<std
+     */
     return result_d;
 }
 
