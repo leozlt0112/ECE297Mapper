@@ -22,6 +22,7 @@
 #include "m1_more.h"
 #include "StreetsDatabaseAPI.h"
 #include "math.h"
+#include <map>
 #include <algorithm>    // std::sort
 
  
@@ -46,11 +47,17 @@ bool load_map(std::string map_path) {
         int street_id = getInfoStreetSegment(streetSegment).streetID; 
         street_street_segments[street_id].push_back(streetSegment);
     }
-
+    
+    for (int streetNum =0; streetNum < getNumStreets(); ++streetNum) {
+        std::string streetName = getStreetName(streetNum);
+        streetID_streetName[streetNum].push_back(streetName);
+    }
+    
     return true;
 }
 
 void close_map() {
+    
     //std::cout << "CLOSING\n";
     //Clean-up your map related data structures here  
          intersection_street_segments.clear();
@@ -136,7 +143,7 @@ std::vector<std::string> find_street_names_of_intersection(int intersection_id){
 //street segment (hint: check for 1-way streets too)
 bool are_directly_connected(std::pair<int, int> intersection_ids){
    //for the intersections find the street segments
-    int streetSegmentCount1 = getIntersectionStreetSegmentCount(intersection_ids.first);
+    int streetSegmentCount1 = getIntersectionStreetSegmentCount(intersection_ids.first);//use size?
     std::vector<int> streetSegmentId1 = intersection_street_segments[intersection_ids.first];
     
     //corner case: an intersection is considered to be connected to itself  
@@ -239,6 +246,26 @@ std::vector<int> find_intersections_of_two_streets(std::pair<int, int> street_id
 
 std::vector<int> find_street_ids_from_partial_street_name(std::string street_prefix){
     std::vector<int> result_d;
+    street_prefix.erase(remove(street_prefix.begin(), street_prefix.end(), " "), street_prefix.end());
+    
+    int street_prefix_size=street_prefix.size();
+    bool isPrefix;
+    for(int i=0; i<streetID_streetName.size(); i++) {
+        isPrefix=true;
+        int street_j=0,prefix_j=0;
+        while(prefix_j < street_prefix_size && isPrefix) {
+            while (street_prefix[prefix_j] == ' ') prefix_j++;
+            while (streetID_streetName[i][street_j] == ' ') street_j++;
+            if (!islower())
+            if(street_prefix[prefix_j] != streetID_streetName[i][street_j]) {
+                isPrefix=false;
+            }
+            else {
+                prefix_j++;
+                street_j++;
+            }
+        }
+    }
     //std::map<std
     return result_d;
 }
