@@ -18,6 +18,7 @@ std::vector<std::vector<int>> street_street_segments;
 //a map<Street_Name,StreetIndex> for all streets
 std::vector<std::string> streetID_streetName;
 
+std::vector<std::vector<LatLon>> featureID_featurePts;
 //This is a new class XY_, similar to LatLon but it holds x,y coordinates instead
 class XY_{
 public:
