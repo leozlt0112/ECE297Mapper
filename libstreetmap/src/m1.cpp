@@ -282,19 +282,32 @@ std::vector<int> find_street_ids_from_partial_street_name(std::string street_pre
 
 double find_feature_area(int feature_id){
     // check if closed 
-    /*
-    int totalPtsCount=getFeaturePointCount(feature_id);
-    LatLon latLonPoint0= getFeaturePoint(0, feature_id);
-    LatLon latLonPointLast= getFeaturePoint(totalPtsCount-1, feature_id);
+    
+    int totalPtsCount = getFeaturePointCount(feature_id);
+    LatLon latLonPoint0= featureID_featurePts[feature_id][0];
+    LatLon latLonPointLast= featureID_featurePts[feature_id][totalPtsCount-1];
+    double sum = 0.0;
     if((latLonPoint0.lat()==latLonPointLast.lat()) && (latLonPoint0.lon()==latLonPointLast.lon())) {
-        std::pair<XY_,XY_> startPoint_XY= pair_of_LatLon_to_XY(latLonPoint0);
-        std::pair<XY_,XY_> startPoint_XY= pair_of_LatLon_to_XY(latLonPoint0);
+        std::vector<XY_> featurePts=pair_of_LatLon_to_XY(featureID_featurePts[feature_id]); 
+        for (int i=0; i<= totalPtsCount-2; ++i) {
+            //std::pair<LatLon,LatLon> points = std::make_pair(
+                                               // featureID_featurePts[feature_id][i], 
+                                                //featureID_featurePts[feature_id][i+1]);
+            //std::pair<XY_,XY_> twoConsecPts = pair_of_LatLon_to_XY(points);
+            sum+=(featurePts[i].x_) * EARTH_RADIUS_METERS * (featurePts[i+1].y_) * EARTH_RADIUS_METERS - 
+                 (featurePts[i].y_) * EARTH_RADIUS_METERS * (featurePts[i+1].x_) * EARTH_RADIUS_METERS;
+        }
+        //std::pair<LatLon,LatLon> lastFirstpoints = std::make_pair(latLonPoint0, featureID_featurePts[feature_id][totalPtsCount-2]);
+        //std::pair<XY_,XY_> twoConsecPtsLast = pair_of_LatLon_to_XY(lastFirstpoints);
+        //sum+=(twoConsecPtsLast.second.x_ )* EARTH_RADIUS_METERS * (twoConsecPtsLast.first.y_ ) * EARTH_RADIUS_METERS- ((twoConsecPtsLast.second.y_) * EARTH_RADIUS_METERS * 
+                    //(twoConsecPtsLast.first.x_) * EARTH_RADIUS_METERS);
+        
+        sum=fabs(sum)/2.0;
+        return sum;
     }
     else {
         return 0;
     }
-    */
-    return 0;
 }
 
 double find_way_length(OSMID way_id){
@@ -313,5 +326,22 @@ std::pair<XY_,XY_> pair_of_LatLon_to_XY(std::pair<LatLon,LatLon> points){
     points_XY.first.y_=lat_first;
     points_XY.second.x_=lon_second * std::cos(lat_avg);
     points_XY.second.y_=lat_second;
+    return points_XY;
+}
+
+std::vector<XY_> pair_of_LatLon_to_XY(std::vector<LatLon> points){
+    double lat_sum=0, lat_avg=0;
+    int vector_size=points.size();
+    std::vector<XY_> points_XY;
+    //find lat_avg in radian
+    for (int i=0; i<vector_size; ++i) lat_sum += DEGREE_TO_RADIAN * points[i].lat();
+    lat_avg=lat_sum/vector_size;
+    //push them into result
+    XY_ one_point;
+    for (int i=0; i<vector_size; ++i){
+        one_point.x_ = points[i].lon() * DEGREE_TO_RADIAN * std::cos(lat_avg);
+        one_point.y_ = points[i].lat() * DEGREE_TO_RADIAN;
+        points_XY.push_back(one_point);
+    }
     return points_XY;
 }
