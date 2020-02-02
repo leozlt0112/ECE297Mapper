@@ -369,6 +369,7 @@ std::pair<XY_,XY_> LatLon_to_XY(std::pair<LatLon,LatLon> points){
     return points_XY;
 }
 
+
 std::vector<XY_> LatLon_to_XY(std::vector<LatLon> points){
     double lat_sum=0, lat_avg=0;
     int vector_size=points.size();
