@@ -24,7 +24,7 @@
 #include "math.h"
 #include <map>
 #include <algorithm>    // std::sort
-
+#include "OSMDatabaseAPI.h"
  
 bool load_map(std::string map_path) {
     //std::cout << "LOADING\n";
@@ -58,6 +58,17 @@ bool load_map(std::string map_path) {
         for(int i = 0; i < getFeaturePointCount(feature); ++i) {
             LatLon featurePoint = getFeaturePoint(i, feature);       
             featureID_featurePts[feature].push_back(featurePoint);  
+        }
+    }
+    
+    for (int wayct= 0; wayct < getNumberOfWays(); ++wayct) {
+        int osmIdx = getWayByIndex(wayct);
+        OSMID_WayIdx[osmIdx].
+    }
+        
+    for (int wayct= 0; wayct < getNumberOfWays(); ++wayct) {
+        for(auto iteratorforosmids=getWayMembers(getWayByIndex(wayct)).begin();iteratorforosmids!=getWayMembers(getWayByIndex(wayct)).end(); iteratorforosmids++) {
+            LatLon_of_theOSMNodes[wayct].pushback(getNodeByIndex(nodect)->coords());
         }
     }
     return true;
@@ -290,17 +301,9 @@ double find_feature_area(int feature_id){
     if((latLonPoint0.lat()==latLonPointLast.lat()) && (latLonPoint0.lon()==latLonPointLast.lon())) {
         std::vector<XY_> featurePts=pair_of_LatLon_to_XY(featureID_featurePts[feature_id]); 
         for (int i=0; i<= totalPtsCount-2; ++i) {
-            //std::pair<LatLon,LatLon> points = std::make_pair(
-                                               // featureID_featurePts[feature_id][i], 
-                                                //featureID_featurePts[feature_id][i+1]);
-            //std::pair<XY_,XY_> twoConsecPts = pair_of_LatLon_to_XY(points);
             sum+=(featurePts[i].x_) * EARTH_RADIUS_METERS * (featurePts[i+1].y_) * EARTH_RADIUS_METERS - 
                  (featurePts[i].y_) * EARTH_RADIUS_METERS * (featurePts[i+1].x_) * EARTH_RADIUS_METERS;
         }
-        //std::pair<LatLon,LatLon> lastFirstpoints = std::make_pair(latLonPoint0, featureID_featurePts[feature_id][totalPtsCount-2]);
-        //std::pair<XY_,XY_> twoConsecPtsLast = pair_of_LatLon_to_XY(lastFirstpoints);
-        //sum+=(twoConsecPtsLast.second.x_ )* EARTH_RADIUS_METERS * (twoConsecPtsLast.first.y_ ) * EARTH_RADIUS_METERS- ((twoConsecPtsLast.second.y_) * EARTH_RADIUS_METERS * 
-                    //(twoConsecPtsLast.first.x_) * EARTH_RADIUS_METERS);
         
         sum=fabs(sum)/2.0;
         return sum;
@@ -310,7 +313,12 @@ double find_feature_area(int feature_id){
     }
 }
 
-double find_way_length(OSMID way_id){
+double find_way_length(OSMID way_id)
+{
+    // std::vector<OSMID> wayMembers = getWayMembers(way_id)
+    //std::vector<
+    
+    
     return 0;
 }
 

@@ -22,6 +22,12 @@ std::vector<std::string> streetID_streetName;
 // variable used to store all possible all features
 std::vector<std::vector<LatLon>> featureID_featurePts;
 
+// a vector[osmid], each stores a way index
+std::vector<std::vector<LatLon>> OSMID_WayIdx;
+
+// a vector[way index], each stores latlon points vector
+std::vector<std::vector<LatLon>> LatLon_of_theOSMNodes;
+
 //This is a new class XY_, similar to LatLon but it holds x,y coordinates instead
 class XY_{
 public:
