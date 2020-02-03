@@ -27,15 +27,23 @@
 #include "OSMDatabaseAPI.h"
  
 bool load_map(std::string map_path) {
-    //std::cout << "LOADING\n";
     //Indicates whether the map has loaded successfully
     bool load_successful = loadStreetsDatabaseBIN(map_path); 
-    
     if (!load_successful) return false;
+    std::string osm_path;
+    for (int i=0; map_path[i]!='.'; ++i)
+        osm_path+=map_path[i];
+    osm_path+=".osm.bin";
+    loadOSMDatabaseBIN(osm_path);
+    
     intersection_street_segments.resize(getNumIntersections());
     street_street_segments.resize(getNumStreets());
+    street_intersections.resize(getNumStreets());
+    //streetSeg_time.resize(getNumStreetSegments());
+    //streetID_streetName.resize(getNumStreets());
     featureID_featurePts.resize(getNumFeatures());
-
+    
+    // std::vector<std::vector<int>> intersection_street_segments;
     for (int intersection = 0; intersection < getNumIntersections(); ++intersection){
         for (int i = 0; i < getIntersectionStreetSegmentCount(intersection); ++i){
             int ss_id = getIntersectionStreetSegment(intersection, i);
@@ -43,17 +51,50 @@ bool load_map(std::string map_path) {
             
         }
     }
- 
+    
+    //std::vector<std::vector<int>> street_street_segments;
     for (int streetSegment = 0; streetSegment < getNumStreetSegments(); ++streetSegment){       
         int street_id = getInfoStreetSegment(streetSegment).streetID; 
         street_street_segments[street_id].push_back(streetSegment);
     }
-    /*
-    for (int streetNum =0; streetNum < getNumStreets(); ++streetNum) {
-        std::string streetName = getStreetName(streetNum);
-        streetID_streetName[streetNum].push_back(streetName);
+    
+    // std::vector<std::vector<int>> street_intersections;
+    for (int street_id = 0; street_id < getNumStreets(); ++street_id){
+        std::vector<int> Segments=street_street_segments[street_id];
+        int NumSegments=Segments.size();
+        for (int i=0; i<NumSegments;++i) {
+            InfoStreetSegment streetSeg = getInfoStreetSegment(Segments[i]);
+            street_intersections[street_id].push_back(streetSeg.to);
+            street_intersections[street_id].push_back(streetSeg.from);
+        }
+        //remove duplicates
+        std::sort(street_intersections[street_id].begin(),street_intersections[street_id].end());
+        street_intersections[street_id].erase( 
+                                                std::unique(street_intersections[street_id].begin(),
+                                                            street_intersections[street_id].end()),
+                                                street_intersections[street_id].end());
     }
-    */
+    
+    // std::vector<double> streetSeg_time;
+    for (int streetSegment = 0; streetSegment < getNumStreetSegments(); ++streetSegment){       
+        streetSeg_time.push_back(find_street_segment_length(streetSegment)/(getInfoStreetSegment(streetSegment).speedLimit)*3.6);
+    }
+    
+    // std::map<std::string, int> streetID_streetName;
+    for (int streetID = 0; streetID < getNumStreets(); ++streetID) {
+        std::string streetName = getStreetName(streetID);
+        std::string this_name;
+        for (int i=0; i<streetName.size(); ++i){
+            char this_char = streetName[i];
+            if (this_char != ' '){
+                if (islower(this_char))
+                    this_char=toupper(this_char);
+                this_name+=this_char;
+            }
+        }
+        streetID_streetName.insert(std::make_pair(this_name,streetID));
+    }
+    //std::vector<std::vector<LatLon>> featureID_featurePts;
     for (int feature = 0; feature < getNumFeatures(); ++feature) {
         for(int i = 0; i < getFeaturePointCount(feature); ++i) {
             LatLon featurePoint = getFeaturePoint(i, feature);       
@@ -61,32 +102,45 @@ bool load_map(std::string map_path) {
         }
     }
     
-    for (int wayct= 0; wayct < getNumberOfWays(); ++wayct) {
-        int osmIdx = getWayByIndex(wayct);
-        OSMID_WayIdx[osmIdx].
+    // std::map<OSMID, int> OSMID_NodeIdx;
+    for (int nodeCt= 0; nodeCt < getNumberOfNodes(); ++nodeCt) {
+        OSMID osmIdx = getNodeByIndex(nodeCt)->id();
+        OSMID_NodeIdx.insert(std::make_pair(osmIdx,nodeCt));
     }
-        
-    for (int wayct= 0; wayct < getNumberOfWays(); ++wayct) {
-        for(auto iteratorforosmids=getWayMembers(getWayByIndex(wayct)).begin();iteratorforosmids!=getWayMembers(getWayByIndex(wayct)).end(); iteratorforosmids++) {
-            LatLon_of_theOSMNodes[wayct].pushback(getNodeByIndex(nodect)->coords());
+    
+    // std::map<OSMID, int> wayID_length;
+    for (int wayCt= 0; wayCt < getNumberOfWays(); ++wayCt) {
+        const OSMWay* this_way = getWayByIndex(wayCt);
+        std::vector<OSMID> these_node_ids = getWayMembers(this_way);
+        double distance=0;
+        for (int i=0; i<these_node_ids.size()-1; ++i){
+            LatLon node_first  = getNodeByIndex(OSMID_NodeIdx.find(these_node_ids[i])  ->second)->coords();
+            LatLon node_second = getNodeByIndex(OSMID_NodeIdx.find(these_node_ids[i+1])->second)->coords();
+            distance += find_distance_between_two_points(std::make_pair(node_first,node_second));
         }
+        wayID_length.insert(std::make_pair(this_way->id(), distance));
     }
+    
     return true;
 }
 
-void close_map() {
-    
-    //std::cout << "CLOSING\n";
+void close_map() {   
     //Clean-up your map related data structures here  
          intersection_street_segments.clear();
          street_street_segments.clear();
+         street_intersections.clear();
+         streetSeg_time.clear();
+         streetID_streetName.clear();
          featureID_featurePts.clear();
+         OSMID_NodeIdx.clear();
+         wayID_length.clear();
     closeStreetDatabase(); 
+    closeOSMDatabase();
 }
 
 //
 double find_distance_between_two_points(std::pair<LatLon, LatLon> points){
-    std::pair<XY_,XY_> points_XY=pair_of_LatLon_to_XY(points);
+    std::pair<XY_,XY_> points_XY=LatLon_to_XY(points);
     return EARTH_RADIUS_METERS * std::sqrt(std::pow(points_XY.first.x_-points_XY.second.x_,2)+std::pow(points_XY.first.y_-points_XY.second.y_,2));
 }
 
@@ -124,7 +178,7 @@ double find_street_segment_length(int street_segment_id){
 }
 
 double find_street_segment_travel_time(int street_segment_id){
-    return find_street_segment_length(street_segment_id)/(getInfoStreetSegment(street_segment_id).speedLimit)*3.6;
+    return streetSeg_time[street_segment_id];
 }
 
 int find_closest_intersection(LatLon my_position){
@@ -226,68 +280,50 @@ std::vector<int> find_street_segments_of_street(int street_id){
 }
 //  Leo
 std::vector<int> find_intersections_of_street(int street_id){
-    std::vector<int> result_d;
-//    //loop thru all intersections 
-    std::vector<int> Segments=street_street_segments[street_id];
-    int NumSegments=Segments.size();
-    for (int i=0; i<NumSegments;++i) {
-        InfoStreetSegment streetSeg = getInfoStreetSegment(Segments[i]);
-        result_d.push_back(streetSeg.to);
-        result_d.push_back(streetSeg.from);
-    }
-    //remove duplicates
-    std::sort(result_d.begin(),result_d.end());
-    //std::vector<int>::iterator it;
-    //it=std::unique(result_d.begin(), result_d.end());
-    //result_d.erase(it, result_d.end());
-    result_d.erase( std::unique(result_d.begin(),result_d.end()), result_d.end());
-    return result_d;
+    return street_intersections[street_id];
 }
 
 std::vector<int> find_intersections_of_two_streets(std::pair<int, int> street_ids){
-    std::vector<int> all_intsersections=find_intersections_of_street(street_ids.first);
-    std::vector<int> result; 
-    auto second=street_ids.second;
-    bool done_adding_this_intersection;
-    int NumSegmentsForStreet=all_intsersections.size();
-    for(int i=0; i<NumSegmentsForStreet;i++) {
-        std::vector<int> all_segments_of_onepoint=intersection_street_segments[all_intsersections[i]];
-        done_adding_this_intersection = false;
-        for (int j=0;j<all_segments_of_onepoint.size() && !done_adding_this_intersection;j++) {
-            if(getInfoStreetSegment(all_segments_of_onepoint[j]).streetID==second) {
-                result.push_back(all_intsersections[i]);
-                done_adding_this_intersection = true;
+    std::vector<int> intsersections_first =find_intersections_of_street(street_ids.first);
+    std::vector<int> intsersections_second=find_intersections_of_street(street_ids.second);
+    std::vector<int> intsersections_result;
+    bool done_this; 
+    for (int i=0; i<intsersections_first.size(); ++i){
+        done_this=false;
+        for (int j=0; j<intsersections_second.size() && !done_this; ++j){
+            if (intsersections_first[i]==intsersections_second[j]){
+                intsersections_result.push_back(intsersections_first[i]);
+                done_this=true;
             }
         }
     }
-    return result;
+    return intsersections_result;
 }
 
 std::vector<int> find_street_ids_from_partial_street_name(std::string street_prefix){
     std::vector<int> result_d;
-    /*
-    street_prefix.erase(remove(street_prefix.begin(), street_prefix.end(), " "), street_prefix.end());
-    
-    int street_prefix_size=street_prefix.size();
-    bool isPrefix;
-    for(int i=0; i<streetID_streetName.size(); i++) {
-        isPrefix=true;
-        int street_j=0,prefix_j=0;
-        while(prefix_j < street_prefix_size && isPrefix) {
-            while (street_prefix[prefix_j] == ' ') prefix_j++;
-            while (streetID_streetName[i][street_j] == ' ') street_j++;
-            if (!islower())
-            if(street_prefix[prefix_j] != streetID_streetName[i][street_j]) {
-                isPrefix=false;
-            }
-            else {
-                prefix_j++;
-                street_j++;
-            }
+    std::string Prefix;
+    for (int i=0; i<street_prefix.size(); ++i){
+        char this_char = street_prefix[i];
+        if (this_char != ' '){
+            if (islower(this_char))
+                this_char=toupper(this_char);
+            Prefix+=this_char;
         }
     }
-    //std::map<std
+    std::string Prefix_after = Prefix;
+    ++Prefix_after[Prefix_after.length() - 1];
+    auto start_ptr = streetID_streetName.lower_bound(Prefix);
+    auto end_ptr   = streetID_streetName.lower_bound(Prefix_after);
+    /*
+    std::cout<<"*******************************"<<std::endl;
+    std::cout<<street_prefix<<std::endl;
+    std::cout<<start_ptr->first<<std::endl;
+    std::cout<<end_ptr->first<<std::endl;
+    std::cout<<"*******************************"<<std::endl;
      */
+    for (auto ptr=start_ptr; ptr != end_ptr; ++ptr)
+        result_d.push_back(ptr->second);
     return result_d;
 }
 
@@ -299,7 +335,7 @@ double find_feature_area(int feature_id){
     LatLon latLonPointLast= featureID_featurePts[feature_id][totalPtsCount-1];
     double sum = 0.0;
     if((latLonPoint0.lat()==latLonPointLast.lat()) && (latLonPoint0.lon()==latLonPointLast.lon())) {
-        std::vector<XY_> featurePts=pair_of_LatLon_to_XY(featureID_featurePts[feature_id]); 
+        std::vector<XY_> featurePts=LatLon_to_XY(featureID_featurePts[feature_id]); 
         for (int i=0; i<= totalPtsCount-2; ++i) {
             sum+=(featurePts[i].x_) * EARTH_RADIUS_METERS * (featurePts[i+1].y_) * EARTH_RADIUS_METERS - 
                  (featurePts[i].y_) * EARTH_RADIUS_METERS * (featurePts[i+1].x_) * EARTH_RADIUS_METERS;
@@ -315,15 +351,11 @@ double find_feature_area(int feature_id){
 
 double find_way_length(OSMID way_id)
 {
-    // std::vector<OSMID> wayMembers = getWayMembers(way_id)
-    //std::vector<
-    
-    
-    return 0;
+    return wayID_length.find(way_id)->second;
 }
 
 //send in a pair of LatLon, give out a pair of XY(int pair))
-std::pair<XY_,XY_> pair_of_LatLon_to_XY(std::pair<LatLon,LatLon> points){
+std::pair<XY_,XY_> LatLon_to_XY(std::pair<LatLon,LatLon> points){
     double lat_first = DEGREE_TO_RADIAN * points.first.lat();
     double lon_first = DEGREE_TO_RADIAN * points.first.lon();
     double lat_second = DEGREE_TO_RADIAN * points.second.lat();
@@ -337,7 +369,7 @@ std::pair<XY_,XY_> pair_of_LatLon_to_XY(std::pair<LatLon,LatLon> points){
     return points_XY;
 }
 
-std::vector<XY_> pair_of_LatLon_to_XY(std::vector<LatLon> points){
+std::vector<XY_> LatLon_to_XY(std::vector<LatLon> points){
     double lat_sum=0, lat_avg=0;
     int vector_size=points.size();
     std::vector<XY_> points_XY;
