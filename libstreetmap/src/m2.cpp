@@ -9,11 +9,19 @@
 #include "m2_more.h"
 
 void draw_map () {
+    //draw_map_blank_canvas();
+    intersections.resize(getNumIntersections());
+    for(int i=0; i<getNumIntersections(); i++ ) {
+        intersections[i].position=getIntersectionPosition(i);
+        intersections[i].name= getIntersectionName(i);
+    }
     draw_map_blank_canvas();
     return;
 }
 
 void draw_main_canvas (ezgl::renderer *g){    
+    //double max_lat = getIntersectionPosition(0).lat();
+//double min_lat = max_lat;
     g->draw_rectangle({0, 0}, {1000, 1000});
 
     for (size_t i = 0; i < intersections.size(); ++i) {
