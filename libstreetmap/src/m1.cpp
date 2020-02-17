@@ -44,8 +44,8 @@ bool load_map(std::string map_path) {
     featureID_featurePts.resize(getNumFeatures());
     
     // std::vector<std::vector<int>> intersection_street_segments;
-    for (int intersection = 0; intersection < getNumIntersections(); ++intersection){
-        for (int i = 0; i < getIntersectionStreetSegmentCount(intersection); ++i){
+    for (int intersection = 0; intersection < getNumIntersections(); ++intersection) {
+        for (int i = 0; i < getIntersectionStreetSegmentCount(intersection); ++i) {
             int ss_id = getIntersectionStreetSegment(intersection, i);
             intersection_street_segments[intersection].push_back(ss_id);
             
@@ -53,7 +53,7 @@ bool load_map(std::string map_path) {
     }
     
     //std::vector<std::vector<int>> street_street_segments;
-    for (int streetSegment = 0; streetSegment < getNumStreetSegments(); ++streetSegment){       
+    for (int streetSegment = 0; streetSegment < getNumStreetSegments(); ++streetSegment) {       
         int street_id = getInfoStreetSegment(streetSegment).streetID; 
         street_street_segments[street_id].push_back(streetSegment);
     }
@@ -160,16 +160,15 @@ double find_street_segment_length(int street_segment_id){
         total_length += find_distance_between_two_points(two_points);
         // distance between "0th" and "curvePointCount-1'th point"
         for (int i=0; i<(curvePointCount-1); i++){
-        two_points.first = getStreetSegmentCurvePoint(i, street_segment_id);
-        two_points.second = getStreetSegmentCurvePoint(i+1, street_segment_id);
-        total_length += find_distance_between_two_points(two_points);
+            two_points.first = getStreetSegmentCurvePoint(i, street_segment_id);
+            two_points.second = getStreetSegmentCurvePoint(i+1, street_segment_id);
+            total_length += find_distance_between_two_points(two_points);
         }
         //distance between "curvePointCount-1'th point" and "to"
         two_points.first = getStreetSegmentCurvePoint(curvePointCount-1, street_segment_id);
         two_points.second = getIntersectionPosition(to);
         total_length += find_distance_between_two_points(two_points);
-    }
-    else{
+    } else {
         two_points.first = getIntersectionPosition(from);
         two_points.second = getIntersectionPosition(to);
         total_length += find_distance_between_two_points(two_points);
@@ -257,16 +256,17 @@ std::vector<int> find_adjacent_intersections(int intersection_id){
         from = getInfoStreetSegment(streetSegment_id).from;
         to = getInfoStreetSegment(streetSegment_id).to;
         oneway = getInfoStreetSegment(streetSegment_id).oneWay;
-        if(oneway){
-            if(from == intersection_id)
+        if(oneway) {
+            if(from == intersection_id) {
                 adjacentIntersections.push_back(to);
-        }
-        else{
+            }
+        } else {
             if(from != intersection_id)
                 adjacentIntersections.push_back(from);
             else
                 adjacentIntersections.push_back(to);
         }
+        
     //remove duplicate intersections
      std::sort(adjacentIntersections.begin(), adjacentIntersections.end());
      adjacentIntersections.erase( std::unique(adjacentIntersections.begin(), adjacentIntersections.end()), adjacentIntersections.end());
