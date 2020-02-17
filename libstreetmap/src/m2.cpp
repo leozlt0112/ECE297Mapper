@@ -7,8 +7,6 @@
 
 #include "m2.h"
 #include "m2_more.h"
-#include "ezgl/application.hpp"
-#include "ezgl/graphics.hpp"
 
 void draw_map () {
     draw_map_blank_canvas();

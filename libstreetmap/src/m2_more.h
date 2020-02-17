@@ -12,6 +12,22 @@
  */
 
 #pragma once
+#include "m1.h"
+#include "StreetsDatabaseAPI.h"
+#include "math.h"
+#include <map>
+#include <algorithm>    // std::sort
+#include "OSMDatabaseAPI.h"
+
+#include "ezgl/application.hpp"
+#include "ezgl/graphics.hpp"
+
+struct inersection_data{
+    LatLon position; 
+    std::string name; 
+};
+
+void draw_main_canvas (ezgl::renderer *g);
 
 void draw_map_blank_canvas();
 
