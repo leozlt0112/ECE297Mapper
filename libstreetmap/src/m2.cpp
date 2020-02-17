@@ -13,10 +13,19 @@ void draw_map () {
     return;
 }
 
-void draw_main_canvas (ezgl::renderer *g){   
-  g->draw_rectangle({0, 0},
-                    {1000, 1000});
-};
+void draw_main_canvas (ezgl::renderer *g){    
+    g->draw_rectangle({0, 0}, {1000, 1000});
+
+    for (size_t i = 0; i < intersections.size(); ++i) {
+        float x = intersections[i].position.lon();
+        float y = intersections[i].position.lat();
+
+        float width = 10;
+        float height = width;
+
+        g->fill_rectangle({x, y}, {x + width, y + height});
+    }
+}
 
 void draw_map_blank_canvas() {
   ezgl::application::settings settings; 

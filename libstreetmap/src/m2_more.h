@@ -22,10 +22,12 @@
 #include "ezgl/application.hpp"
 #include "ezgl/graphics.hpp"
 
-struct inersection_data{
+struct intersection_data{
     LatLon position; 
     std::string name; 
 };
+
+std::vector<intersection_data> intersections;
 
 void draw_main_canvas (ezgl::renderer *g);
 
