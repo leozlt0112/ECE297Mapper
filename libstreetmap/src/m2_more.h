@@ -29,6 +29,8 @@ struct intersection_data{
 
 std::vector<intersection_data> intersections;
 
+double max_lat, min_lat, max_lon, min_lon;
+
 void draw_main_canvas (ezgl::renderer *g);
 
 void draw_map_blank_canvas();
