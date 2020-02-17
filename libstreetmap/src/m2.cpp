@@ -5,3 +5,7 @@
  */
 
 #include "m2.h"
+
+void draw_map() {
+    return;
+}

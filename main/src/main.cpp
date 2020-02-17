@@ -62,7 +62,7 @@ int main(int argc, char** argv) {
 
     //Clean-up the map data and related data structures
     std::cout << "Closing map\n";
+    draw_map();
     close_map(); 
-
     return SUCCESS_EXIT_CODE;
 }
