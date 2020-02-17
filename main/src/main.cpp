@@ -22,6 +22,7 @@
 #include <string>
 
 #include "m1.h"
+#include "m2.h"
 
 //Program exit codes
 constexpr int SUCCESS_EXIT_CODE = 0;        //Everyting went OK
