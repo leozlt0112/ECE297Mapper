@@ -24,7 +24,9 @@
 
 struct intersection_data{
     LatLon position; 
-    std::string name; 
+    std::string name;
+    bool highlight = false;
+    
 };
 
 // a vector[intersection_id] storing intersection data
@@ -41,3 +43,6 @@ void draw_map_blank_canvas();
 // Converting latlon in degrees to x and y
 float x_from_lon(float lon);
 float y_from_lat(float lat);
+float lat_from_y(double y);
+float lon_from_x(double x);
+void act_on_mouse_click(ezgl::application* app, GdkEventButton* event, double x, double y);
