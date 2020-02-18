@@ -27,13 +27,17 @@ struct intersection_data{
     std::string name; 
 };
 
+// a vector[intersection_id] storing intersection data
 std::vector<intersection_data> intersections;
 
+// In Degrees: max_lat, min_lat, max_lon, min_lon
+// In Radians: avg_lat
 double max_lat, min_lat, max_lon, min_lon, avg_lat;
 
 void draw_main_canvas (ezgl::renderer *g);
 
 void draw_map_blank_canvas();
 
+// Converting latlon in degrees to x and y
 float x_from_lon(float lon);
 float y_from_lat(float lat);

@@ -8,8 +8,9 @@
 #include "m2.h"
 #include "m2_more.h"
 
+// draw map loads necessary variables and calls draw_map_blank_canvas() in the end.
 void draw_map () {
-    //Loading intersection. Finding min_latlon, max_latlon;
+    //Loading intersections[]. Finding min_latlon, max_latlon;
     max_lat = getIntersectionPosition(0).lat(); 
     min_lat = max_lat;
     max_lon = getIntersectionPosition(0).lon();
@@ -30,6 +31,7 @@ void draw_map () {
     return;
 }
 
+// draws the canvas and all intersections
 void draw_main_canvas (ezgl::renderer *g){    
     g->draw_rectangle({0, 0}, {1000, 1000});
 
@@ -44,30 +46,33 @@ void draw_main_canvas (ezgl::renderer *g){
     }
 }
 
+// draw(initialize) the canvas
 void draw_map_blank_canvas() {
-  ezgl::application::settings settings; 
-  settings.main_ui_resource = 
-           "libstreetmap/resources/main.ui"; 
-  settings.window_identifier = "MainWindow"; 
-  settings.canvas_identifier = "MainCanvas";
+    ezgl::application::settings settings; 
+    settings.main_ui_resource = 
+               "libstreetmap/resources/main.ui"; 
+    settings.window_identifier = "MainWindow"; 
+    settings.canvas_identifier = "MainCanvas";
 
-  ezgl::application application(settings); 
+    ezgl::application application(settings); 
 
-  ezgl::rectangle initial_world({x_from_lon(min_lon), y_from_lat(min_lat)},
-                                {x_from_lon(max_lon), y_from_lat(max_lat)});
-  application.add_canvas("MainCanvas", 
-                         draw_main_canvas,
-                         initial_world);
-
-  application.run(nullptr, nullptr,
-                  nullptr, nullptr);
+    ezgl::rectangle initial_world({x_from_lon(min_lon), y_from_lat(min_lat)},
+                                  {x_from_lon(max_lon), y_from_lat(max_lat)});
+    application.add_canvas("MainCanvas", 
+                           draw_main_canvas,
+                           initial_world);
+    application.run(nullptr, nullptr,
+                    nullptr, nullptr);
 }
 
+// uses global variable avg_lat (in radians)
+// uses parameter lon (in degrees)
 float x_from_lon(float lon) {
     float x = lon * DEGREE_TO_RADIAN * std::cos(avg_lat) * EARTH_RADIUS_METERS;
     return x;
 }
 
+// uses parameter lat (in degrees)
 float y_from_lat(float lat) {
     float y = lat * DEGREE_TO_RADIAN * EARTH_RADIUS_METERS;
     return y;
