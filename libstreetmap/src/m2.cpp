@@ -86,11 +86,14 @@ float lat_from_y(double y) {
     float lat = y / DEGREE_TO_RADIAN / EARTH_RADIUS_METERS;
     return lat; 
 }
+
 float lon_from_x(double x) {
     float lon = x / EARTH_RADIUS_METERS / std::cos(avg_lat) / DEGREE_TO_RADIAN; 
     return lon; 
 }
 
+// uses global variable avg_lat (in radians)
+// uses parameter lon (in degrees)
 float x_from_lon(float lon) {
     float x = lon * DEGREE_TO_RADIAN * std::cos(avg_lat) * EARTH_RADIUS_METERS;
     return x;
