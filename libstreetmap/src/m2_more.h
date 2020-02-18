@@ -27,10 +27,19 @@ struct intersection_data{
     std::string name;
     bool highlight = false;
     
+    
+};
+
+struct street_segment_data{
+    int from;   
+    int to;
 };
 
 // a vector[intersection_id] storing intersection data
 std::vector<intersection_data> intersections;
+
+//a vector[streetSegment_id] storing street_segment_data
+std::vector<street_segment_data> streetSegments;
 
 // In Degrees: max_lat, min_lat, max_lon, min_lon
 // In Radians: avg_lat
@@ -39,6 +48,9 @@ double max_lat, min_lat, max_lon, min_lon, avg_lat;
 void draw_main_canvas (ezgl::renderer *g);
 
 void draw_map_blank_canvas();
+
+//draw all street segments 
+void draw_all_street_segments(ezgl::renderer *g);
 
 // Converting latlon in degrees to x and y
 float x_from_lon(float lon);
