@@ -110,9 +110,7 @@ void draw_all_street_segments(ezgl::renderer *g){
         float y_from = this_segment.allPoints[0]    .second;
         float x_to   = this_segment.allPoints.back().first;
         float y_to   = this_segment.allPoints.back().second;
-        //draw all street segments with curve!
-        //for (int curvePnt=0; curvePnt<this_segment.allPoints.size(); ++curvePnt){}
-        //draw the streetsegments according to zoom
+        // draw the streetsegments according to zoom
         // determine how much is zoomed in using if conditions
         if (visible_width > 0.75 * iniWidth){
             if (this_segment.speedLimit > 50){

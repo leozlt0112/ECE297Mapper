@@ -10,22 +10,25 @@ class XY_;
 std::pair<XY_,XY_> LatLon_to_XY(std::pair<LatLon,LatLon> points);
 std::vector<XY_> LatLon_to_XY(std::vector<LatLon> points);
 
-//this is a vector[IntersectionIndex], each intersection vector stores StreetSegID ints
+// a vector[IntersectionIndex], each intersection vector stores StreetSegID ints
 std::vector<std::vector<int>> intersection_street_segments;
 
-//a vector[StreetIndex], each street vector stores streetSegmentIDs
+// a vector[StreetIndex], each street vector stores streetSegmentIDs
 std::vector<std::vector<int>> street_street_segments;
 
-//a vector[StreetIndex], each street vector stores IntersectionIDs
+// a vector[StreetIndex], each street vector stores IntersectionIDs
 std::vector<std::vector<int>> street_intersections;
 
-//a vector[streetSegIndex], each element stores travel time
+// a vector[streetSegIndex], each element stores distance
+std::vector<double> streetSeg_length;
+
+// a vector[streetSegIndex], each element stores travel time
 std::vector<double> streetSeg_time;
 
-//a map<Street_Name,StreetIndex> for all streets
+// a map<Street_Name,StreetIndex> for all streets
 std::multimap<std::string, int> streetID_streetName;
 
-// variable used to store all possible all features
+// a variable used to store all possible all features
 std::vector<std::vector<LatLon>> featureID_featurePts;
 
 // a map, each stores <node ID, node index>

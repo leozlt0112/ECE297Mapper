@@ -74,9 +74,12 @@ bool load_map(std::string map_path) {
                                                 street_intersections[street_id].end());
     }
     
+    // std::vector<double> streetSeg_length;
     // std::vector<double> streetSeg_time;
-    for (int streetSegment = 0; streetSegment < getNumStreetSegments(); ++streetSegment){       
-        streetSeg_time.push_back(find_street_segment_length(streetSegment)/(getInfoStreetSegment(streetSegment).speedLimit)*3.6);
+    for (int streetSegment = 0; streetSegment < getNumStreetSegments(); ++streetSegment){ 
+        double length = find_street_segment_length(streetSegment);
+        streetSeg_length.push_back(length);
+        streetSeg_time.push_back(length/(getInfoStreetSegment(streetSegment).speedLimit)*3.6);
     }
     
     // std::map<std::string, int> streetID_streetName;

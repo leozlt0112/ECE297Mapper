@@ -30,32 +30,39 @@ struct intersection_info{
 };
 
 struct segment_info {
-    bool oneWay;                    // if true, then can only travel in from->to direction
-    std::vector<std::pair<int,int>> allPoints;          // from, curve points, to
-    float speedLimit;               // in km/h
-    StreetIndex	streetID;           // index of street this segment belongs to
+    bool oneWay;                                // if true, then can only travel in from->to direction
+    int major_minor=0;                          // determine how major it is. (0=minor, 1=medium, 2=major)
+    std::vector<std::pair<int,int>> allPoints;  // from, curve points, to
+    float speedLimit;                           // in km/h
+    StreetIndex	streetID;                       // index of street this segment belongs to
 };
 
 // a vector[intersection_id] storing intersection data
 std::vector<intersection_info> intersections;
 
-//a vector[streetSegment_id] storing street_segment_data
+// a vector[streetSegment_id] storing street_segment_data
 std::vector<segment_info> streetSegments;
+
+//a vector[streetSegIndex], each element stores distance. from m1_more.h
+extern std::vector<double> streetSeg_length;
+
+//a vector[StreetIndex], each street vector stores streetSegmentIDs
+extern std::vector<std::vector<int>> street_street_segments;
 
 // In Degrees: max_lat, min_lat, max_lon, min_lon
 // In Radians: avg_lat
 double max_lat, min_lat, max_lon, min_lon, avg_lat;
 
-//load all the data
+// load all the data
 void draw_map_load ();
 
-//draw main canvas and related features
+// draw main canvas and related features
 void draw_main_canvas (ezgl::renderer *g);
 
-//draw all intersections
+// draw all intersections
 void draw_intersections (ezgl::renderer *g);
 
-//draw all street segments 
+// draw all street segments 
 void draw_all_street_segments(ezgl::renderer *g);
 
 // Converting latlon in degrees to x and y
