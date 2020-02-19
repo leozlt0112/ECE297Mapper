@@ -43,7 +43,7 @@ void draw_map_load (){
     // stores initailly unzoomed width of the world
     memory.initial_world_width = x_from_lon(max_lon) - x_from_lon(min_lon);
     
-    //std::vector<InfoStreetSegment> streetSegments;
+    //std::vector<intersection_info> intersections;
     for(int i=0; i<intersections.size(); i++ ) {
         LatLon this_position  = getIntersectionPosition(i);
         intersections[i].x_   = x_from_lon(this_position.lon());
