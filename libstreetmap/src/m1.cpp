@@ -21,10 +21,9 @@
 #include "m1.h"
 #include "m1_more.h"
 #include "StreetsDatabaseAPI.h"
-#include "math.h"
+#include "OSMDatabaseAPI.h"
 #include <map>
 #include <algorithm>    // std::sort
-#include "OSMDatabaseAPI.h"
  
 bool load_map(std::string map_path) {
     //Indicates whether the map has loaded successfully

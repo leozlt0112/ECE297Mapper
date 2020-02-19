@@ -6,7 +6,6 @@
 #include <map>
 class XY_;
 
-
 //it converts a pair of LatLon to a pair of XY_
 std::pair<XY_,XY_> LatLon_to_XY(std::pair<LatLon,LatLon> points);
 std::vector<XY_> LatLon_to_XY(std::vector<LatLon> points);

@@ -14,16 +14,16 @@
 #pragma once
 #include "m1.h"
 #include "StreetsDatabaseAPI.h"
+#include "OSMDatabaseAPI.h"
+#include "ezgl/application.hpp"
+#include "ezgl/graphics.hpp"
 #include "math.h"
 #include <map>
 #include <algorithm>    // std::sort
-#include "OSMDatabaseAPI.h"
-
-#include "ezgl/application.hpp"
-#include "ezgl/graphics.hpp"
 
 struct intersection_data{
-    LatLon position; 
+    double lat;
+    double lon;
     std::string name;
     bool highlight = false;
     
@@ -47,7 +47,11 @@ double max_lat, min_lat, max_lon, min_lon, avg_lat;
 
 void draw_main_canvas (ezgl::renderer *g);
 
+void draw_map_load ();
+
 void draw_map_blank_canvas();
+
+void draw_intersections (ezgl::renderer *g);
 
 //draw all street segments 
 void draw_all_street_segments(ezgl::renderer *g);
