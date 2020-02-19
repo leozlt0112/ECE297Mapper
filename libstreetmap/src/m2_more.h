@@ -65,8 +65,9 @@ float y_from_lat(float lat);
 // Converting x and y to latlon in degrees
 float lat_from_y(double y);
 float lon_from_x(double x);
-
+// stores bunch of variables 
 struct action_mem{
+    // store intersections u clickded
     int last_clicked_intersection=-1;
     int initial_world_width=0;
 };

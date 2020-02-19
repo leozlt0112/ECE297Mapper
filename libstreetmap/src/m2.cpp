@@ -40,6 +40,7 @@ void draw_map_load (){
         min_lon = std::min(min_lon, this_position.lon());
     }
     avg_lat=(max_lat+min_lat)/2.0 * DEGREE_TO_RADIAN;
+    // stores initailly unzoomed width of the world
     memory.initial_world_width = x_from_lon(max_lon) - x_from_lon(min_lon);
     
     //std::vector<InfoStreetSegment> streetSegments;
@@ -71,6 +72,7 @@ void draw_map_load (){
 }
 
 // draws main canvas and all relevant features
+// call all the draw functions
 void draw_main_canvas (ezgl::renderer *g){ 
     draw_intersections(g);
     draw_all_street_segments(g);
@@ -111,6 +113,7 @@ void draw_all_street_segments(ezgl::renderer *g){
         //draw all street segments with curve!
         //for (int curvePnt=0; curvePnt<this_segment.allPoints.size(); ++curvePnt){}
         //draw the streetsegments according to zoom
+        // determine how much is zoomed in using if conditions
         if (visible_width > 0.75 * iniWidth){
             if (this_segment.speedLimit > 50){
                 g->set_line_width(1);
