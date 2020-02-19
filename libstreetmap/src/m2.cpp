@@ -27,47 +27,50 @@ void draw_map_load (){
     streetSegments.resize(getNumStreetSegments());
     
     //double max_lat, min_lat, max_lon, min_lon, avg_lat;
-    //std::vector<intersection_data> intersections;
-    //std::vector<street_segment_data> streetSegments;
+    //memory.initial_world_width
     max_lat = getIntersectionPosition(0).lat(); 
     min_lat = max_lat;
     max_lon = getIntersectionPosition(0).lon();
     min_lon = max_lon;
     for(int i=0; i<intersections.size(); i++ ) {
         LatLon this_position  = getIntersectionPosition(i);
-        intersections[i].lat  = this_position.lat();
-        intersections[i].lon  = this_position.lon();
-        intersections[i].name = getIntersectionName(i);
-        max_lat = std::max(max_lat, intersections[i].lat);
-        min_lat = std::min(min_lat, intersections[i].lat);
-        max_lon = std::max(max_lon, intersections[i].lon);
-        min_lon = std::min(min_lon, intersections[i].lon);
+        max_lat = std::max(max_lat, this_position.lat());
+        min_lat = std::min(min_lat, this_position.lat());
+        max_lon = std::max(max_lon, this_position.lon());
+        min_lon = std::min(min_lon, this_position.lon());
     }
     avg_lat=(max_lat+min_lat)/2.0 * DEGREE_TO_RADIAN;
+    memory.initial_world_width = x_from_lon(max_lon) - x_from_lon(min_lon);
+    
+    //std::vector<intersection_data> intersections;
+    //std::vector<street_segment_data> streetSegments;
+    for(int i=0; i<intersections.size(); i++ ) {
+        LatLon this_position  = getIntersectionPosition(i);
+        intersections[i].x_   = x_from_lon(this_position.lon());
+        intersections[i].y_   = y_from_lat(this_position.lat());
+        intersections[i].name = getIntersectionName(i);
+    }
     
     //std::vector<street_segment_data> streetSegments;
     for(size_t i = 0; i < streetSegments.size(); ++i) {
-        InfoStreetSegment streetSeg = getInfoStreetSegment(i);
-        streetSegments[i].from = streetSeg.from;
-        streetSegments[i].to= streetSeg.to;
+        streetSegments[i] = getInfoStreetSegment(i);
     }
+
 }
 
 // draws main canvas and all relevant features
-void draw_main_canvas (ezgl::renderer *g){    
-    g->draw_rectangle({0, 0}, {1000, 1000});
+void draw_main_canvas (ezgl::renderer *g){ 
     draw_intersections(g);
     draw_all_street_segments(g);
 }
 
 //draws all intersections
 void draw_intersections (ezgl::renderer *g){
+    float width = 5;
+    float height = width;
     for (size_t i = 0; i < intersections.size(); ++i) {
-        float x = x_from_lon(intersections[i].lon);
-        float y = y_from_lat(intersections[i].lat);
-
-        float width = 10;
-        float height = width;
+        float x = intersections[i].x_;
+        float y = intersections[i].y_;
         if (intersections[i].highlight) {
             g->set_color(ezgl::RED);
         } 
@@ -81,18 +84,72 @@ void draw_intersections (ezgl::renderer *g){
 //draw all street segments. solid lines of width 3, with butt ends, opaque
 void draw_all_street_segments(ezgl::renderer *g){
     //draw all the lines 
-    g->set_color(ezgl::BLACK);
-    g->set_line_cap(ezgl::line_cap::butt); // Butt ends
+    g->set_line_cap(ezgl::line_cap::round); // round ends
     g->set_line_dash(ezgl::line_dash::none); // Solid line
-    g->set_line_width(1);
+    int visible_width = g->get_visible_world().width();
+    int iniWidth = memory.initial_world_width;
+    std::cout<<g->get_visible_world().width()/iniWidth<<std::endl;
     for(size_t i = 0; i < streetSegments.size(); ++i) {
          //get coordinate of two points 
-        float x_from = x_from_lon(intersections[streetSegments[i].from].lon);
-        float y_from = y_from_lat(intersections[streetSegments[i].from].lat);
-        float x_to = x_from_lon(intersections[streetSegments[i].to].lon);
-        float y_to = y_from_lat(intersections[streetSegments[i].to].lat);
-        //draw the line from to to 
-        g->draw_line({x_from, y_from}, {x_to, y_to});
+        InfoStreetSegment this_segment = streetSegments[i];
+        float x_from = intersections[this_segment.from].x_;
+        float y_from = intersections[this_segment.from].y_;
+        float x_to   = intersections[this_segment.to].x_;
+        float y_to   = intersections[this_segment.to].y_;
+        //draw the streetsegments according to zoom
+        if (visible_width > 0.75 * iniWidth){
+            if (this_segment.speedLimit > 50){
+                g->set_line_width(1);
+                g->set_color(0, 0, 0, 255);
+                g->draw_line({x_from, y_from}, {x_to, y_to});
+            }
+        }
+        else if (visible_width > 0.3 * iniWidth){
+            if (this_segment.speedLimit > 50){
+                g->set_line_width(1);
+                g->set_color(0, 0, 0, 255);
+                g->draw_line({x_from, y_from}, {x_to, y_to});
+            }
+            else if (this_segment.speedLimit > 40){
+                g->set_line_width(0.5);
+                g->set_color(200, 200, 200, 255);
+                g->draw_line({x_from, y_from}, {x_to, y_to});
+            }
+        }
+        else if (visible_width > 0.02 * iniWidth){
+            if (this_segment.speedLimit > 50){
+                g->set_line_width(1);
+                g->set_color(0, 0, 0, 255);
+                g->draw_line({x_from, y_from}, {x_to, y_to});
+            }
+            else if (this_segment.speedLimit > 40){
+                g->set_line_width(0.5);
+                g->set_color(100, 100, 100, 255);
+                g->draw_line({x_from, y_from}, {x_to, y_to});
+            }
+            else if ( visible_width < 5000){
+                g->set_line_width(0.1);
+                g->set_color(200, 200, 200, 255);
+                g->draw_line({x_from, y_from}, {x_to, y_to});
+            }
+        }
+        else{
+            if (this_segment.speedLimit > 50){
+                g->set_line_width(1);
+                g->set_color(0, 0, 0, 255);
+                g->draw_line({x_from, y_from}, {x_to, y_to});
+            }
+            else if (this_segment.speedLimit > 40){
+                g->set_line_width(0.5);
+                g->set_color(100, 100, 100, 255);
+                g->draw_line({x_from, y_from}, {x_to, y_to});
+            }
+            else if ( visible_width < 5000){
+                g->set_line_width(0.1);
+                g->set_color(100, 100, 100, 255);
+                g->draw_line({x_from, y_from}, {x_to, y_to});
+            }
+        }
     }
 }
 
@@ -103,10 +160,10 @@ void act_on_mouse_click(ezgl::application* app, GdkEventButton* event, double x,
     std::cout<< "Closest Intersection: "<< intersections[id].name << "\n";
     //un-highlight the last clicked intersection
     
-    if (last_clicked.intersection!= -1) 
-        intersections[last_clicked.intersection].highlight = false;
-    intersections[id].highlight = true;
-    last_clicked.intersection   = id;
+    if (memory.last_clicked_intersection != -1) 
+        intersections[memory.last_clicked_intersection].highlight = false;
+    intersections[id].highlight       = true;
+    memory.last_clicked_intersection  = id;
     app->refresh_drawing();
 }
 
