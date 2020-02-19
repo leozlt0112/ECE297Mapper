@@ -4,9 +4,9 @@
 // draw map loads necessary variables and calls draw_map_blank_canvas() in the end.
 void draw_map () {
     draw_map_load();
+    
     ezgl::application::settings settings; 
-    settings.main_ui_resource = 
-               "libstreetmap/resources/main.ui"; 
+    settings.main_ui_resource =  "libstreetmap/resources/main.ui"; 
     settings.window_identifier = "MainWindow"; 
     settings.canvas_identifier = "MainCanvas";
 
@@ -80,8 +80,7 @@ void draw_main_canvas (ezgl::renderer *g){
 
 //draws all intersections
 void draw_intersections (ezgl::renderer *g){
-    float width = 5;
-    float height = width;
+    float radius = 5;
     for (size_t i = 0; i < intersections.size(); ++i) {
         float x = intersections[i].x_;
         float y = intersections[i].y_;
@@ -91,7 +90,7 @@ void draw_intersections (ezgl::renderer *g){
         else {
             g->set_color(ezgl::GREY_55);
         }
-        g->fill_rectangle({x-width/2, y-height/2}, {x+width/2, y+height/2});
+        g->fill_arc({x, y}, radius, 0, 360);
     }
 }
 
@@ -121,7 +120,7 @@ void draw_all_street_segments(ezgl::renderer *g){
         }
         else if (visible_width > 0.3 * iniWidth){
             if (this_segment.speedLimit > 50){
-                g->set_line_width(1);
+                g->set_line_width(2);
                 g->set_color(0, 0, 0, 255);
                 g->draw_line({x_from, y_from}, {x_to, y_to});
             }
@@ -133,34 +132,34 @@ void draw_all_street_segments(ezgl::renderer *g){
         }
         else if (visible_width > 0.02 * iniWidth){
             if (this_segment.speedLimit > 50){
-                g->set_line_width(1);
+                g->set_line_width(2);
                 g->set_color(0, 0, 0, 255);
                 g->draw_line({x_from, y_from}, {x_to, y_to});
             }
             else if (this_segment.speedLimit > 40){
-                g->set_line_width(0.5);
+                g->set_line_width(1);
                 g->set_color(100, 100, 100, 255);
                 g->draw_line({x_from, y_from}, {x_to, y_to});
             }
             else if ( visible_width < 5000){
-                g->set_line_width(0.1);
+                g->set_line_width(0.5);
                 g->set_color(200, 200, 200, 255);
                 g->draw_line({x_from, y_from}, {x_to, y_to});
             }
         }
         else{
             if (this_segment.speedLimit > 50){
-                g->set_line_width(1);
+                g->set_line_width(2);
                 g->set_color(0, 0, 0, 255);
                 g->draw_line({x_from, y_from}, {x_to, y_to});
             }
             else if (this_segment.speedLimit > 40){
-                g->set_line_width(0.5);
+                g->set_line_width(1);
                 g->set_color(100, 100, 100, 255);
                 g->draw_line({x_from, y_from}, {x_to, y_to});
             }
             else if ( visible_width < 5000){
-                g->set_line_width(0.1);
+                g->set_line_width(0.5);
                 g->set_color(100, 100, 100, 255);
                 g->draw_line({x_from, y_from}, {x_to, y_to});
             }
