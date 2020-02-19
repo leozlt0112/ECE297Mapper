@@ -42,8 +42,7 @@ void draw_map_load (){
     avg_lat=(max_lat+min_lat)/2.0 * DEGREE_TO_RADIAN;
     memory.initial_world_width = x_from_lon(max_lon) - x_from_lon(min_lon);
     
-    //std::vector<intersection_data> intersections;
-    //std::vector<street_segment_data> streetSegments;
+    //std::vector<InfoStreetSegment> streetSegments;
     for(int i=0; i<intersections.size(); i++ ) {
         LatLon this_position  = getIntersectionPosition(i);
         intersections[i].x_   = x_from_lon(this_position.lon());
@@ -51,11 +50,24 @@ void draw_map_load (){
         intersections[i].name = getIntersectionName(i);
     }
     
-    //std::vector<street_segment_data> streetSegments;
+    //std::vector<segment_info> streetSegments;
     for(size_t i = 0; i < streetSegments.size(); ++i) {
-        streetSegments[i] = getInfoStreetSegment(i);
+        InfoStreetSegment this_segment_info = getInfoStreetSegment(i);
+        streetSegments[i].oneWay                = this_segment_info.oneWay;
+        streetSegments[i].speedLimit            = this_segment_info.speedLimit;
+        //store XY_ of "from" in allPoints
+        streetSegments[i].allPoints.push_back(std::make_pair(   intersections[this_segment_info.from].x_,
+                                                                intersections[this_segment_info.from].y_));
+        //store XY_ of "curve points" in allPoints
+        for (int curvePnt = 0; curvePnt < this_segment_info.curvePointCount; ++curvePnt){
+            LatLon this_curvePnt = getStreetSegmentCurvePoint(curvePnt,i);
+            streetSegments[i].allPoints.push_back(std::make_pair(   x_from_lon(this_curvePnt.lon()),
+                                                                    y_from_lat(this_curvePnt.lat())));
+        }
+        //store XY_ of "to" in allPoints
+        streetSegments[i].allPoints.push_back(std::make_pair(   intersections[this_segment_info.to].x_,
+                                                                intersections[this_segment_info.to].y_));
     }
-
 }
 
 // draws main canvas and all relevant features
@@ -91,11 +103,13 @@ void draw_all_street_segments(ezgl::renderer *g){
     std::cout<<g->get_visible_world().width()/iniWidth<<std::endl;
     for(size_t i = 0; i < streetSegments.size(); ++i) {
          //get coordinate of two points 
-        InfoStreetSegment this_segment = streetSegments[i];
-        float x_from = intersections[this_segment.from].x_;
-        float y_from = intersections[this_segment.from].y_;
-        float x_to   = intersections[this_segment.to].x_;
-        float y_to   = intersections[this_segment.to].y_;
+        segment_info this_segment = streetSegments[i];
+        float x_from = this_segment.allPoints[0]    .first;
+        float y_from = this_segment.allPoints[0]    .second;
+        float x_to   = this_segment.allPoints.back().first;
+        float y_to   = this_segment.allPoints.back().second;
+        //draw all street segments with curve!
+        //for (int curvePnt=0; curvePnt<this_segment.allPoints.size(); ++curvePnt){}
         //draw the streetsegments according to zoom
         if (visible_width > 0.75 * iniWidth){
             if (this_segment.speedLimit > 50){

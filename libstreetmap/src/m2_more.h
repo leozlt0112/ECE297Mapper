@@ -19,20 +19,28 @@
 #include "ezgl/graphics.hpp"
 #include "math.h"
 #include <map>
+#include <vector>
 #include <algorithm>    // std::sort
 
-struct intersection_data{
+struct intersection_info{
     float x_;
     float y_;
     std::string name;
     bool highlight = false;
 };
 
+struct segment_info {
+    bool oneWay;                    // if true, then can only travel in from->to direction
+    std::vector<std::pair<int,int>> allPoints;          // from, curve points, to
+    float speedLimit;               // in km/h
+    StreetIndex	streetID;           // index of street this segment belongs to
+};
+
 // a vector[intersection_id] storing intersection data
-std::vector<intersection_data> intersections;
+std::vector<intersection_info> intersections;
 
 //a vector[streetSegment_id] storing street_segment_data
-std::vector<InfoStreetSegment> streetSegments;
+std::vector<segment_info> streetSegments;
 
 // In Degrees: max_lat, min_lat, max_lon, min_lon
 // In Radians: avg_lat
