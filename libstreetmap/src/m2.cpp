@@ -66,7 +66,7 @@ void draw_intersections (ezgl::renderer *g){
         float x = x_from_lon(intersections[i].lon);
         float y = y_from_lat(intersections[i].lat);
 
-        float width = 50;
+        float width = 10;
         float height = width;
         if (intersections[i].highlight) {
             g->set_color(ezgl::RED);
@@ -84,7 +84,7 @@ void draw_all_street_segments(ezgl::renderer *g){
     g->set_color(ezgl::BLACK);
     g->set_line_cap(ezgl::line_cap::butt); // Butt ends
     g->set_line_dash(ezgl::line_dash::none); // Solid line
-    g->set_line_width(3);
+    g->set_line_width(1);
     for(size_t i = 0; i < streetSegments.size(); ++i) {
          //get coordinate of two points 
         float x_from = x_from_lon(intersections[streetSegments[i].from].lon);
@@ -101,7 +101,12 @@ void act_on_mouse_click(ezgl::application* app, GdkEventButton* event, double x,
     LatLon pos = LatLon(lat_from_y(y), lon_from_x(x));
     int id = find_closest_intersection(pos);
     std::cout<< "Closest Intersection: "<< intersections[id].name << "\n";
-    intersections[id].highlight =true;
+    //un-highlight the last clicked intersection
+    
+    if (last_clicked.intersection!= -1) 
+        intersections[last_clicked.intersection].highlight = false;
+    intersections[id].highlight = true;
+    last_clicked.intersection   = id;
     app->refresh_drawing();
 }
 

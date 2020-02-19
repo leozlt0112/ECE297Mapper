@@ -26,8 +26,6 @@ struct intersection_data{
     double lon;
     std::string name;
     bool highlight = false;
-    
-    
 };
 
 struct street_segment_data{
@@ -45,12 +43,13 @@ std::vector<street_segment_data> streetSegments;
 // In Radians: avg_lat
 double max_lat, min_lat, max_lon, min_lon, avg_lat;
 
-void draw_main_canvas (ezgl::renderer *g);
-
+//load all the data
 void draw_map_load ();
 
-void draw_map_blank_canvas();
+//draw main canvas and related features
+void draw_main_canvas (ezgl::renderer *g);
 
+//draw all intersections
 void draw_intersections (ezgl::renderer *g);
 
 //draw all street segments 
@@ -59,7 +58,15 @@ void draw_all_street_segments(ezgl::renderer *g);
 // Converting latlon in degrees to x and y
 float x_from_lon(float lon);
 float y_from_lat(float lat);
+
 // Converting x and y to latlon in degrees
 float lat_from_y(double y);
 float lon_from_x(double x);
+
+struct action_mem{
+    int intersection=-1;
+};
+action_mem last_clicked;
+
+//events triggered by mouse clicks
 void act_on_mouse_click(ezgl::application* app, GdkEventButton* event, double x, double y);
