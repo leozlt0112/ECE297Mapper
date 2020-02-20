@@ -70,10 +70,11 @@ void draw_map_load (){
         // store XY_ of "to" in allPoints
         streetSegments[i].allPoints.push_back({ intersections[this_segment_info.to].x_,
                                                 intersections[this_segment_info.to].y_});
-        //store major_minor
-        if (streetID_streetLength[this_segment_info.streetID]>5000 && this_segment_info.speedLimit > 50){ streetSegments[i].major_minor = 2; }
-        else if (streetID_streetLength[this_segment_info.streetID]>1000)                                { streetSegments[i].major_minor = 1; }
-        else                                                                                            { streetSegments[i].major_minor = 0; }
+        // store major_minor
+        float initial_width = memory.initial_world_width;
+        if      (streetID_streetLength[this_segment_info.streetID]>initial_width/20 && this_segment_info.speedLimit > 50)   { streetSegments[i].major_minor = 2; }
+        else if (streetID_streetLength[this_segment_info.streetID]>initial_width/100)                                       { streetSegments[i].major_minor = 1; }
+        else                                                                                                                { streetSegments[i].major_minor = 0; }
     }
 }
 
@@ -107,25 +108,27 @@ void draw_all_street_segments(ezgl::renderer *g){
     //draw all the lines 
     g->set_line_cap(ezgl::line_cap::round); // round ends
     g->set_line_dash(ezgl::line_dash::none); // Solid line
-    int visible_width = g->get_visible_world().width();
-    int initial_width = memory.initial_world_width;
-    std::cout<<visible_width/*/initial_width*/<<std::endl;
+    float visible_width = g->get_visible_world().width();
+    float initial_width = memory.initial_world_width;
+    std::cout<<visible_width/initial_width<<std::endl;
     for(size_t i = 0; i < streetSegments.size(); ++i) {
-         //get coordinate of two points 
         segment_info   this_segment = streetSegments[i];
         for (int pnt = 0; pnt < (this_segment.allPoints.size()-1); ++pnt){
+            //get coordinate of two points 
             ezgl::point2d from = this_segment.allPoints[pnt  ];
             ezgl::point2d to   = this_segment.allPoints[pnt+1];
-            // draw the streetsegments according to zoom
+            // draw the street segments according to zoom
             // determine how much is zoomed in using if conditions
-            if (visible_width > 0.75 * initial_width){
+            // 0.5 - 
+            if (visible_width > 0.5 * initial_width){
                 if (this_segment.major_minor==2){
                     g->set_line_width(1);
                     g->set_color(0, 0, 0, 255);
                     g->draw_line(from, to);
                 }
             }
-            else if (visible_width > 0.3 * initial_width){
+            // 0.1 - 0.5
+            else if (visible_width > 0.1 * initial_width){
                 if (this_segment.major_minor==2){
                     g->set_line_width(1);
                     g->set_color(0, 0, 0, 255);
@@ -134,6 +137,19 @@ void draw_all_street_segments(ezgl::renderer *g){
                 else if (this_segment.major_minor==1){
                     g->set_line_width(0.5);
                     g->set_color(200, 200, 200, 255);
+                    g->draw_line(from, to);
+                }
+            }
+            //0.05 - 0.1
+            else if (visible_width > 0.05 * initial_width){
+                if (this_segment.major_minor==2){
+                    g->set_line_width(1);
+                    g->set_color(0, 0, 0, 255);
+                    g->draw_line(from, to);
+                }
+                else if (this_segment.major_minor==1){
+                    g->set_line_width(0.5);
+                    g->set_color(100, 100, 100, 255);
                     g->draw_line(from, to);
                 }
             }

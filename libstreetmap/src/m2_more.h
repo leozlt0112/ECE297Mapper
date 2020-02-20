@@ -81,7 +81,7 @@ float lon_from_x(double x);
 struct action_mem{
     // store intersections u clickded
     int last_clicked_intersection=-1;
-    int initial_world_width=0;
+    float initial_world_width=0;
 };
 
 action_mem memory;
