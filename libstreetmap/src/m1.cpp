@@ -41,13 +41,13 @@ bool load_map(std::string map_path) {
     //streetSeg_time.resize(getNumStreetSegments());
     //streetID_streetName.resize(getNumStreets());
     featureID_featurePts.resize(getNumFeatures());
+    streetID_streetLength.resize(getNumStreets(),0);
     
     // std::vector<std::vector<int>> intersection_street_segments;
     for (int intersection = 0; intersection < getNumIntersections(); ++intersection) {
         for (int i = 0; i < getIntersectionStreetSegmentCount(intersection); ++i) {
             int ss_id = getIntersectionStreetSegment(intersection, i);
             intersection_street_segments[intersection].push_back(ss_id);
-            
         }
     }
     
@@ -76,10 +76,13 @@ bool load_map(std::string map_path) {
     
     // std::vector<double> streetSeg_length;
     // std::vector<double> streetSeg_time;
+    // std::vector<double> streetID_streetLength;
     for (int streetSegment = 0; streetSegment < getNumStreetSegments(); ++streetSegment){ 
         double length = find_street_segment_length(streetSegment);
         streetSeg_length.push_back(length);
-        streetSeg_time.push_back(length/(getInfoStreetSegment(streetSegment).speedLimit)*3.6);
+        InfoStreetSegment this_Seg_info = getInfoStreetSegment(streetSegment);
+        streetSeg_time.push_back(length/(this_Seg_info.speedLimit)*3.6);
+        streetID_streetLength[this_Seg_info.streetID]+=length;
     }
     
     // std::multimap<std::string, int> streetID_streetName;
@@ -95,6 +98,9 @@ bool load_map(std::string map_path) {
             }
         }
         streetID_streetName.insert(std::make_pair(this_name,streetID));
+        std::cout<<streetID<<std::endl;
+        std::cout<<"   "<<this_name<<std::endl;
+        std::cout<<"   "<<streetID_streetLength[streetID]<<std::endl;
     }
     //std::vector<std::vector<LatLon>> featureID_featurePts;
     for (int feature = 0; feature < getNumFeatures(); ++feature) {

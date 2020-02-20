@@ -32,7 +32,7 @@ struct intersection_info{
 struct segment_info {
     bool oneWay;                                // if true, then can only travel in from->to direction
     int major_minor=0;                          // determine how major it is. (0=minor, 1=medium, 2=major)
-    std::vector<std::pair<int,int>> allPoints;  // from, curve points, to
+    std::vector<ezgl::point2d> allPoints;  // from, curve points, to
     float speedLimit;                           // in km/h
     StreetIndex	streetID;                       // index of street this segment belongs to
 };
@@ -50,6 +50,9 @@ extern std::vector<double> streetSeg_length;
 
 //a vector[StreetIndex], each street vector stores streetSegmentIDs
 extern std::vector<std::vector<int>> street_street_segments;
+
+// a vector[streetIndex], each element stores distance
+extern std::vector<double> streetID_streetLength;
 
 // In Degrees: max_lat, min_lat, max_lon, min_lon
 // In Radians: avg_lat
@@ -83,5 +86,8 @@ struct action_mem{
 
 action_mem memory;
 
-//events triggered by mouse clicks
+// initial setup 
+void initial_setup(ezgl::application *application, bool new_window);
+
+// events triggered by mouse clicks
 void act_on_mouse_click(ezgl::application* app, GdkEventButton* event, double x, double y);

@@ -17,7 +17,7 @@ void draw_map () {
     application.add_canvas("MainCanvas", 
                            draw_main_canvas,
                            initial_world);
-    application.run(nullptr, act_on_mouse_click,
+    application.run(initial_setup, act_on_mouse_click,
                     nullptr, nullptr);
     return;
 }
@@ -54,20 +54,26 @@ void draw_map_load (){
     //std::vector<segment_info> streetSegments;
     for(size_t i = 0; i < streetSegments.size(); ++i) {
         InfoStreetSegment this_segment_info = getInfoStreetSegment(i);
+        // store oneWay
         streetSegments[i].oneWay                = this_segment_info.oneWay;
+        // store speedLimit
         streetSegments[i].speedLimit            = this_segment_info.speedLimit;
-        //store XY_ of "from" in allPoints
-        streetSegments[i].allPoints.push_back(std::make_pair(   intersections[this_segment_info.from].x_,
-                                                                intersections[this_segment_info.from].y_));
-        //store XY_ of "curve points" in allPoints
+        // store XY_ of "from" in allPoints
+        streetSegments[i].allPoints.push_back({ intersections[this_segment_info.from].x_,
+                                                intersections[this_segment_info.from].y_});
+        // store XY_ of "curve points" in allPoints
         for (int curvePnt = 0; curvePnt < this_segment_info.curvePointCount; ++curvePnt){
             LatLon this_curvePnt = getStreetSegmentCurvePoint(curvePnt,i);
-            streetSegments[i].allPoints.push_back(std::make_pair(   x_from_lon(this_curvePnt.lon()),
-                                                                    y_from_lat(this_curvePnt.lat())));
+            streetSegments[i].allPoints.push_back({ x_from_lon(this_curvePnt.lon()),
+                                                    y_from_lat(this_curvePnt.lat())});
         }
-        //store XY_ of "to" in allPoints
-        streetSegments[i].allPoints.push_back(std::make_pair(   intersections[this_segment_info.to].x_,
-                                                                intersections[this_segment_info.to].y_));
+        // store XY_ of "to" in allPoints
+        streetSegments[i].allPoints.push_back({ intersections[this_segment_info.to].x_,
+                                                intersections[this_segment_info.to].y_});
+        //store major_minor
+        if (streetID_streetLength[this_segment_info.streetID]>5000 && this_segment_info.speedLimit > 50){ streetSegments[i].major_minor = 2; }
+        else if (streetID_streetLength[this_segment_info.streetID]>1000)                                { streetSegments[i].major_minor = 1; }
+        else                                                                                            { streetSegments[i].major_minor = 0; }
     }
 }
 
@@ -103,70 +109,74 @@ void draw_all_street_segments(ezgl::renderer *g){
     g->set_line_dash(ezgl::line_dash::none); // Solid line
     int visible_width = g->get_visible_world().width();
     int initial_width = memory.initial_world_width;
-    std::cout<<g->get_visible_world().width()/initial_width<<std::endl;
+    std::cout<<visible_width/*/initial_width*/<<std::endl;
     for(size_t i = 0; i < streetSegments.size(); ++i) {
          //get coordinate of two points 
-        segment_info this_segment = streetSegments[i];
-        float x_from = this_segment.allPoints[0]    .first;
-        float y_from = this_segment.allPoints[0]    .second;
-        float x_to   = this_segment.allPoints.back().first;
-        float y_to   = this_segment.allPoints.back().second;
-        // draw the streetsegments according to zoom
-        // determine how much is zoomed in using if conditions
-        if (visible_width > 0.75 * initial_width){
-            if (this_segment.speedLimit > 50){
-                g->set_line_width(1);
-                g->set_color(0, 0, 0, 255);
-                g->draw_line({x_from, y_from}, {x_to, y_to});
+        segment_info   this_segment = streetSegments[i];
+        for (int pnt = 0; pnt < (this_segment.allPoints.size()-1); ++pnt){
+            ezgl::point2d from = this_segment.allPoints[pnt  ];
+            ezgl::point2d to   = this_segment.allPoints[pnt+1];
+            // draw the streetsegments according to zoom
+            // determine how much is zoomed in using if conditions
+            if (visible_width > 0.75 * initial_width){
+                if (this_segment.major_minor==2){
+                    g->set_line_width(1);
+                    g->set_color(0, 0, 0, 255);
+                    g->draw_line(from, to);
+                }
             }
-        }
-        else if (visible_width > 0.3 * initial_width){
-            if (this_segment.speedLimit > 50){
-                g->set_line_width(1);
-                g->set_color(0, 0, 0, 255);
-                g->draw_line({x_from, y_from}, {x_to, y_to});
+            else if (visible_width > 0.3 * initial_width){
+                if (this_segment.major_minor==2){
+                    g->set_line_width(1);
+                    g->set_color(0, 0, 0, 255);
+                    g->draw_line(from, to);
+                }
+                else if (this_segment.major_minor==1){
+                    g->set_line_width(0.5);
+                    g->set_color(200, 200, 200, 255);
+                    g->draw_line(from, to);
+                }
             }
-            else if (this_segment.speedLimit > 40){
-                g->set_line_width(0.5);
-                g->set_color(200, 200, 200, 255);
-                g->draw_line({x_from, y_from}, {x_to, y_to});
+            else if (visible_width > 0.02 * initial_width){
+                if (this_segment.major_minor==2){
+                    g->set_line_width(2);
+                    g->set_color(0, 0, 0, 255);
+                    g->draw_line(from, to);
+                }
+                else if (this_segment.major_minor==1){
+                    g->set_line_width(1);
+                    g->set_color(100, 100, 100, 255);
+                    g->draw_line(from, to);
+                }
+                else if (this_segment.major_minor==0){
+                    g->set_line_width(0.5);
+                    g->set_color(200, 200, 200, 255);
+                    g->draw_line(from, to);
+                }
             }
-        }
-        else if (visible_width > 0.02 * initial_width){
-            if (this_segment.speedLimit > 50){
-                g->set_line_width(2);
-                g->set_color(0, 0, 0, 255);
-                g->draw_line({x_from, y_from}, {x_to, y_to});
-            }
-            else if (this_segment.speedLimit > 40){
-                g->set_line_width(1);
-                g->set_color(100, 100, 100, 255);
-                g->draw_line({x_from, y_from}, {x_to, y_to});
-            }
-            else if ( visible_width < 5000){
-                g->set_line_width(0.5);
-                g->set_color(200, 200, 200, 255);
-                g->draw_line({x_from, y_from}, {x_to, y_to});
-            }
-        }
-        else{
-            if (this_segment.speedLimit > 50){
-                g->set_line_width(2);
-                g->set_color(0, 0, 0, 255);
-                g->draw_line({x_from, y_from}, {x_to, y_to});
-            }
-            else if (this_segment.speedLimit > 40){
-                g->set_line_width(1);
-                g->set_color(100, 100, 100, 255);
-                g->draw_line({x_from, y_from}, {x_to, y_to});
-            }
-            else if ( visible_width < 5000){
-                g->set_line_width(0.5);
-                g->set_color(100, 100, 100, 255);
-                g->draw_line({x_from, y_from}, {x_to, y_to});
+            else{
+                if (this_segment.major_minor==2){
+                    g->set_line_width(2);
+                    g->set_color(0, 0, 0, 255);
+                    g->draw_line(from, to);
+                }
+                else if (this_segment.major_minor==1){
+                    g->set_line_width(1);
+                    g->set_color(100, 100, 100, 255);
+                    g->draw_line(from, to);
+                }
+                else if (this_segment.major_minor==0){
+                    g->set_line_width(0.5);
+                    g->set_color(100, 100, 100, 255);
+                    g->draw_line(from, to);
+                }
             }
         }
     }
+}
+
+void initial_setup(ezgl::application *application, bool new_window){
+    return;
 }
 
 void act_on_mouse_click(ezgl::application* app, GdkEventButton* event, double x, double y) {
@@ -190,8 +200,7 @@ float lon_from_x(double x) {
     return lon; 
 }
 
-// uses global variable avg_lat (in radians)
-// uses parameter lon (in degrees)
+// uses parameter lat (in degrees)
 float lat_from_y(double y) {
     float lat = y / DEGREE_TO_RADIAN / EARTH_RADIUS_METERS;
     return lat; 

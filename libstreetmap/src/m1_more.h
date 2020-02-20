@@ -6,7 +6,7 @@
 #include <map>
 class XY_;
 
-//it converts a pair of LatLon to a pair of XY_
+// it converts a pair of LatLon to a pair of XY_
 std::pair<XY_,XY_> LatLon_to_XY(std::pair<LatLon,LatLon> points);
 std::vector<XY_> LatLon_to_XY(std::vector<LatLon> points);
 
@@ -27,6 +27,9 @@ std::vector<double> streetSeg_time;
 
 // a map <Street_Name,StreetIndex> for all streets
 std::multimap<std::string, int> streetID_streetName;
+
+// a vector[streetIndex], each element stores distance
+std::vector<double> streetID_streetLength;
 
 // a variable used to store all possible all features
 std::vector<std::vector<LatLon>> featureID_featurePts;
