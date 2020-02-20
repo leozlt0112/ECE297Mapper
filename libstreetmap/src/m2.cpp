@@ -12,8 +12,6 @@ void draw_map () {
 
     ezgl::application application(settings); 
 
-    ezgl::rectangle initial_world({x_from_lon(min_lon), y_from_lat(min_lat)},
-                                  {x_from_lon(max_lon), y_from_lat(max_lat)});
     application.add_canvas("MainCanvas", 
                            draw_main_canvas,
                            initial_world);
@@ -27,8 +25,8 @@ void draw_map_load (){
     streetSegments.resize(getNumStreetSegments());
     features.resize(getNumFeatures());
     
-    //double max_lat, min_lat, max_lon, min_lon, avg_lat;
-    //memory.initial_world_width
+    // double max_lat, min_lat, max_lon, min_lon, avg_lat;
+    // memory.initial_world_width
     max_lat = getIntersectionPosition(0).lat(); 
     min_lat = max_lat;
     max_lon = getIntersectionPosition(0).lon();
@@ -41,10 +39,15 @@ void draw_map_load (){
         min_lon = std::min(min_lon, this_position.lon());
     }
     avg_lat=(max_lat+min_lat)/2.0 * DEGREE_TO_RADIAN;
-    // stores initailly unzoomed width of the world
-    memory.initial_world_width = x_from_lon(max_lon) - x_from_lon(min_lon);
     
-    //std::vector<intersection_info> intersections;
+    // ezgl::rectangle initial_world;
+    // memory.last_visible_world
+    ezgl::rectangle rhs({x_from_lon(min_lon), y_from_lat(min_lat)},
+                        {x_from_lon(max_lon), y_from_lat(max_lat)});
+    initial_world = rhs;
+    memory.last_visible_world = rhs;
+    
+    // std::vector<intersection_info> intersections;
     for(int i=0; i<intersections.size(); i++ ) {
         LatLon this_position  = getIntersectionPosition(i);
         intersections[i].x_   = x_from_lon(this_position.lon());
@@ -52,7 +55,7 @@ void draw_map_load (){
         intersections[i].name = getIntersectionName(i);
     }
     
-    //std::vector<segment_info> streetSegments;
+    // std::vector<segment_info> streetSegments;
     for(size_t i = 0; i < streetSegments.size(); ++i) {
         InfoStreetSegment this_segment_info = getInfoStreetSegment(i);
         // store oneWay
@@ -72,9 +75,9 @@ void draw_map_load (){
         streetSegments[i].allPoints.push_back({ intersections[this_segment_info.to].x_,
                                                 intersections[this_segment_info.to].y_});
         // store major_minor
-        float initial_width = memory.initial_world_width;
-        if      (streetID_streetLength[this_segment_info.streetID]>initial_width/20 && this_segment_info.speedLimit > 50)   { streetSegments[i].major_minor = 2; }
-        else if (streetID_streetLength[this_segment_info.streetID]>initial_width/100)                                       { streetSegments[i].major_minor = 1; }
+        float   initial_width = initial_world.width();
+        if      (streetID_streetLength[this_segment_info.streetID]>initial_width/10 && this_segment_info.speedLimit > 50)   { streetSegments[i].major_minor = 2; }
+        else if (streetID_streetLength[this_segment_info.streetID]>initial_width/20)                                       { streetSegments[i].major_minor = 1; }
         else                                                                                                                { streetSegments[i].major_minor = 0; }
     }
     
@@ -104,9 +107,17 @@ void draw_map_load (){
 // draws main canvas and all relevant features
 // call all the draw functions
 void draw_main_canvas (ezgl::renderer *g){
+    out_of_bound_prevention(g);
     draw_features(g);
     draw_intersections(g);
     draw_all_street_segments(g);
+}
+
+void out_of_bound_prevention(ezgl::renderer *g) {
+    ezgl::rectangle current_visible_world = g->get_visible_world();
+    //if (current_visible_world.)
+    //last_visible_world;
+    return;
 }
 
 //draws all intersections
@@ -133,7 +144,7 @@ void draw_all_street_segments(ezgl::renderer *g){
     g->set_line_cap(ezgl::line_cap::round); // round ends
     g->set_line_dash(ezgl::line_dash::none); // Solid line
     float visible_width = g->get_visible_world().width();
-    float initial_width = memory.initial_world_width;
+    float initial_width = initial_world.width();
     std::cout<<visible_width/initial_width<<std::endl;
     for(size_t i = 0; i < streetSegments.size(); ++i) {
         segment_info   this_segment = streetSegments[i];
@@ -164,7 +175,7 @@ void draw_all_street_segments(ezgl::renderer *g){
                     g->draw_line(from, to);
                 }
             }
-            //0.05 - 0.1
+            // 0.05 - 0.1
             else if (visible_width > 0.05 * initial_width){
                 if (this_segment.major_minor==2){
                     g->set_line_width(1);
@@ -177,6 +188,7 @@ void draw_all_street_segments(ezgl::renderer *g){
                     g->draw_line(from, to);
                 }
             }
+            // 0.02 - 0.05
             else if (visible_width > 0.02 * initial_width){
                 if (this_segment.major_minor==2){
                     g->set_line_width(2);
@@ -194,6 +206,7 @@ void draw_all_street_segments(ezgl::renderer *g){
                     g->draw_line(from, to);
                 }
             }
+            //  - 0.02
             else{
                 if (this_segment.major_minor==2){
                     g->set_line_width(2);
@@ -221,11 +234,43 @@ void initial_setup(ezgl::application *application, bool new_window){
 
 // Leo draw features
 void draw_features(ezgl::renderer *g) {
-    g->set_color(200, 200, 200, 255);
+    float visible_width = g->get_visible_world().width();
+    float initial_width = initial_world.width();
     for (int feature_id=0; feature_id<features.size(); ++feature_id) {
         feature_info this_feature = features[feature_id];
-        if (this_feature.closed)
-            g->fill_poly(this_feature.allPoints);
+        // 0.5 - 
+        if (visible_width > 0.5 * initial_width){
+            if (this_feature.closed && this_feature.type == Lake){
+                g->set_color(174, 234, 250, 255);
+                g->fill_poly(this_feature.allPoints);
+            }
+        }
+        // 0.1 - 0.5
+        else if (visible_width > 0.1 * initial_width){
+            if (this_feature.closed && this_feature.type == Lake){
+                g->set_color(174, 234, 250, 255);
+                g->fill_poly(this_feature.allPoints);
+            }
+        }
+        // 0.05 - 0.1
+        else if (visible_width > 0.05 * initial_width){
+            if (this_feature.closed && this_feature.type == Lake){
+                g->set_color(174, 234, 250, 255);
+                g->fill_poly(this_feature.allPoints);
+            }
+        }
+        else if (visible_width > 0.02 * initial_width){
+            if (this_feature.closed && this_feature.type == Lake){
+                g->set_color(174, 234, 250, 255);
+                g->fill_poly(this_feature.allPoints);
+            }
+        }
+        else{
+            if (this_feature.closed && this_feature.type == Lake){
+                g->set_color(174, 234, 250, 255);
+                g->fill_poly(this_feature.allPoints);
+            }
+        }
     }
 }
 

@@ -69,6 +69,12 @@ extern std::vector<std::vector<LatLon>> featureID_featurePts;
 // In Radians: avg_lat
 double max_lat, min_lat, max_lon, min_lon, avg_lat;
 
+// it stores the value of initial world size
+ ezgl::rectangle initial_world;
+
+//prevent zooming out of bound
+void out_of_bound_prevention(ezgl::renderer *g);
+
 // load all the data
 void draw_map_load ();
 
@@ -91,11 +97,12 @@ float y_from_lat(float lat);
 // Converting x and y to latlon in degrees
 float lat_from_y(double y);
 float lon_from_x(double x);
+
 // stores bunch of variables 
 struct action_mem{
     // store intersections u clickded
     int last_clicked_intersection=-1;
-    float initial_world_width=0;
+    ezgl::rectangle last_visible_world;
 };
 
 action_mem memory;
