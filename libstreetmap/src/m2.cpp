@@ -107,10 +107,10 @@ void draw_map_load (){
 // draws main canvas and all relevant features
 // call all the draw functions
 void draw_main_canvas (ezgl::renderer *g){
-    out_of_bound_prevention(g);
-    draw_features(g);
-    draw_intersections(g);
-    draw_all_street_segments(g);
+    out_of_bound_prevention(g); 
+    draw_features(g); 
+    draw_intersections(g); 
+    draw_all_street_segments(g); 
 }
 
 void out_of_bound_prevention(ezgl::renderer *g) {
@@ -150,7 +150,7 @@ void draw_intersections (ezgl::renderer *g){
     }
 }
 
-//draw all street segments. solid lines of width 3, with butt ends, opaque
+//draw all street segments. solid lines of width 3, with round ends, opaque
 void draw_all_street_segments(ezgl::renderer *g){
     //draw all the lines 
     g->set_line_cap(ezgl::line_cap::round); // round ends
