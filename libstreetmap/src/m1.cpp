@@ -98,9 +98,11 @@ bool load_map(std::string map_path) {
             }
         }
         streetID_streetName.insert(std::make_pair(this_name,streetID));
+        /*
         std::cout<<streetID<<std::endl;
         std::cout<<"   "<<this_name<<std::endl;
         std::cout<<"   "<<streetID_streetLength[streetID]<<std::endl;
+         */
     }
     //std::vector<std::vector<LatLon>> featureID_featurePts;
     for (int feature = 0; feature < getNumFeatures(); ++feature) {
