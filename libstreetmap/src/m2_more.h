@@ -28,7 +28,7 @@ struct intersection_info{
     std::string name;
     bool highlight = false;
 };
-
+ 
 struct segment_info {
     bool oneWay;                                // if true, then can only travel in from->to direction
     int major_minor=0;                          // determine how major it is. (0=minor, 1=medium, 2=major)
@@ -37,13 +37,21 @@ struct segment_info {
     StreetIndex	streetID;                       // index of street this segment belongs to
 };
 
-
+struct feature_info {
+    bool closed = false;                                    // if true, it's closed (poly))
+    std::string name;
+    FeatureType type;
+    std::vector<ezgl::point2d> allPoints;           // from, curve points, to
+};
 
 // a vector[intersection_id] storing intersection data
 std::vector<intersection_info> intersections;
 
 // a vector[streetSegment_id] storing street_segment_data
 std::vector<segment_info> streetSegments;
+
+//a vector[features_id] storing features_data
+std::vector<feature_info> features;
 
 //a vector[streetSegIndex], each element stores distance. from m1_more.h
 extern std::vector<double> streetSeg_length;
@@ -53,6 +61,9 @@ extern std::vector<std::vector<int>> street_street_segments;
 
 // a vector[streetIndex], each element stores distance
 extern std::vector<double> streetID_streetLength;
+
+// a variable used to store all possible all features
+extern std::vector<std::vector<LatLon>> featureID_featurePts;
 
 // In Degrees: max_lat, min_lat, max_lon, min_lon
 // In Radians: avg_lat
@@ -69,6 +80,9 @@ void draw_intersections (ezgl::renderer *g);
 
 // draw all street segments 
 void draw_all_street_segments(ezgl::renderer *g);
+
+// draw all the features
+void draw_features(ezgl::renderer *g); 
 
 // Converting latlon in degrees to x and y
 float x_from_lon(float lon);

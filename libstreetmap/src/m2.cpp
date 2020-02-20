@@ -25,6 +25,7 @@ void draw_map () {
 void draw_map_load (){
     intersections.resize(getNumIntersections());
     streetSegments.resize(getNumStreetSegments());
+    features.resize(getNumFeatures());
     
     //double max_lat, min_lat, max_lon, min_lon, avg_lat;
     //memory.initial_world_width
@@ -76,11 +77,34 @@ void draw_map_load (){
         else if (streetID_streetLength[this_segment_info.streetID]>initial_width/100)                                       { streetSegments[i].major_minor = 1; }
         else                                                                                                                { streetSegments[i].major_minor = 0; }
     }
+    
+    // load features accordingly based on if they are closed or open
+    for (int featureid=0; featureid<featureID_featurePts.size(); featureid++) {
+         int totalPtsCount = getFeaturePointCount(featureid); 
+         // set all points
+         for(int i=0; i<totalPtsCount; i++) {
+            float xcoords =  x_from_lon((float)(featureID_featurePts[featureid][i].lon()));
+            float ycoords =  y_from_lat((float)(featureID_featurePts[featureid][i].lat()));
+            features[featureid].allPoints.push_back({xcoords,ycoords});
+         }
+         // set the closed bool
+         LatLon latLonPoint0    = featureID_featurePts[featureid][0];
+         LatLon latLonPointLast = featureID_featurePts[featureid][totalPtsCount-1];
+         if((latLonPoint0.lat()==latLonPointLast.lat()) && 
+            (latLonPoint0.lon()==latLonPointLast.lon()) && 
+            totalPtsCount>1)
+            features[featureid].closed = true;
+         // set type
+         features[featureid].type = getFeatureType(featureid);
+         // set name
+         features[featureid].name = getFeatureName(featureid);
+    }
 }
 
 // draws main canvas and all relevant features
 // call all the draw functions
-void draw_main_canvas (ezgl::renderer *g){ 
+void draw_main_canvas (ezgl::renderer *g){
+    draw_features(g);
     draw_intersections(g);
     draw_all_street_segments(g);
 }
@@ -193,6 +217,16 @@ void draw_all_street_segments(ezgl::renderer *g){
 
 void initial_setup(ezgl::application *application, bool new_window){
     return;
+}
+
+// Leo draw features
+void draw_features(ezgl::renderer *g) {
+    g->set_color(200, 200, 200, 255);
+    for (int feature_id=0; feature_id<features.size(); ++feature_id) {
+        feature_info this_feature = features[feature_id];
+        if (this_feature.closed)
+            g->fill_poly(this_feature.allPoints);
+    }
 }
 
 void act_on_mouse_click(ezgl::application* app, GdkEventButton* event, double x, double y) {
