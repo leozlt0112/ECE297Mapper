@@ -270,32 +270,179 @@ void draw_features(ezgl::renderer *g) {
                     g->set_color(168, 160, 50, 255);
                     g->fill_poly(this_feature.allPoints);
                 }
+                if (this_feature.type==Lake) {
+                    g->set_color(174, 234, 250, 255);
+                    g->fill_poly(this_feature.allPoints);
+                }
+                if (this_feature.type==Park) {
+                    g->set_color(174, 225, 195, 255);
+                    g->fill_poly(this_feature.allPoints);
+                }
+                
             }
         }
         // 0.1 - 0.5
         else if (visible_width > 0.1 * initial_width){
-            if (this_feature.closed && this_feature.type == Beach){
-                g->set_color(174, 234, 250, 255);
-                g->fill_poly(this_feature.allPoints);
+            if (this_feature.closed){
+               if (this_feature.type==Beach) {
+                    g->set_color(168, 160, 50, 255);
+                    g->fill_poly(this_feature.allPoints);
+                }
+                if (this_feature.type==Lake) {
+                    g->set_color(174, 234, 250, 255);
+                    g->fill_poly(this_feature.allPoints);
+                }
+                if (this_feature.type==Park) {
+                    g->set_color(174, 225, 195, 255);
+                    g->fill_poly(this_feature.allPoints);
+                }
+               if (this_feature.type==River) {
+                    g->set_color(51, 200, 245, 255);
+                    g->fill_poly(this_feature.allPoints);
+               }
+               if (this_feature.type==Golfcourse) {
+                    g->set_color(11, 214, 89, 255);
+                    g->fill_poly(this_feature.allPoints);
+               }
+               if (this_feature.type==Golfcourse) {
+                   g->set_color(11, 214, 89, 255);
+                   g->fill_poly(this_feature.allPoints);
+               }
+               if (this_feature.type==Island) {
+                    g->set_color(148, 124, 77, 255);
+                    g->fill_poly(this_feature.allPoints);
+                }
             }
         }
         // 0.05 - 0.1
         else if (visible_width > 0.05 * initial_width){
-            if (this_feature.closed && this_feature.type == Lake){
-                g->set_color(174, 234, 250, 255);
-                g->fill_poly(this_feature.allPoints);
+             if (this_feature.closed){
+               if (this_feature.type==Beach) {
+                    g->set_color(168, 160, 50, 255);
+                    g->fill_poly(this_feature.allPoints);
+                }
+                if (this_feature.type==Lake) {
+                    g->set_color(174, 234, 250, 255);
+                    g->fill_poly(this_feature.allPoints);
+                }
+                if (this_feature.type==Park) {
+                    g->set_color(174, 225, 195, 255);
+                    g->fill_poly(this_feature.allPoints);
+                }
+               if (this_feature.type==River) {
+                    g->set_color(51, 200, 245, 255);
+                    g->fill_poly(this_feature.allPoints);
+               }
+               if (this_feature.type==Golfcourse) {
+                    g->set_color(11, 214, 89, 255);
+                    g->fill_poly(this_feature.allPoints);
+               }
+               if (this_feature.type==Golfcourse) {
+                   g->set_color(11, 214, 89, 255);
+                   g->fill_poly(this_feature.allPoints);
+               }
+               if (this_feature.type==Island) {
+                    g->set_color(148, 124, 77, 255);
+                    g->fill_poly(this_feature.allPoints);
+                }
+               if (this_feature.type==Greenspace) {
+                    g->set_color(7, 1247, 55, 255);
+                    g->fill_poly(this_feature.allPoints);
+                }
+               if (this_feature.type==Stream) {
+                    g->set_color(21, 167, 247, 255);
+                    g->fill_poly(this_feature.allPoints);
+                }
             }
         }
         else if (visible_width > 0.02 * initial_width){
-            if (this_feature.closed && this_feature.type == Lake){
-                g->set_color(174, 234, 250, 255);
-                g->fill_poly(this_feature.allPoints);
+             if (this_feature.closed){
+               if (this_feature.type==Beach) {
+                    g->set_color(168, 160, 50, 255);
+                    g->fill_poly(this_feature.allPoints);
+                }
+                if (this_feature.type==Lake) {
+                    g->set_color(174, 234, 250, 255);
+                    g->fill_poly(this_feature.allPoints);
+                }
+                if (this_feature.type==Park) {
+                    g->set_color(174, 225, 195, 255);
+                    g->fill_poly(this_feature.allPoints);
+                }
+               if (this_feature.type==River) {
+                    g->set_color(51, 200, 245, 255);
+                    g->fill_poly(this_feature.allPoints);
+               }
+               if (this_feature.type==Golfcourse) {
+                    g->set_color(11, 214, 89, 255);
+                    g->fill_poly(this_feature.allPoints);
+               }
+               if (this_feature.type==Golfcourse) {
+                   g->set_color(11, 214, 89, 255);
+                   g->fill_poly(this_feature.allPoints);
+               }
+               if (this_feature.type==Island) {
+                    g->set_color(148, 124, 77, 255);
+                    g->fill_poly(this_feature.allPoints);
+                }
+               if (this_feature.type==Greenspace) {
+                    g->set_color(7, 1247, 55, 255);
+                    g->fill_poly(this_feature.allPoints);
+                }
+               if (this_feature.type==Stream) {
+                    g->set_color(21, 167, 247, 255);
+                    g->fill_poly(this_feature.allPoints);
+                }
+               if (this_feature.type==Building) {
+                    g->set_color(181, 180, 177, 255);
+                    g->fill_poly(this_feature.allPoints);
+                }
+               
             }
         }
         else{
-            if (this_feature.closed && this_feature.type == Lake){
-                g->set_color(174, 234, 250, 255);
-                g->fill_poly(this_feature.allPoints);
+           if (this_feature.closed){
+               if (this_feature.type==Beach) {
+                    g->set_color(168, 160, 50, 255);
+                    g->fill_poly(this_feature.allPoints);
+                }
+                if (this_feature.type==Lake) {
+                    g->set_color(174, 234, 250, 255);
+                    g->fill_poly(this_feature.allPoints);
+                }
+                if (this_feature.type==Park) {
+                    g->set_color(174, 225, 195, 255);
+                    g->fill_poly(this_feature.allPoints);
+                }
+               if (this_feature.type==River) {
+                    g->set_color(51, 200, 245, 255);
+                    g->fill_poly(this_feature.allPoints);
+               }
+               if (this_feature.type==Golfcourse) {
+                    g->set_color(11, 214, 89, 255);
+                    g->fill_poly(this_feature.allPoints);
+               }
+               if (this_feature.type==Golfcourse) {
+                   g->set_color(11, 214, 89, 255);
+                   g->fill_poly(this_feature.allPoints);
+               }
+               if (this_feature.type==Island) {
+                    g->set_color(148, 124, 77, 255);
+                    g->fill_poly(this_feature.allPoints);
+                }
+               if (this_feature.type==Greenspace) {
+                    g->set_color(7, 1247, 55, 255);
+                    g->fill_poly(this_feature.allPoints);
+                }
+               if (this_feature.type==Stream) {
+                    g->set_color(21, 167, 247, 255);
+                    g->fill_poly(this_feature.allPoints);
+                }
+               if (this_feature.type==Building) {
+                    g->set_color(181, 180, 177, 255);
+                    g->fill_poly(this_feature.allPoints);
+                }
+               
             }
         }
     }
