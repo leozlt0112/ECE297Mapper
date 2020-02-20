@@ -32,16 +32,17 @@ struct intersection_info{
 struct segment_info {
     bool oneWay;                                // if true, then can only travel in from->to direction
     int major_minor=0;                          // determine how major it is. (0=minor, 1=medium, 2=major)
-    std::vector<ezgl::point2d> allPoints;  // from, curve points, to
+    std::vector<ezgl::point2d> allPoints;       // from, curve points, to
     float speedLimit;                           // in km/h
     StreetIndex	streetID;                       // index of street this segment belongs to
 };
 
 struct feature_info {
-    bool closed = false;                                    // if true, it's closed (poly))
-    std::string name;
-    FeatureType type;
-    std::vector<ezgl::point2d> allPoints;           // from, curve points, to
+    bool closed = false;                        // if true, it's closed (poly))
+    std::string name;                           // feature name
+    FeatureType type;                           // feature type
+    std::vector<ezgl::point2d> allPoints;       // from, curve points, to
+    float area;                                 // area
 };
 
 // a vector[intersection_id] storing intersection data
