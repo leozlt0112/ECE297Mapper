@@ -252,14 +252,29 @@ void draw_features(ezgl::renderer *g) {
         feature_info this_feature = features[feature_id];
         // 0.5 - 
         if (visible_width > 0.5 * initial_width){
-            if (this_feature.closed && this_feature.type == Lake){
-                g->set_color(174, 234, 250, 255);
-                g->fill_poly(this_feature.allPoints);
+            if (this_feature.closed){
+                if (this_feature.type==Lake) {
+                    g->set_color(174, 234, 250, 255);
+                    g->fill_poly(this_feature.allPoints);
+                }
+                if (this_feature.type==Park) {
+                    g->set_color(174, 225, 195, 255);
+                    g->fill_poly(this_feature.allPoints);
+                }
+                    
+            }
+        }
+        else if (visible_width > 0.4 * initial_width) {
+            if (this_feature.closed) {
+                if (this_feature.type==Beach) {
+                    g->set_color(168, 160, 50, 255);
+                    g->fill_poly(this_feature.allPoints);
+                }
             }
         }
         // 0.1 - 0.5
         else if (visible_width > 0.1 * initial_width){
-            if (this_feature.closed && this_feature.type == Lake){
+            if (this_feature.closed && this_feature.type == Beach){
                 g->set_color(174, 234, 250, 255);
                 g->fill_poly(this_feature.allPoints);
             }
