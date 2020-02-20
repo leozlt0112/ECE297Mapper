@@ -25,7 +25,7 @@ std::vector<double> streetSeg_length;
 // a vector[streetSegIndex], each element stores travel time
 std::vector<double> streetSeg_time;
 
-// a map<Street_Name,StreetIndex> for all streets
+// a map <Street_Name,StreetIndex> for all streets
 std::multimap<std::string, int> streetID_streetName;
 
 // a variable used to store all possible all features

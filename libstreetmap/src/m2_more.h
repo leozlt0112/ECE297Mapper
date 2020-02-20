@@ -37,6 +37,8 @@ struct segment_info {
     StreetIndex	streetID;                       // index of street this segment belongs to
 };
 
+
+
 // a vector[intersection_id] storing intersection data
 std::vector<intersection_info> intersections;
 

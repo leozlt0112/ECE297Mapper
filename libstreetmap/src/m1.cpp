@@ -82,7 +82,7 @@ bool load_map(std::string map_path) {
         streetSeg_time.push_back(length/(getInfoStreetSegment(streetSegment).speedLimit)*3.6);
     }
     
-    // std::map<std::string, int> streetID_streetName;
+    // std::multimap<std::string, int> streetID_streetName;
     for (int streetID = 0; streetID < getNumStreets(); ++streetID) {
         std::string streetName = getStreetName(streetID);
         std::string this_name;
