@@ -80,6 +80,8 @@ void draw_main_canvas (ezgl::renderer *g){
 
 //draws all intersections
 void draw_intersections (ezgl::renderer *g){
+    int visible_width = g->get_visible_world().width();
+    if (visible_width >10000) return;
     float radius = 5;
     for (size_t i = 0; i < intersections.size(); ++i) {
         float x = intersections[i].x_;
@@ -100,8 +102,8 @@ void draw_all_street_segments(ezgl::renderer *g){
     g->set_line_cap(ezgl::line_cap::round); // round ends
     g->set_line_dash(ezgl::line_dash::none); // Solid line
     int visible_width = g->get_visible_world().width();
-    int iniWidth = memory.initial_world_width;
-    std::cout<<g->get_visible_world().width()/iniWidth<<std::endl;
+    int initial_width = memory.initial_world_width;
+    std::cout<<g->get_visible_world().width()/initial_width<<std::endl;
     for(size_t i = 0; i < streetSegments.size(); ++i) {
          //get coordinate of two points 
         segment_info this_segment = streetSegments[i];
@@ -111,16 +113,16 @@ void draw_all_street_segments(ezgl::renderer *g){
         float y_to   = this_segment.allPoints.back().second;
         // draw the streetsegments according to zoom
         // determine how much is zoomed in using if conditions
-        if (visible_width > 0.75 * iniWidth){
+        if (visible_width > 0.75 * initial_width){
             if (this_segment.speedLimit > 50){
                 g->set_line_width(1);
                 g->set_color(0, 0, 0, 255);
                 g->draw_line({x_from, y_from}, {x_to, y_to});
             }
         }
-        else if (visible_width > 0.3 * iniWidth){
+        else if (visible_width > 0.3 * initial_width){
             if (this_segment.speedLimit > 50){
-                g->set_line_width(2);
+                g->set_line_width(1);
                 g->set_color(0, 0, 0, 255);
                 g->draw_line({x_from, y_from}, {x_to, y_to});
             }
@@ -130,7 +132,7 @@ void draw_all_street_segments(ezgl::renderer *g){
                 g->draw_line({x_from, y_from}, {x_to, y_to});
             }
         }
-        else if (visible_width > 0.02 * iniWidth){
+        else if (visible_width > 0.02 * initial_width){
             if (this_segment.speedLimit > 50){
                 g->set_line_width(2);
                 g->set_color(0, 0, 0, 255);
