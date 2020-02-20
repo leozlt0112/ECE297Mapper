@@ -76,8 +76,8 @@ void draw_map_load (){
                                                 intersections[this_segment_info.to].y_});
         // store major_minor
         float   initial_width = initial_world.width();
-        if      (streetID_streetLength[this_segment_info.streetID]>initial_width/10 && this_segment_info.speedLimit > 50)   { streetSegments[i].major_minor = 2; }
-        else if (streetID_streetLength[this_segment_info.streetID]>initial_width/20)                                       { streetSegments[i].major_minor = 1; }
+        if      (streetID_streetLength[this_segment_info.streetID]>initial_width/50 && this_segment_info.speedLimit > 50)   { streetSegments[i].major_minor = 2; }
+        else if (streetID_streetLength[this_segment_info.streetID]>initial_width/20)                                        { streetSegments[i].major_minor = 1; }
         else                                                                                                                { streetSegments[i].major_minor = 0; }
     }
     
@@ -114,17 +114,29 @@ void draw_main_canvas (ezgl::renderer *g){
 }
 
 void out_of_bound_prevention(ezgl::renderer *g) {
+    
     ezgl::rectangle current_visible_world = g->get_visible_world();
-    //if (current_visible_world.)
-    //last_visible_world;
+    if (current_visible_world.width() > initial_world.width()){
+        g -> set_visible_world(initial_world);
+        memory.last_visible_world = initial_world;
+    }/*
+    else if (current_visible_world.right()  > initial_world.right() ||
+             current_visible_world.left()   < initial_world.left()  ||
+             current_visible_world.top()    > initial_world.top()   ||
+             current_visible_world.bottom() < initial_world.bottom()){
+        g -> set_visible_world(memory.last_visible_world);
+    }
+    else{
+        memory.last_visible_world = current_visible_world;
+    }*/
     return;
 }
 
 //draws all intersections
 void draw_intersections (ezgl::renderer *g){
     int visible_width = g->get_visible_world().width();
-    if (visible_width >10000) return;
-    float radius = 5;
+    if (visible_width >2000) return;
+    float radius = 1;
     for (size_t i = 0; i < intersections.size(); ++i) {
         float x = intersections[i].x_;
         float y = intersections[i].y_;
@@ -154,15 +166,15 @@ void draw_all_street_segments(ezgl::renderer *g){
             ezgl::point2d to   = this_segment.allPoints[pnt+1];
             // draw the street segments according to zoom
             // determine how much is zoomed in using if conditions
-            // 0.5 - 
-            if (visible_width > 0.5 * initial_width){
+            // 1, 0.6, 0.36
+            if (visible_width > 0.3 * initial_width){
                 if (this_segment.major_minor==2){
                     g->set_line_width(1);
                     g->set_color(0, 0, 0, 255);
                     g->draw_line(from, to);
                 }
             }
-            // 0.1 - 0.5
+            // 0.22, 0.12
             else if (visible_width > 0.1 * initial_width){
                 if (this_segment.major_minor==2){
                     g->set_line_width(1);
@@ -175,7 +187,7 @@ void draw_all_street_segments(ezgl::renderer *g){
                     g->draw_line(from, to);
                 }
             }
-            // 0.05 - 0.1
+            // 0.07
             else if (visible_width > 0.05 * initial_width){
                 if (this_segment.major_minor==2){
                     g->set_line_width(1);
@@ -188,7 +200,7 @@ void draw_all_street_segments(ezgl::renderer *g){
                     g->draw_line(from, to);
                 }
             }
-            // 0.02 - 0.05
+            // 0.046, 0.027
             else if (visible_width > 0.02 * initial_width){
                 if (this_segment.major_minor==2){
                     g->set_line_width(2);
@@ -206,7 +218,7 @@ void draw_all_street_segments(ezgl::renderer *g){
                     g->draw_line(from, to);
                 }
             }
-            //  - 0.02
+            // 0.016, 0.010
             else{
                 if (this_segment.major_minor==2){
                     g->set_line_width(2);
@@ -277,14 +289,18 @@ void draw_features(ezgl::renderer *g) {
 void act_on_mouse_click(ezgl::application* app, GdkEventButton* event, double x, double y) {
     std::cout << "Mouse clicked at (" << x << "," << y << ")\n";
     LatLon pos = LatLon(lat_from_y(y), lon_from_x(x));
+    //find closest intersection_id, -1 means too far away to any intersections
     int id = find_closest_intersection(pos);
-    std::cout<< "Closest Intersection: "<< intersections[id].name << "\n";
     //un-highlight the last clicked intersection
-    
     if (memory.last_clicked_intersection != -1) 
         intersections[memory.last_clicked_intersection].highlight = false;
-    intersections[id].highlight       = true;
+    // set new value of last_clicked
     memory.last_clicked_intersection  = id;
+    // highlight current clicked
+    if (id != -1) {
+        intersections[id].highlight = true;
+        std::cout<< "Closest Intersection: "<< intersections[id].name << "\n";
+    }
     app->refresh_drawing();
 }
 
