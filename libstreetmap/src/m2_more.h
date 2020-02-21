@@ -66,12 +66,12 @@ std::vector<feature_info> features;
 std::vector<poi_info> POIs;
 
 // a vector[way_index] storing all the tags
-std::vector<std::unordered_map<std::string,std::string>> wayIdx_tags;
+std::unordered_map<OSMID, std::unordered_map<std::string,std::string>> WayID_tags;
 
-//a vector[streetSegIndex], each element stores distance. from m1_more.h
+// a vector[streetSegIndex], each element stores distance. from m1_more.h
 extern std::vector<double> streetSeg_length;
 
-//a vector[StreetIndex], each street vector stores streetSegmentIDs
+// a vector[StreetIndex], each street vector stores streetSegmentIDs
 extern std::vector<std::vector<int>> street_street_segments;
 
 // a vector[streetIndex], each element stores distance

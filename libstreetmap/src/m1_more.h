@@ -37,13 +37,13 @@ std::vector<double> streetID_streetLength;
 std::vector<std::vector<LatLon>> featureID_featurePts;
 
 // a map, each stores <node ID, node>
-std::map<OSMID, const OSMNode*> NodeID_Node;
+std::unordered_map<OSMID, const OSMNode*> NodeID_Node;
 
 // a map, each stores <way ID, way>
-std::map<OSMID, const OSMWay*> WayID_Way;
+std::unordered_map<OSMID, const OSMWay*> WayID_Way;
 
 // a map, each stores <way ID, way length>
-std::map<OSMID, double> WayID_length;
+std::unordered_map<OSMID, double> WayID_length;
 
 int find_closest_POI(LatLon my_position);
 

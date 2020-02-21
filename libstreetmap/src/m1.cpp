@@ -116,6 +116,7 @@ bool load_map(std::string map_path) {
     }
     
     // std::map<OSMID, int> wayID_length;
+    // std::unordered_map<OSMID, const OSMWay*> WayID_Way;
     for (int wayCt= 0; wayCt < getNumberOfWays(); ++wayCt) {
         const OSMWay* this_way = getWayByIndex(wayCt);
         WayID_Way.insert(std::make_pair(this_way->id(), this_way));
