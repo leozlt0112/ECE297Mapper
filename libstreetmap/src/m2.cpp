@@ -1,5 +1,6 @@
 #include "m2.h"
 #include "m2_more.h"
+#include "rectangle.hpp"
         
 // draw map loads necessary variables and calls draw_map_blank_canvas() in the end.
 void draw_map () {
@@ -127,9 +128,8 @@ void draw_main_canvas (ezgl::renderer *g){
 }
 
 void out_of_bound_prevention(ezgl::renderer *g) {
-    
     ezgl::rectangle current_visible_world = g->get_visible_world();
-    if (current_visible_world.width() > initial_world.width()){
+    if (current_visible_world.width() > initial_world.width() && current_visible_world.height() > initial_world.height()){
         g -> set_visible_world(initial_world);
         memory.last_visible_world = initial_world;
     }/*
@@ -367,9 +367,9 @@ void draw_features(ezgl::renderer *g) {
                     g->set_color(75, 130, 100, 255);
                     g->fill_poly(this_feature.allPoints);
                 }
-                // darker blue
+                // dark blue
                 if (this_feature.type==River) {
-                    g->set_color(75, 125, 200, 255);
+                    g->set_color(100, 150, 200, 255);
                     g->fill_poly(this_feature.allPoints);
                 }
             }
@@ -402,9 +402,9 @@ void draw_features(ezgl::renderer *g) {
                     g->set_color(75, 130, 100, 255);
                     g->fill_poly(this_feature.allPoints);
                 }
-                // darker blue
+                // dark blue
                 if (this_feature.type==River) {
-                    g->set_color(75, 125, 200, 255);
+                    g->set_color(100, 150, 200, 255);
                     g->fill_poly(this_feature.allPoints);
                 }
                 // dark gray
@@ -442,9 +442,9 @@ void draw_features(ezgl::renderer *g) {
                     g->set_color(75, 130, 100, 255);
                     g->fill_poly(this_feature.allPoints);
                 }
-                // darker blue
+                // dark blue
                 if (this_feature.type==River) {
-                    g->set_color(75, 125, 200, 255);
+                    g->set_color(100, 150, 200, 255);
                     g->fill_poly(this_feature.allPoints);
                 }
                 // lighter gray
@@ -457,9 +457,9 @@ void draw_features(ezgl::renderer *g) {
                     g->set_color(125, 100, 75, 255);
                     g->fill_poly(this_feature.allPoints);
                 }
-                // darker blue
+                // dark blue
                 if (this_feature.type==Stream) {
-                    g->set_color(75, 125, 200, 255);
+                    g->set_color(100, 150, 200, 255);
                     g->fill_poly(this_feature.allPoints);
                 }
                
@@ -493,9 +493,9 @@ void draw_features(ezgl::renderer *g) {
                     g->set_color(75, 130, 100, 255);
                     g->fill_poly(this_feature.allPoints);
                 }
-                // darker blue
+                // dark blue
                 if (this_feature.type==River) {
-                    g->set_color(75, 125, 200, 255);
+                    g->set_color(100, 150, 200, 255);
                     g->fill_poly(this_feature.allPoints);
                 }
                 // lighter gray
@@ -508,9 +508,9 @@ void draw_features(ezgl::renderer *g) {
                     g->set_color(125, 100, 75, 255);
                     g->fill_poly(this_feature.allPoints);
                 }
-                // darker blue
+                // dark blue
                 if (this_feature.type==Stream) {
-                    g->set_color(75, 125, 200, 255);
+                    g->set_color(100, 150, 200, 255);
                     g->fill_poly(this_feature.allPoints);
                 } 
             }
@@ -532,7 +532,8 @@ void act_on_mouse_click(ezgl::application* app, GdkEventButton* event, double x,
     // highlight current clicked
     if (id != -1) {
         intersections[id].highlight = true;
-        std::cout<< "Closest Intersection: "<< intersections[id].name << "\n";
+        std::string status_message = "Closest Intersection: " + intersections[id].name;
+        app->update_message(status_message);
     }
     
     app->refresh_drawing();
