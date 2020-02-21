@@ -531,6 +531,7 @@ void draw_features(ezgl::renderer *g) {
                 } 
             }
         }
+        if 
     }
 }
 
