@@ -52,6 +52,10 @@ struct poi_info {
     std::string name;                           // poi name
 };
 
+struct way_info {
+                                                 // determine how major it is. (0=minor, 1=medium, 2=major)
+};
+
 // a vector[intersection_id] storing intersection data
 std::vector<intersection_info> intersections;
 

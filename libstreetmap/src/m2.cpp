@@ -175,8 +175,8 @@ void draw_all_street_segments(ezgl::renderer *g){
         segment_info   this_segment = streetSegments[i];
         for (int pnt = 0; pnt < (this_segment.allPoints.size()-1); ++pnt){
             //get coordinate of two points 
-            ezgl::point2d from = this_segment.allPoints[pnt  ];
-            ezgl::point2d to   = this_segment.allPoints[pnt+1];
+            ezgl::point2d point1 = this_segment.allPoints[pnt  ];
+            ezgl::point2d point2 = this_segment.allPoints[pnt+1];
             // draw the street segments according to zoom
             // determine how much is zoomed in using if conditions
             // 1, 0.6, 0.36
@@ -184,7 +184,7 @@ void draw_all_street_segments(ezgl::renderer *g){
                 if (this_segment.major_minor==2){
                     g->set_line_width(1);
                     g->set_color(255, 255, 255, 255);
-                    g->draw_line(from, to);
+                    g->draw_line(point1, point2);
                 }
             }
             // 0.22
@@ -192,12 +192,12 @@ void draw_all_street_segments(ezgl::renderer *g){
                 if (this_segment.major_minor==2){
                     g->set_line_width(1);
                     g->set_color(255, 255, 255, 255);
-                    g->draw_line(from, to);
+                    g->draw_line(point1, point2);
                 }
                 else if (this_segment.major_minor==1){
                     g->set_line_width(0.5);
                     g->set_color(50, 50, 50, 255);
-                    g->draw_line(from, to);
+                    g->draw_line(point1, point2);
                 }
             }
             // 0.12
@@ -205,12 +205,12 @@ void draw_all_street_segments(ezgl::renderer *g){
                 if (this_segment.major_minor==2){
                     g->set_line_width(1);
                     g->set_color(255, 255, 255, 255);
-                    g->draw_line(from, to);
+                    g->draw_line(point1, point2);
                 }
                 else if (this_segment.major_minor==1){
                     g->set_line_width(0.5);
                     g->set_color(100, 100, 100, 255);
-                    g->draw_line(from, to);
+                    g->draw_line(point1, point2);
                 }
             }
             // 0.07
@@ -218,12 +218,12 @@ void draw_all_street_segments(ezgl::renderer *g){
                 if (this_segment.major_minor==2){
                     g->set_line_width(1);
                     g->set_color(255, 255, 255, 255);
-                    g->draw_line(from, to);
+                    g->draw_line(point1, point2);
                 }
                 else if (this_segment.major_minor==1){
                     g->set_line_width(0.5);
                     g->set_color(155, 155, 155, 255);
-                    g->draw_line(from, to);
+                    g->draw_line(point1, point2);
                 }
             }
             // 0.046
@@ -231,17 +231,17 @@ void draw_all_street_segments(ezgl::renderer *g){
                 if (this_segment.major_minor==2){
                     g->set_line_width(2);
                     g->set_color(255, 255, 255, 255);
-                    g->draw_line(from, to);
+                    g->draw_line(point1, point2);
                 }
                 else if (this_segment.major_minor==1){
                     g->set_line_width(1);
                     g->set_color(150, 150, 150, 255);
-                    g->draw_line(from, to);
+                    g->draw_line(point1, point2);
                 }
                 else if (this_segment.major_minor==0){
                     g->set_line_width(0.5);
                     g->set_color(50, 50, 50, 255);
-                    g->draw_line(from, to);
+                    g->draw_line(point1, point2);
                 }
             }
             // 0.027
@@ -249,17 +249,17 @@ void draw_all_street_segments(ezgl::renderer *g){
                 if (this_segment.major_minor==2){
                     g->set_line_width(5);
                     g->set_color(255, 255, 255, 255);
-                    g->draw_line(from, to);
+                    g->draw_line(point1, point2);
                 }
                 else if (this_segment.major_minor==1){
                     g->set_line_width(2);
                     g->set_color(200, 200, 200, 255);
-                    g->draw_line(from, to);
+                    g->draw_line(point1, point2);
                 }
                 else if (this_segment.major_minor==0){
                     g->set_line_width(1);
                     g->set_color(100, 100, 100, 255);
-                    g->draw_line(from, to);
+                    g->draw_line(point1, point2);
                 }
             }
             // 0.016, 0
@@ -267,17 +267,17 @@ void draw_all_street_segments(ezgl::renderer *g){
                 if (this_segment.major_minor==2){
                     g->set_line_width(10);
                     g->set_color(255, 255, 255, 255);
-                    g->draw_line(from, to);
+                    g->draw_line(point1, point2);
                 }
                 else if (this_segment.major_minor==1){
                     g->set_line_width(5);
                     g->set_color(200, 200, 200, 255);
-                    g->draw_line(from, to);
+                    g->draw_line(point1, point2);
                 }
                 else if (this_segment.major_minor==0){
                     g->set_line_width(2);
                     g->set_color(150, 150, 150, 255);
-                    g->draw_line(from, to);
+                    g->draw_line(point1, point2);
                 }
             }
         }
