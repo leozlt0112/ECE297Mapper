@@ -20,9 +20,6 @@
  */
 #include "m1.h"
 #include "m1_more.h"
-#include "StreetsDatabaseAPI.h"
-#include "OSMDatabaseAPI.h"
-#include <map>
 #include <algorithm>    // std::sort
  
 bool load_map(std::string map_path) {
@@ -114,21 +111,22 @@ bool load_map(std::string map_path) {
     
     // std::map<OSMID, int> OSMID_NodeIdx;
     for (int nodeCt= 0; nodeCt < getNumberOfNodes(); ++nodeCt) {
-        OSMID osmIdx = getNodeByIndex(nodeCt)->id();
-        OSMID_NodeIdx.insert(std::make_pair(osmIdx,nodeCt));
+        const OSMNode* osmnode = getNodeByIndex(nodeCt);
+        NodeID_Node.insert(std::make_pair(osmnode->id(), osmnode));
     }
     
     // std::map<OSMID, int> wayID_length;
     for (int wayCt= 0; wayCt < getNumberOfWays(); ++wayCt) {
         const OSMWay* this_way = getWayByIndex(wayCt);
+        WayID_Way.insert(std::make_pair(this_way->id(), this_way));
         std::vector<OSMID> these_node_ids = getWayMembers(this_way);
         double distance=0;
         for (int i=0; i<these_node_ids.size()-1; ++i){
-            LatLon node_first  = getNodeByIndex(OSMID_NodeIdx.find(these_node_ids[i])  ->second)->coords();
-            LatLon node_second = getNodeByIndex(OSMID_NodeIdx.find(these_node_ids[i+1])->second)->coords();
+            LatLon node_first  = NodeID_Node.find(these_node_ids[i])  ->second ->coords();
+            LatLon node_second = NodeID_Node.find(these_node_ids[i+1])->second ->coords();
             distance += find_distance_between_two_points(std::make_pair(node_first,node_second));
         }
-        wayID_length.insert(std::make_pair(this_way->id(), distance));
+        WayID_length.insert(std::make_pair(this_way->id(), distance));
     }
     
     return true;
@@ -141,9 +139,11 @@ void close_map() {
          street_intersections.clear();
          streetSeg_time.clear();
          streetID_streetName.clear();
+         streetID_streetLength.clear();
          featureID_featurePts.clear();
-         OSMID_NodeIdx.clear();
-         wayID_length.clear();
+         NodeID_Node.clear();
+         WayID_Way.clear();
+         WayID_length.clear();
     closeStreetDatabase(); 
     closeOSMDatabase();
 }
@@ -377,7 +377,7 @@ double find_feature_area(int feature_id){
 
 double find_way_length(OSMID way_id)
 {
-    return wayID_length.find(way_id)->second;
+    return WayID_length.find(way_id)->second;
 }
 
 //send in a pair of LatLon, give out a pair of XY(int pair))

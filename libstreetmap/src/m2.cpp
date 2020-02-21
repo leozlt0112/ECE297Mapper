@@ -27,6 +27,7 @@ void draw_map_load (){
     streetSegments.resize(getNumStreetSegments());
     features.resize(getNumFeatures());
     POIs.resize(getNumPointsOfInterest());
+    wayIdx_tags.resize(getNumberOfWays());
     
     // double max_lat, min_lat, max_lon, min_lon, avg_lat;
     // memory.initial_world_width
@@ -58,6 +59,15 @@ void draw_map_load (){
         intersections[i].name     = getIntersectionName(i);
     }
     
+    // way tags
+    for (int way=0; way<wayIdx_tags.size(); ++way){
+        const OSMWay* this_way = getWayByIndex(way);
+        for(int i=0;i<getTagCount(this_way); ++i)
+        {
+            wayIdx_tags[way].insert(getTagPair(this_way,i));
+        }
+    }
+    
     // std::vector<segment_info> streetSegments;
     for(size_t i = 0; i < streetSegments.size(); ++i) {
         InfoStreetSegment this_segment_info = getInfoStreetSegment(i);
@@ -80,7 +90,7 @@ void draw_map_load (){
         // store major_minor
         float   initial_width = initial_world.width();
         if      (streetID_streetLength[this_segment_info.streetID]>initial_width/50 && this_segment_info.speedLimit > 50)   { streetSegments[i].major_minor = 2; }
-        else if (streetID_streetLength[this_segment_info.streetID]>initial_width/20)                                        { streetSegments[i].major_minor = 1; }
+        else if (streetID_streetLength[this_segment_info.streetID]>initial_width/20 && this_segment_info.speedLimit > 20)   { streetSegments[i].major_minor = 1; }
         else                                                                                                                { streetSegments[i].major_minor = 0; }
     }
     

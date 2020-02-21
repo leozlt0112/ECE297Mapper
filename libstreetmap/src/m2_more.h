@@ -35,6 +35,7 @@ struct segment_info {
     std::vector<ezgl::point2d> allPoints;       // from, curve points, to
     float speedLimit;                           // in km/h
     StreetIndex	streetID;                       // index of street this segment belongs to
+    OSMID wayOSMID;                             // index of way this segment belongs to
 };
 
 struct feature_info {
@@ -52,21 +53,20 @@ struct poi_info {
     std::string name;                           // poi name
 };
 
-struct way_info {
-                                                 // determine how major it is. (0=minor, 1=medium, 2=major)
-};
-
 // a vector[intersection_id] storing intersection data
 std::vector<intersection_info> intersections;
 
 // a vector[streetSegment_id] storing street_segment_data
 std::vector<segment_info> streetSegments;
 
-//a vector[features_id] storing features_data
+// a vector[features_id] storing features_data
 std::vector<feature_info> features;
 
-//a vector[POI_id] storing poi_data
+// a vector[POI_id] storing poi_data
 std::vector<poi_info> POIs;
+
+// a vector[way_index] storing all the tags
+std::vector<std::unordered_map<std::string,std::string>> wayIdx_tags;
 
 //a vector[streetSegIndex], each element stores distance. from m1_more.h
 extern std::vector<double> streetSeg_length;
@@ -85,7 +85,7 @@ extern std::vector<std::vector<LatLon>> featureID_featurePts;
 double max_lat, min_lat, max_lon, min_lon, avg_lat;
 
 // it stores the value of initial world size
- ezgl::rectangle initial_world;
+ezgl::rectangle initial_world;
 
 //prevent zooming out of bound
 void out_of_bound_prevention(ezgl::renderer *g);

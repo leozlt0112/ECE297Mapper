@@ -3,6 +3,8 @@
  ***********************************************/
 
 #pragma once //protects against multiple inclusions of this header file
+#include "StreetsDatabaseAPI.h"
+#include "OSMDatabaseAPI.h"
 #include <map>
 class XY_;
 
@@ -34,11 +36,14 @@ std::vector<double> streetID_streetLength;
 // a variable used to store all possible all features
 std::vector<std::vector<LatLon>> featureID_featurePts;
 
-// a map, each stores <node ID, node index>
-std::map<OSMID, int> OSMID_NodeIdx;
+// a map, each stores <node ID, node>
+std::map<OSMID, const OSMNode*> NodeID_Node;
 
-// a map, each stores <way ID, way length> each stores length of way
-std::map<OSMID, double> wayID_length;
+// a map, each stores <way ID, way>
+std::map<OSMID, const OSMWay*> WayID_Way;
+
+// a map, each stores <way ID, way length>
+std::map<OSMID, double> WayID_length;
 
 int find_closest_POI(LatLon my_position);
 
