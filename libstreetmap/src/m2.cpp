@@ -306,6 +306,8 @@ void initial_setup(ezgl::application *application, bool new_window){
 
 // Leo draw features
 void draw_features(ezgl::renderer *g) {
+    g->set_line_cap(ezgl::line_cap::round); // round ends
+    g->set_line_dash(ezgl::line_dash::none); 
     float visible_width = g->get_visible_world().width();
     float initial_width = initial_world.width();
     for (int feature_id=0; feature_id<features.size(); ++feature_id) {
@@ -531,7 +533,18 @@ void draw_features(ezgl::renderer *g) {
                 } 
             }
         }
-        if 
+        if(!this_feature.closed) {
+            if (visible_width <= 0.02  * initial_width){
+                for(int pts=0; pts<this_feature.allPoints.size()-1; pts++) {
+                    ezgl::point2d position1 = this_feature.allPoints[pts  ];
+                    ezgl::point2d position2 = this_feature.allPoints[pts+1];
+                    g->set_line_width(1);
+                        // light green for streams
+                    g->set_color(110, 199, 200, 255);
+                    g->draw_line(position1, position2);
+                }
+            }
+        }
     }
 }
 
