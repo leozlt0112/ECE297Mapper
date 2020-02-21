@@ -34,7 +34,6 @@ struct segment_info {
     int major_minor=0;                          // determine how major it is. (0=minor, 1=medium, 2=major)
     std::vector<ezgl::point2d> allPoints;       // from, curve points, to
     float speedLimit;                           // in km/h
-    StreetIndex	streetID;                       // index of street this segment belongs to
     OSMID wayOSMID;                             // index of way this segment belongs to
 };
 
@@ -53,16 +52,16 @@ struct poi_info {
     std::string name;                           // poi name
 };
 
-// a vector[intersection_id] storing intersection data
+// a vector[intersection_idx] storing intersection data
 std::vector<intersection_info> intersections;
 
-// a vector[streetSegment_id] storing street_segment_data
+// a vector[streetSegment_idx] storing street_segment_data
 std::vector<segment_info> streetSegments;
 
-// a vector[features_id] storing features_data
+// a vector[features_idx] storing features_data
 std::vector<feature_info> features;
 
-// a vector[POI_id] storing poi_data
+// a vector[POI_idx] storing poi_data
 std::vector<poi_info> POIs;
 
 // a vector[way_index] storing all the tags

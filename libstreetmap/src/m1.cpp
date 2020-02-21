@@ -234,7 +234,7 @@ std::vector<std::string> find_street_names_of_intersection(int intersection_id){
     for(int i = 0; i < street_segments_ids.size(); i++) {
         streetName = getStreetName(getInfoStreetSegment(street_segments_ids[i]).streetID);
         street_names.push_back(streetName);
-    }   
+    }
     return street_names;
 }
 

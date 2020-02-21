@@ -65,8 +65,8 @@ void draw_map_load (){
         for(int i=0;i<getTagCount(this_way); ++i)
         {
             these_tags.insert(getTagPair(this_way,i));
-            if (getTagPair(this_way,i).first == "highway") std::cout<<getTagPair(this_way,i).second<<"\n";
         }
+        WayID_tags.insert(std::make_pair(this_way->id(), these_tags));
     }
     
     // std::vector<segment_info> streetSegments;
@@ -90,9 +90,13 @@ void draw_map_load (){
                                                 intersections[this_segment_info.to].y_});
         // store major_minor
         float   initial_width = initial_world.width();
-        //std::unordered_map<std::string,std::string> these_tags = WayID_tags.find(this_segment_info.wayOSMID)->second;
-        if      (streetID_streetLength[this_segment_info.streetID]>initial_width/50 && this_segment_info.speedLimit > 50)   { streetSegments[i].major_minor = 2; }
-        else if (streetID_streetLength[this_segment_info.streetID]>initial_width/20 && this_segment_info.speedLimit > 20)   { streetSegments[i].major_minor = 1; }
+        std::unordered_map<std::string,std::string> these_tags = WayID_tags.find(this_segment_info.wayOSMID)->second;
+        std::string highway_tag = these_tags.find("highway")->second;
+        if      (highway_tag == "motorway"  || highway_tag == "trunk"   || 
+                 highway_tag == "primary"   || highway_tag == "secondary")                                                  { streetSegments[i].major_minor = 2; }
+        else if (highway_tag == "motorway_link" || highway_tag == "trunk_link"      || 
+                 highway_tag == "primary_link"  || highway_tag == "secondary_link"  ||
+                 highway_tag == "tertiary"      || highway_tag == "tertiary_link")                                          { streetSegments[i].major_minor = 1; }
         else                                                                                                                { streetSegments[i].major_minor = 0; }
     }
     
