@@ -198,12 +198,28 @@ int find_closest_intersection(LatLon my_position){
     for (int i=0; i<getNumIntersections(); ++i){
         two_points.second = getIntersectionPosition(i);
         double current_distance = find_distance_between_two_points(two_points);
-        if (current_distance<closest_distance && current_distance < 100){
+        if (current_distance<closest_distance && current_distance < 50){
             closest_distance=current_distance;
             closest_intersection=i;
         }
     }
     return closest_intersection;
+}
+
+int find_closest_POI(LatLon my_position){
+    double closest_distance= 2000000;
+    int closest_poi= -1;
+    std::pair<LatLon, LatLon> two_points;
+    two_points.first=my_position;
+    for (int i=0; i<getNumPointsOfInterest(); ++i){
+        two_points.second = getPointOfInterestPosition(i);
+        double current_distance = find_distance_between_two_points(two_points);
+        if (current_distance<closest_distance && current_distance < 100){
+            closest_distance=current_distance;
+            closest_poi=i;
+        }
+    }
+    return closest_poi;
 }
 
 std::vector<int> find_street_segments_of_intersection(int intersection_id){

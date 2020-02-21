@@ -45,6 +45,13 @@ struct feature_info {
     float area;                                 // area
 };
 
+struct poi_info {
+    float x_;                                   // position x
+    float y_;                                   // position y
+    std::string type;                           // poi type
+    std::string name;                           // poi name
+};
+
 // a vector[intersection_id] storing intersection data
 std::vector<intersection_info> intersections;
 
@@ -53,6 +60,9 @@ std::vector<segment_info> streetSegments;
 
 //a vector[features_id] storing features_data
 std::vector<feature_info> features;
+
+//a vector[POI_id] storing poi_data
+std::vector<poi_info> POIs;
 
 //a vector[streetSegIndex], each element stores distance. from m1_more.h
 extern std::vector<double> streetSeg_length;
@@ -91,6 +101,8 @@ void draw_all_street_segments(ezgl::renderer *g);
 // draw all the features
 void draw_features(ezgl::renderer *g); 
 
+extern int find_closest_POI(LatLon my_position);
+
 // Converting latlon in degrees to x and y
 float x_from_lon(float lon);
 float y_from_lat(float lat);
@@ -103,6 +115,7 @@ float lon_from_x(double x);
 struct action_mem{
     // store intersections u clickded
     int last_clicked_intersection=-1;
+    int last_clicked_POI=-1;
     ezgl::rectangle last_visible_world;
 };
 

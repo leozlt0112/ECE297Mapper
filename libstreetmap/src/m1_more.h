@@ -40,6 +40,8 @@ std::map<OSMID, int> OSMID_NodeIdx;
 // a map, each stores <way ID, way length> each stores length of way
 std::map<OSMID, double> wayID_length;
 
+int find_closest_POI(LatLon my_position);
+
 //This is a new class XY_, similar to LatLon but it holds x,y coordinates instead
 class XY_{
 public:

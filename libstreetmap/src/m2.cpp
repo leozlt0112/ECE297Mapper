@@ -25,6 +25,7 @@ void draw_map_load (){
     intersections.resize(getNumIntersections());
     streetSegments.resize(getNumStreetSegments());
     features.resize(getNumFeatures());
+    POIs.resize(getNumPointsOfInterest());
     
     // double max_lat, min_lat, max_lon, min_lon, avg_lat;
     // memory.initial_world_width
@@ -50,10 +51,10 @@ void draw_map_load (){
     
     // std::vector<intersection_info> intersections;
     for(int i=0; i<intersections.size(); i++ ) {
-        LatLon this_position  = getIntersectionPosition(i);
-        intersections[i].x_   = x_from_lon(this_position.lon());
-        intersections[i].y_   = y_from_lat(this_position.lat());
-        intersections[i].name = getIntersectionName(i);
+        LatLon this_position      = getIntersectionPosition(i);
+        intersections[i].x_       = x_from_lon(this_position.lon());
+        intersections[i].y_       = y_from_lat(this_position.lat());
+        intersections[i].name     = getIntersectionName(i);
     }
     
     // std::vector<segment_info> streetSegments;
@@ -80,6 +81,15 @@ void draw_map_load (){
         if      (streetID_streetLength[this_segment_info.streetID]>initial_width/50 && this_segment_info.speedLimit > 50)   { streetSegments[i].major_minor = 2; }
         else if (streetID_streetLength[this_segment_info.streetID]>initial_width/20)                                        { streetSegments[i].major_minor = 1; }
         else                                                                                                                { streetSegments[i].major_minor = 0; }
+    }
+    
+    // std::vector<poi_info> POIs;
+    for(int i=0; i< POIs.size(); i++ ) {
+        LatLon this_position      = getPointOfInterestPosition(i);
+        POIs[i].x_   = x_from_lon(this_position.lon());
+        POIs[i].y_   = y_from_lat(this_position.lat());
+        POIs[i].name = getPointOfInterestName(i);
+        POIs[i].type = getPointOfInterestType(i);
     }
     
     // load features accordingly based on if they are closed or open
@@ -511,6 +521,7 @@ void draw_features(ezgl::renderer *g) {
 void act_on_mouse_click(ezgl::application* app, GdkEventButton* event, double x, double y) {
     std::cout << "Mouse clicked at (" << x << "," << y << ")\n";
     LatLon pos = LatLon(lat_from_y(y), lon_from_x(x));
+    
     //find closest intersection_id, -1 means too far away to any intersections
     int id = find_closest_intersection(pos);
     //un-highlight the last clicked intersection
@@ -523,6 +534,7 @@ void act_on_mouse_click(ezgl::application* app, GdkEventButton* event, double x,
         intersections[id].highlight = true;
         std::cout<< "Closest Intersection: "<< intersections[id].name << "\n";
     }
+    
     app->refresh_drawing();
 }
 
