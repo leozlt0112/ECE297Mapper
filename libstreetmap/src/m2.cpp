@@ -107,6 +107,7 @@ void draw_map_load (){
         POIs[i].y_   = y_from_lat(this_position.lat());
         POIs[i].name = getPointOfInterestName(i);
         POIs[i].type = getPointOfInterestType(i);
+        std::cout<<POIs[i].name<<"\n"<<POIs[i].x_<<"\n"<<POIs[i].y_ <<"\n\n"<<std::endl;
     }
     
     // load features accordingly based on if they are closed or open
@@ -141,6 +142,8 @@ void draw_main_canvas (ezgl::renderer *g){
     draw_features(g); 
     draw_all_street_segments(g); 
     draw_intersections(g); 
+    draw_points_of_interests(g); 
+    
 }
 
 void out_of_bound_prevention(ezgl::renderer *g) {
@@ -548,6 +551,15 @@ void draw_features(ezgl::renderer *g) {
     }
 }
 
+void draw_points_of_interests(ezgl::renderer *g) {
+    for(int poi=0; poi<POIs.size(); poi++) {
+        int x = POIs[poi].x_;
+        int y = POIs[poi].y_; 
+        g->set_color(ezgl::RED);
+        g->fill_arc({x, y}, 10, 0, 360);
+    }
+    
+}
 void act_on_mouse_click(ezgl::application* app, GdkEventButton* event, double x, double y) {
     std::cout << "Mouse clicked at (" << x << "," << y << ")\n";
     LatLon pos = LatLon(lat_from_y(y), lon_from_x(x));
