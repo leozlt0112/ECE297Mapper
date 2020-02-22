@@ -102,7 +102,10 @@ void draw_intersections (ezgl::renderer *g);
 void draw_all_street_segments(ezgl::renderer *g);
 
 // draw all the features
-void draw_features(ezgl::renderer *g); 
+void draw_features(ezgl::renderer *g);
+
+// draw all the points of interests
+void draw_points_of_interests(ezgl::renderer *g);
 
 extern int find_closest_POI(LatLon my_position);
 
