@@ -199,7 +199,7 @@ int find_closest_intersection(LatLon my_position){
     for (int i=0; i<getNumIntersections(); ++i){
         two_points.second = getIntersectionPosition(i);
         double current_distance = find_distance_between_two_points(two_points);
-        if (current_distance<closest_distance && current_distance < 50){
+        if (current_distance<closest_distance && current_distance < 10){
             closest_distance=current_distance;
             closest_intersection=i;
         }

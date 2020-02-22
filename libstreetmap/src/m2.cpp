@@ -30,7 +30,7 @@ void draw_map_load (){
     
     // double max_lat, min_lat, max_lon, min_lon, avg_lat;
     // memory.initial_world_width
-    max_lat = getIntersectionPosition(0).lat(); 
+    max_lat = getIntersectionPosition(0).lat();
     min_lat = max_lat;
     max_lon = getIntersectionPosition(0).lon();
     min_lon = max_lon;
@@ -89,7 +89,6 @@ void draw_map_load (){
         streetSegments[i].allPoints.push_back({ intersections[this_segment_info.to].x_,
                                                 intersections[this_segment_info.to].y_});
         // store major_minor
-        float   initial_width = initial_world.width();
         std::unordered_map<std::string,std::string> these_tags = WayID_tags.find(this_segment_info.wayOSMID)->second;
         std::string highway_tag = these_tags.find("highway")->second;
         if      (highway_tag == "motorway"  || highway_tag == "trunk"   || 
@@ -313,11 +312,12 @@ void draw_features(ezgl::renderer *g) {
     g->set_line_dash(ezgl::line_dash::none); 
     float visible_width = g->get_visible_world().width();
     float initial_width = initial_world.width();
+    float visible_area = g->get_visible_world().area();
     for (int feature_id=0; feature_id<features.size(); ++feature_id) {
         feature_info this_feature = features[feature_id];
         // 1, 0.6
         if (visible_width > 0.5 * initial_width){
-            if (this_feature.closed && this_feature.area > 100000){
+            if (this_feature.closed && this_feature.area > visible_area/50000){
                 // light blue
                 if (this_feature.type==Lake) {
                     g->set_color(100, 150, 200, 255);
@@ -337,7 +337,7 @@ void draw_features(ezgl::renderer *g) {
         }
         // 0.36
         else if (visible_width > 0.3 * initial_width) {
-            if (this_feature.closed) {
+            if (this_feature.closed && this_feature.area > visible_area/100000) {
                 // dark blue
                 if (this_feature.type==Lake) {
                     g->set_color(100, 150, 200, 255);
@@ -478,17 +478,12 @@ void draw_features(ezgl::renderer *g) {
                     g->set_color(125, 100, 75, 255);
                     g->fill_poly(this_feature.allPoints);
                 }
-                // dark blue
-                if (this_feature.type==Stream) {
-                    g->set_color(100, 150, 200, 255);
-                    g->fill_poly(this_feature.allPoints);
-                }
-               
             }
         }
         // 0.016, 0
         else{
-           if (this_feature.closed){
+            // closed
+            if (this_feature.closed){
                 // dark blue
                 if (this_feature.type==Lake) {
                     g->set_color(100, 150, 200, 255);
@@ -528,22 +523,16 @@ void draw_features(ezgl::renderer *g) {
                 if (this_feature.type==Beach) {
                     g->set_color(125, 100, 75, 255);
                     g->fill_poly(this_feature.allPoints);
-                }
-                // dark blue
-                if (this_feature.type==Stream) {
-                    g->set_color(100, 150, 200, 255);
-                    g->fill_poly(this_feature.allPoints);
                 } 
             }
-        }
-        if(!this_feature.closed) {
-            if (visible_width <= 0.02  * initial_width){
+            // non-closed
+            else{
                 for(int pts=0; pts<this_feature.allPoints.size()-1; pts++) {
                     ezgl::point2d position1 = this_feature.allPoints[pts  ];
                     ezgl::point2d position2 = this_feature.allPoints[pts+1];
                     g->set_line_width(1);
                         // light green for streams
-                    g->set_color(110, 199, 200, 255);
+                    g->set_color(100, 150, 200, 255);
                     g->draw_line(position1, position2);
                 }
             }
