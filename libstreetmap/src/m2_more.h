@@ -115,6 +115,9 @@ void draw_features(ezgl::renderer *g);
 // draw all the points of interests
 void draw_points_of_interests(ezgl::renderer *g);
 
+// draw all the street names
+void draw_street_names(ezgl::renderer *g);
+
 extern int find_closest_POI(LatLon my_position);
 
 // Converting latlon in degrees to x and y
