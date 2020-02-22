@@ -215,7 +215,7 @@ int find_closest_POI(LatLon my_position){
     for (int i=0; i<getNumPointsOfInterest(); ++i){
         two_points.second = getPointOfInterestPosition(i);
         double current_distance = find_distance_between_two_points(two_points);
-        if (current_distance<closest_distance && current_distance < 100){
+        if (current_distance<closest_distance && current_distance < 10){
             closest_distance=current_distance;
             closest_poi=i;
         }
