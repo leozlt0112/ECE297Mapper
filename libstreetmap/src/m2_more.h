@@ -50,6 +50,7 @@ struct poi_info {
     float y_;                                   // position y
     std::string type;                           // poi type
     std::string name;                           // poi name
+    bool highlight = false; 
 };
 
 // a vector[intersection_idx] storing intersection data

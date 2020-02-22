@@ -542,16 +542,32 @@ void draw_features(ezgl::renderer *g) {
 
 void draw_points_of_interests(ezgl::renderer *g) {
     for(int poi=0; poi<POIs.size(); poi++) {
-        int x = POIs[poi].x_;
-        int y = POIs[poi].y_; 
-        g->set_color(ezgl::RED);
-        g->fill_arc({x, y}, 10, 0, 360);
-    }
-    
+        float x = POIs[poi].x_;
+        float y = POIs[poi].y_;
+        if (POIs[poi].highlight) {
+            g->set_color(ezgl::MAGENTA);
+            g->fill_arc({x, y}, 10, 0, 360);
+        }
+        else {
+             g->set_color(ezgl::RED);
+            g->fill_arc({x, y}, 10, 0, 360);
+        }
+    }  
 }
 void act_on_mouse_click(ezgl::application* app, GdkEventButton* event, double x, double y) {
     std::cout << "Mouse clicked at (" << x << "," << y << ")\n";
     LatLon pos = LatLon(lat_from_y(y), lon_from_x(x));
+    // find closedPOIid, -1 means too far away to any intersections =
+    int idForPOI=find_closest_POI(pos);
+    // unhighlight the last intersection
+    if(memory.last_clicked_POI !=-1) 
+        POIs[memory.last_clicked_POI].highlight = false; 
+    // set the value of last_clicked
+    memory.last_clicked_POI = idForPOI;
+    // highlight current clicked 
+    if (idForPOI != -1) {
+        POIs[idForPOI].highlight = true; 
+    }
     
     //find closest intersection_id, -1 means too far away to any intersections
     int id = find_closest_intersection(pos);
@@ -564,9 +580,9 @@ void act_on_mouse_click(ezgl::application* app, GdkEventButton* event, double x,
     if (id != -1) {
         intersections[id].highlight = true;
         std::string status_message = "Closest Intersection: " + intersections[id].name;
-        app->update_message(status_message);
+       app->update_message(status_message);
     }
-    
+
     app->refresh_drawing();
 }
 
