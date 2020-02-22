@@ -79,12 +79,6 @@ extern std::vector<double> streetSeg_length;
 extern std::vector<std::vector<int>> street_street_segments;
 
 <<<<<<< HEAD
-// a vector[StreetIndex], each street vector stores IntersectionIDs
-extern std::vector<std::vector<int>> street_intersections;
-
-// a map <Street_Name,StreetIndex> for all streets
-extern std::multimap<std::string, int> streetID_streetName;
-=======
 // a vector[streetIndex], each element stores distance
 extern std::vector<double> streetID_streetLength;
 
@@ -144,17 +138,6 @@ action_mem memory;
 //events triggered by mouse clicks
 void act_on_mouse_click(ezgl::application* app, GdkEventButton* event, double x, double y);
 
-
-// Function called before the activation of the application
-// Can be used to create additional buttons, initialize the status message,
-//or connect added widgets to their callback functions
-void initial_setup(ezgl::application *application, bool /*new_window*/);
-
-//Find button callback function
-//enter two street names: 
-//1. have all intersections between street names be highlighted 
-//2. print information about the intersections 
-void find_button(GtkWidget */*widget*/, ezgl::application *application);
 
 
 
