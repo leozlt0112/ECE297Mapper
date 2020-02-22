@@ -383,7 +383,7 @@ void renderer::fill_rectangle(rectangle r)
 
 void renderer::fill_poly(std::vector<point2d> const &points)
 {
-  assert(points.size() > 1);
+  assert(points.size() > 1); 
 
   // Conservative but fast clip test -- check containing rectangle of polygon
   double x_min = points[0].x;

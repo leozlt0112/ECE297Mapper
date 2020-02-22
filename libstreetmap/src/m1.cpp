@@ -20,9 +20,6 @@
  */
 #include "m1.h"
 #include "m1_more.h"
-#include "StreetsDatabaseAPI.h"
-#include "OSMDatabaseAPI.h"
-#include <map>
 #include <algorithm>    // std::sort
  
 bool load_map(std::string map_path) {
@@ -41,13 +38,13 @@ bool load_map(std::string map_path) {
     //streetSeg_time.resize(getNumStreetSegments());
     //streetID_streetName.resize(getNumStreets());
     featureID_featurePts.resize(getNumFeatures());
+    streetID_streetLength.resize(getNumStreets(),0);
     
     // std::vector<std::vector<int>> intersection_street_segments;
     for (int intersection = 0; intersection < getNumIntersections(); ++intersection) {
         for (int i = 0; i < getIntersectionStreetSegmentCount(intersection); ++i) {
             int ss_id = getIntersectionStreetSegment(intersection, i);
             intersection_street_segments[intersection].push_back(ss_id);
-            
         }
     }
     
@@ -76,10 +73,13 @@ bool load_map(std::string map_path) {
     
     // std::vector<double> streetSeg_length;
     // std::vector<double> streetSeg_time;
+    // std::vector<double> streetID_streetLength;
     for (int streetSegment = 0; streetSegment < getNumStreetSegments(); ++streetSegment){ 
         double length = find_street_segment_length(streetSegment);
         streetSeg_length.push_back(length);
-        streetSeg_time.push_back(length/(getInfoStreetSegment(streetSegment).speedLimit)*3.6);
+        InfoStreetSegment this_Seg_info = getInfoStreetSegment(streetSegment);
+        streetSeg_time.push_back(length/(this_Seg_info.speedLimit)*3.6);
+        streetID_streetLength[this_Seg_info.streetID]+=length;
     }
     
     // std::multimap<std::string, int> streetID_streetName;
@@ -95,6 +95,11 @@ bool load_map(std::string map_path) {
             }
         }
         streetID_streetName.insert(std::make_pair(this_name,streetID));
+        /*
+        std::cout<<streetID<<std::endl;
+        std::cout<<"   "<<this_name<<std::endl;
+        std::cout<<"   "<<streetID_streetLength[streetID]<<std::endl;
+         */
     }
     //std::vector<std::vector<LatLon>> featureID_featurePts;
     for (int feature = 0; feature < getNumFeatures(); ++feature) {
@@ -106,21 +111,23 @@ bool load_map(std::string map_path) {
     
     // std::map<OSMID, int> OSMID_NodeIdx;
     for (int nodeCt= 0; nodeCt < getNumberOfNodes(); ++nodeCt) {
-        OSMID osmIdx = getNodeByIndex(nodeCt)->id();
-        OSMID_NodeIdx.insert(std::make_pair(osmIdx,nodeCt));
+        const OSMNode* osmnode = getNodeByIndex(nodeCt);
+        NodeID_Node.insert(std::make_pair(osmnode->id(), osmnode));
     }
     
     // std::map<OSMID, int> wayID_length;
+    // std::unordered_map<OSMID, const OSMWay*> WayID_Way;
     for (int wayCt= 0; wayCt < getNumberOfWays(); ++wayCt) {
         const OSMWay* this_way = getWayByIndex(wayCt);
+        WayID_Way.insert(std::make_pair(this_way->id(), this_way));
         std::vector<OSMID> these_node_ids = getWayMembers(this_way);
         double distance=0;
         for (int i=0; i<these_node_ids.size()-1; ++i){
-            LatLon node_first  = getNodeByIndex(OSMID_NodeIdx.find(these_node_ids[i])  ->second)->coords();
-            LatLon node_second = getNodeByIndex(OSMID_NodeIdx.find(these_node_ids[i+1])->second)->coords();
+            LatLon node_first  = NodeID_Node.find(these_node_ids[i])  ->second ->coords();
+            LatLon node_second = NodeID_Node.find(these_node_ids[i+1])->second ->coords();
             distance += find_distance_between_two_points(std::make_pair(node_first,node_second));
         }
-        wayID_length.insert(std::make_pair(this_way->id(), distance));
+        WayID_length.insert(std::make_pair(this_way->id(), distance));
     }
     
     return true;
@@ -133,9 +140,11 @@ void close_map() {
          street_intersections.clear();
          streetSeg_time.clear();
          streetID_streetName.clear();
+         streetID_streetLength.clear();
          featureID_featurePts.clear();
-         OSMID_NodeIdx.clear();
-         wayID_length.clear();
+         NodeID_Node.clear();
+         WayID_Way.clear();
+         WayID_length.clear();
     closeStreetDatabase(); 
     closeOSMDatabase();
 }
@@ -184,18 +193,34 @@ double find_street_segment_travel_time(int street_segment_id){
 
 int find_closest_intersection(LatLon my_position){
     double closest_distance= 2000000;
-    int closest_intersection= 0;
+    int closest_intersection= -1;
     std::pair<LatLon, LatLon> two_points;
     two_points.first=my_position;
     for (int i=0; i<getNumIntersections(); ++i){
         two_points.second = getIntersectionPosition(i);
         double current_distance = find_distance_between_two_points(two_points);
-        if (current_distance<closest_distance){
+        if (current_distance<closest_distance && current_distance < 10){
             closest_distance=current_distance;
             closest_intersection=i;
         }
     }
     return closest_intersection;
+}
+
+int find_closest_POI(LatLon my_position){
+    double closest_distance= 2000000;
+    int closest_poi= -1;
+    std::pair<LatLon, LatLon> two_points;
+    two_points.first=my_position;
+    for (int i=0; i<getNumPointsOfInterest(); ++i){
+        two_points.second = getPointOfInterestPosition(i);
+        double current_distance = find_distance_between_two_points(two_points);
+        if (current_distance<closest_distance && current_distance < 10){
+            closest_distance=current_distance;
+            closest_poi=i;
+        }
+    }
+    return closest_poi;
 }
 
 std::vector<int> find_street_segments_of_intersection(int intersection_id){
@@ -209,7 +234,7 @@ std::vector<std::string> find_street_names_of_intersection(int intersection_id){
     for(int i = 0; i < street_segments_ids.size(); i++) {
         streetName = getStreetName(getInfoStreetSegment(street_segments_ids[i]).streetID);
         street_names.push_back(streetName);
-    }   
+    }
     return street_names;
 }
 
@@ -353,7 +378,7 @@ double find_feature_area(int feature_id){
 
 double find_way_length(OSMID way_id)
 {
-    return wayID_length.find(way_id)->second;
+    return WayID_length.find(way_id)->second;
 }
 
 //send in a pair of LatLon, give out a pair of XY(int pair))
