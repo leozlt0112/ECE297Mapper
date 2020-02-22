@@ -37,9 +37,7 @@ struct segment_info {
     OSMID wayOSMID;                             // index of way this segment belongs to
 };
 
-<<<<<<< HEAD
 // a vector[intersection_id] storing intersection data
-=======
 struct feature_info {
     bool closed = false;                        // if true, it's closed (poly))
     std::string name;                           // feature name
@@ -57,7 +55,6 @@ struct poi_info {
 };
 
 // a vector[intersection_idx] storing intersection data
->>>>>>> 8a79e0b712954c4d03dd6485c782636c9a30e9ff
 std::vector<intersection_info> intersections;
 
 // a vector[streetSegment_idx] storing street_segment_data
@@ -78,13 +75,11 @@ extern std::vector<double> streetSeg_length;
 // a vector[StreetIndex], each street vector stores streetSegmentIDs
 extern std::vector<std::vector<int>> street_street_segments;
 
-<<<<<<< HEAD
 // a vector[streetIndex], each element stores distance
 extern std::vector<double> streetID_streetLength;
 
 // a variable used to store all possible all features
 extern std::vector<std::vector<LatLon>> featureID_featurePts;
->>>>>>> 8a79e0b712954c4d03dd6485c782636c9a30e9ff
 
 // In Degrees: max_lat, min_lat, max_lon, min_lon
 // In Radians: avg_lat
@@ -134,17 +129,8 @@ struct action_mem{
 
 action_mem memory;
 
-<<<<<<< HEAD
-//events triggered by mouse clicks
-void act_on_mouse_click(ezgl::application* app, GdkEventButton* event, double x, double y);
-
-
-
-
-=======
 // initial setup 
 void initial_setup(ezgl::application *application, bool new_window);
 
 // events triggered by mouse clicks
 void act_on_mouse_click(ezgl::application* app, GdkEventButton* event, double x, double y);
->>>>>>> 8a79e0b712954c4d03dd6485c782636c9a30e9ff
