@@ -1,6 +1,7 @@
 #include "m2.h"
 #include "m2_more.h"
 #include "rectangle.hpp"
+#include "graphics.hpp"
         
 // draw map loads necessary variables and calls draw_map_blank_canvas() in the end.
 void draw_map () {
@@ -142,7 +143,7 @@ void draw_main_canvas (ezgl::renderer *g){
     draw_all_street_segments(g); 
     draw_intersections(g); 
     draw_points_of_interests(g); 
-    
+    draw_street_names(g);
 }
 
 void out_of_bound_prevention(ezgl::renderer *g) {
@@ -275,7 +276,7 @@ void draw_all_street_segments(ezgl::renderer *g){
                     g->draw_line(point1, point2);
                 }
                 else if (this_segment.major_minor==0){
-                    g->set_line_width(1);
+                    g->set_line_width(2);
                     g->set_color(100, 100, 100, 255);
                     g->draw_line(point1, point2);
                 }
@@ -293,7 +294,7 @@ void draw_all_street_segments(ezgl::renderer *g){
                     g->draw_line(point1, point2);
                 }
                 else if (this_segment.major_minor==0){
-                    g->set_line_width(2);
+                    g->set_line_width(5);
                     g->set_color(150, 150, 150, 255);
                     g->draw_line(point1, point2);
                 }
@@ -534,8 +535,7 @@ void draw_features(ezgl::renderer *g) {
                 for(int pts=0; pts<this_feature.allPoints.size()-1; pts++) {
                     ezgl::point2d position1 = this_feature.allPoints[pts  ];
                     ezgl::point2d position2 = this_feature.allPoints[pts+1];
-                    g->set_line_width(1);
-                        // light green for streams
+                    g->set_line_width(10);
                     g->set_color(100, 150, 200, 255);
                     g->draw_line(position1, position2);
                 }
@@ -556,14 +556,41 @@ void draw_points_of_interests(ezgl::renderer *g) {
              g->set_color(ezgl::RED);
             g->fill_arc({x, y}, 10, 0, 360);
         }
-    }  
+    }
 }
+
+void draw_street_names(ezgl::renderer *g) {
+    g->set_font_size(20);
+    g->set_color(50, 100, 50, 255);
+    float visible_width = g->get_visible_world().width();
+    float initial_width = initial_world.width();
+    if (visible_width < 0.02 * initial_width){
+        for (int street=0; street < getNumStreets(); ++street){
+            // find street name and its length
+            std::string street_name = getStreetName(street);
+            int name_size = street_name.size();
+            // find the position and angle to draw the name
+            std::vector<int> these_segments = street_street_segments[street];
+            int this_segment_idx = these_segments[these_segments.size()/2];
+            std::vector<ezgl::point2d> these_points = streetSegments[this_segment_idx].allPoints;
+            ezgl::point2d point1 = these_points[these_points.size()/2 -1];
+            ezgl::point2d point2 = these_points[these_points.size()/2   ];
+            ezgl::point2d middle((point1.x + point2.x)*0.5, (point1.y + point2.y)*0.5);
+            double angle = atan((point2.y-point1.y)/(point2.x-point1.x)) / DEGREE_TO_RADIAN;
+            // draw text
+            g->set_text_rotation(angle);
+            double segment_length = streetSeg_length[this_segment_idx];
+            g->draw_text(middle,street_name,std::min((double)(10*name_size),segment_length),10);
+        }
+    }
+}
+
 void act_on_mouse_click(ezgl::application* app, GdkEventButton* event, double x, double y) {
     std::cout << "Mouse clicked at (" << x << "," << y << ")\n";
     LatLon pos = LatLon(lat_from_y(y), lon_from_x(x));
-    // find closedPOIid, -1 means too far away to any intersections =
+    // find closedPOIid, -1 means too far away to any poi
     int idForPOI=find_closest_POI(pos);
-    // unhighlight the last intersection
+    // un-highlight the last intersection
     if(memory.last_clicked_POI !=-1) 
         POIs[memory.last_clicked_POI].highlight = false; 
     // set the value of last_clicked
