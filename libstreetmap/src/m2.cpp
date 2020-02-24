@@ -167,7 +167,7 @@ void out_of_bound_prevention(ezgl::renderer *g) {
 //draws all intersections
 void draw_intersections (ezgl::renderer *g){
     int visible_width = g->get_visible_world().width();
-    if (visible_width >2000) return;
+    if (visible_width > 2000) return;
     float radius = 1;
     for (size_t i = 0; i < intersections.size(); ++i) {
         float x = intersections[i].x_;
@@ -340,7 +340,7 @@ void draw_features(ezgl::renderer *g) {
                 }
             }
         }
-        // 0.36
+        // 0.6^2
         else if (visible_width > 0.3 * initial_width) {
             if (this_feature.closed && this_feature.area > visible_area/100000) {
                 // dark blue
@@ -365,7 +365,7 @@ void draw_features(ezgl::renderer *g) {
                 }
             }
         }
-        // 0.21, 0.12
+        // 0.6^3, 0.6^4
         else if (visible_width > 0.1 * initial_width){
             if (this_feature.closed){
                 // dark blue
@@ -400,7 +400,7 @@ void draw_features(ezgl::renderer *g) {
                 }
             }
         }
-        // 0.077
+        // 0.6^5
         else if (visible_width > 0.05 * initial_width){
              if (this_feature.closed){
                 // dark blue
@@ -440,7 +440,7 @@ void draw_features(ezgl::renderer *g) {
                 }
             }
         }
-        // 0.046, 0.027
+        // 0.6^6, 0.6^7
         else if (visible_width > 0.02 * initial_width){
              if (this_feature.closed){
                 // dark blue
@@ -485,7 +485,7 @@ void draw_features(ezgl::renderer *g) {
                 }
             }
         }
-        // 0.016, 0
+        // 0.6^8, 0
         else{
             // closed
             if (this_feature.closed){
@@ -545,16 +545,20 @@ void draw_features(ezgl::renderer *g) {
 }
 
 void draw_points_of_interests(ezgl::renderer *g) {
-    for(int poi=0; poi<POIs.size(); poi++) {
-        float x = POIs[poi].x_;
-        float y = POIs[poi].y_;
-        if (POIs[poi].highlight) {
-            g->set_color(ezgl::MAGENTA);
-            g->fill_arc({x, y}, 10, 0, 360);
-        }
-        else {
-             g->set_color(ezgl::RED);
-            g->fill_arc({x, y}, 10, 0, 360);
+    float visible_width = g->get_visible_world().width();
+    float initial_width = initial_world.width();
+    if (visible_width < 2000 * initial_width){
+        for(int poi=0; poi<POIs.size(); poi++) {
+            float x = POIs[poi].x_;
+            float y = POIs[poi].y_;
+            if (POIs[poi].highlight) {
+                g->set_color(ezgl::MAGENTA);
+                g->fill_arc({x, y}, 5, 0, 360);
+            }
+            else {
+                 g->set_color(ezgl::RED);
+                g->fill_arc({x, y}, 5, 0, 360);
+            }
         }
     }
 }
@@ -623,37 +627,48 @@ void find_button(GtkWidget */*widget*/, ezgl::application *application){
     
     // Update the status bar message
     application->update_message("Find Button Pressed");
-
-    //get user input 
-    std::string firstStreet;
-    std::cout << "please enter first street name:" << std::endl;
-    std::cin >> firstStreet;
-     
-    std::string secondStreet;
-    std::cout << "please enter second street name:" << std::endl;
-    std::cin >> secondStreet;
-     
-    //get street ids from street names    
-    int first_id= streetID_streetName.find(firstStreet)->second;
-    int second_id= streetID_streetName.find(secondStreet)->second;
+    std::cout << "please enter both street names:" << std::endl;
     
-        //the two street names are the same 
-    if(first_id != second_id){
+    // get street1 entry
+    GtkEntry* text_entry1 = (GtkEntry *) application->get_object("TextEntry1");
+    std::string firstStreet(gtk_entry_get_text(text_entry1));
+    std::cout<<"entry1:"<<firstStreet<<"\n";
+    
+    //get street ids from street names    
+    std::vector<int> first_ids  = find_street_ids_from_partial_street_name(firstStreet);
+    for (int i=0; i <first_ids.size(); ++i)
+        std::cout << first_ids[i] << "  " << getStreetName(first_ids[i]) << std::endl;
+    
+    // get street2 entry
+    GtkEntry* text_entry2 = (GtkEntry *) application->get_object("TextEntry2");
+    std::string secondStreet(gtk_entry_get_text(text_entry2));
+    std::cout<<"entry2:"<<secondStreet<<"\n";
+    
+    //get street ids from street names
+    std::vector<int> second_ids = find_street_ids_from_partial_street_name(secondStreet);
+    for (int i=0; i <second_ids.size(); ++i)
+        std::cout << second_ids[i] << "  " << getStreetName(second_ids[i]) << std::endl;
+
+    //the two streets are not the same 
+    if(first_ids[0] != second_ids[0]){
     
         std::pair<int, int> street_ids;
-        street_ids = std::make_pair(first_id, second_id); 
+        street_ids = std::make_pair(first_ids[0], second_ids[0]); 
     
         //find intersection ids for two intersecting streets
         std::vector<int> intersections_id;
         intersections_id = find_intersections_of_two_streets(street_ids);
-    
+        
+        if (intersections_id.size()==0)
+            std::cout<<"no intersections"<<std::endl;
         //highlight intersections 
         for(int i=0; i<intersections_id.size(); ++i){
             intersections[intersections_id[i]].highlight = true;
+            //print intersection info
+            std::cout << intersections_id[i] << "  " << intersections[intersections_id[i]].name <<std::endl;
         }
         
-        //print intersection info
-        std::cout << "intersection info:"  << std::endl;
+        application->refresh_drawing();
     }
 }
 
