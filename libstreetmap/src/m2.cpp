@@ -92,8 +92,8 @@ void draw_map_load (){
         // store major_minor
         std::unordered_map<std::string,std::string> these_tags = WayID_tags.find(this_segment_info.wayOSMID)->second;
         std::string highway_tag = these_tags.find("highway")->second;
-        if      (highway_tag == "motorway"  || highway_tag == "trunk"   || 
-                 highway_tag == "primary"   || highway_tag == "secondary")                                                  { streetSegments[i].major_minor = 2; }
+        if      (highway_tag == "motorway"      || highway_tag == "trunk"           || 
+                 highway_tag == "primary"       || highway_tag == "secondary")                                              { streetSegments[i].major_minor = 2; }
         else if (highway_tag == "motorway_link" || highway_tag == "trunk_link"      || 
                  highway_tag == "primary_link"  || highway_tag == "secondary_link"  ||
                  highway_tag == "tertiary"      || highway_tag == "tertiary_link")                                          { streetSegments[i].major_minor = 1; }
@@ -107,10 +107,9 @@ void draw_map_load (){
         POIs[i].y_   = y_from_lat(this_position.lat());
         POIs[i].name = getPointOfInterestName(i);
         POIs[i].type = getPointOfInterestType(i);
-        std::cout<<POIs[i].name<<"\n"<<POIs[i].x_<<"\n"<<POIs[i].y_ <<"\n\n"<<std::endl;
     }
     
-    // load features accordingly based on if they are closed or open
+    // load features
     for (int featureid=0; featureid<featureID_featurePts.size(); featureid++) {
          int totalPtsCount = getFeaturePointCount(featureid); 
          // set all points
@@ -301,14 +300,6 @@ void draw_all_street_segments(ezgl::renderer *g){
             }
         }
     }
-}
-
-void initial_setup(ezgl::application *application, bool new_window){
-    // Update the status bar message
-    application->update_message("EZGL Application"); 
-  
-    // Create a Find button and link it with find_button callback.
-    application->create_button("Find", 8, find_button);
 }
 
 // Leo draw features
@@ -589,6 +580,14 @@ void draw_street_names(ezgl::renderer *g) {
     }
 }
 
+void initial_setup(ezgl::application *application, bool new_window){
+    // Update the status bar message
+    application->update_message("EZGL Application"); 
+  
+    // Create a Find button and link it with find_button callback.
+    application->create_button("Find", 8, find_button);
+}
+
 void act_on_mouse_click(ezgl::application* app, GdkEventButton* event, double x, double y) {
     std::cout << "Mouse clicked at (" << x << "," << y << ")\n";
     LatLon pos = LatLon(lat_from_y(y), lon_from_x(x));
@@ -620,7 +619,6 @@ void act_on_mouse_click(ezgl::application* app, GdkEventButton* event, double x,
 
     app->refresh_drawing();
 }
-
 
 //A callback function for Find button 
 void find_button(GtkWidget */*widget*/, ezgl::application *application){
