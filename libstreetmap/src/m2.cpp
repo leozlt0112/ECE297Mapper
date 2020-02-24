@@ -303,7 +303,11 @@ void draw_all_street_segments(ezgl::renderer *g){
 }
 
 void initial_setup(ezgl::application *application, bool new_window){
-    return;
+    // Update the status bar message
+    application->update_message("EZGL Application"); 
+  
+    // Create a Find button and link it with find_button callback.
+    application->create_button("Find", 8, find_button);
 }
 
 // Leo draw features
@@ -584,6 +588,46 @@ void act_on_mouse_click(ezgl::application* app, GdkEventButton* event, double x,
     }
 
     app->refresh_drawing();
+}
+
+
+//A callback function for Find button 
+void find_button(GtkWidget */*widget*/, ezgl::application *application){
+    
+    // Update the status bar message
+    application->update_message("Find Button Pressed");
+
+    //get user input 
+    std::string firstStreet;
+    std::cout << "please enter first street name:" << std::endl;
+    std::cin >> firstStreet;
+     
+    std::string secondStreet;
+    std::cout << "please enter second street name:" << std::endl;
+    std::cin >> secondStreet;
+     
+    //get street ids from street names    
+    int first_id= streetID_streetName.find(firstStreet)->second;
+    int second_id= streetID_streetName.find(secondStreet)->second;
+    
+        //the two street names are the same 
+    if(first_id != second_id){
+    
+        std::pair<int, int> street_ids;
+        street_ids = std::make_pair(first_id, second_id); 
+    
+        //find intersection ids for two intersecting streets
+        std::vector<int> intersections_id;
+        intersections_id = find_intersections_of_two_streets(street_ids);
+    
+        //highlight intersections 
+        for(int i=0; i<intersections_id.size(); ++i){
+            intersections[intersections_id[i]].highlight = true;
+        }
+        
+        //print intersection info
+        std::cout << "intersection info:"  << std::endl;
+    }
 }
 
 // uses global variable avg_lat (in radians)
