@@ -586,6 +586,11 @@ void initial_setup(ezgl::application *application, bool new_window){
   
     // Create a Find button and link it with find_button callback.
     application->create_button("Find", 8, find_button);
+
+    GtkWidget* show_entry1 = (GtkWidget *) application->get_object("TextEntry1");
+    GtkWidget* show_entry2 = (GtkWidget *) application->get_object("TextEntry2");    
+    gtk_widget_set_visible(show_entry1,false);
+    gtk_widget_set_visible(show_entry2,false);
 }
 
 void act_on_mouse_click(ezgl::application* app, GdkEventButton* event, double x, double y) {
@@ -627,6 +632,11 @@ void find_button(GtkWidget */*widget*/, ezgl::application *application){
     application->update_message("Find Button Pressed");
     std::cout << "please enter both street names:" << std::endl;
     
+    GtkWidget* show_entry1 = (GtkWidget *) application->get_object("TextEntry1");
+    GtkWidget* show_entry2 = (GtkWidget *) application->get_object("TextEntry2");
+    gtk_widget_set_visible(show_entry1,true);
+    gtk_widget_set_visible(show_entry2,true);
+    
     // get street1 entry
     GtkEntry* text_entry1 = (GtkEntry *) application->get_object("TextEntry1");
     std::string firstStreet(gtk_entry_get_text(text_entry1));
@@ -646,7 +656,11 @@ void find_button(GtkWidget */*widget*/, ezgl::application *application){
     std::vector<int> second_ids = find_street_ids_from_partial_street_name(secondStreet);
     for (int i=0; i <second_ids.size(); ++i)
         std::cout << second_ids[i] << "  " << getStreetName(second_ids[i]) << std::endl;
-
+    
+    if (first_ids.size()==0 || second_ids.size()==0){
+        std::cout<<"invalid entry"<<std::endl;
+        return;
+    } 
     //the two streets are not the same 
     if(first_ids[0] != second_ids[0]){
     
