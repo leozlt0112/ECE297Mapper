@@ -687,6 +687,7 @@ void act_on_key_press(ezgl::application *application, GdkEventKey */*event*/, ch
             std::cout << intersections_id[i] << "  " << intersections[intersections_id[i]].name <<std::endl;
         }
         
+        // change the visible to the point highlighted
         ezgl::rectangle visible_world = application->get_renderer()->get_visible_world();
         float visible_width  = visible_world.width();
         float visible_height = visible_world.height();
