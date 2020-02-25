@@ -146,7 +146,7 @@ void initial_setup(ezgl::application *application, bool new_window);
 void act_on_mouse_click(ezgl::application* app, GdkEventButton* event, double x, double y);
 
 // events triggered by keyboard
-void act_on_key_press(ezgl::application* application, GdkEventKey *event, char *key_name);
+void act_on_key_press(ezgl::application* application, GdkEventKey* event, char *key_name);
 
-//Find button callback function
-void find_button(GtkWidget */*widget*/, ezgl::application *application);
+// Find button callback function
+void FindButton_callback(GtkToggleButton* widget, ezgl::application *application);

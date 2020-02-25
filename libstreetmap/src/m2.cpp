@@ -586,13 +586,15 @@ void initial_setup(ezgl::application *application, bool new_window){
     // Update the status bar message
     application->update_message("EZGL Application"); 
   
-    // Create a Find button and link it with find_button callback.
-    // hide it by default
-    application->create_button("Find", 8, find_button);
+    // hide the search bars by default
     GtkWidget* entry1 = (GtkWidget *) application->get_object("TextEntry1");
     GtkWidget* entry2 = (GtkWidget *) application->get_object("TextEntry2");    
     gtk_widget_set_visible(entry1,false);
     gtk_widget_set_visible(entry2,false);
+    
+    // link the find button with callback function
+    GtkToggleButton* find_button = (GtkToggleButton *) application->get_object("FindButton");
+    g_signal_connect(find_button, "toggled", G_CALLBACK(FindButton_callback), application);
 }
 
 void act_on_mouse_click(ezgl::application* app, GdkEventButton* event, double x, double y) {
@@ -637,10 +639,10 @@ void act_on_key_press(ezgl::application *application, GdkEventKey */*event*/, ch
     std::cout << key_name << " key is pressed" << std::endl;
     */
     
-    // find intersections of two streets when "Return"
-    GtkWidget* entry1 = (GtkWidget *) application->get_object("TextEntry1");
-    GtkWidget* entry2 = (GtkWidget *) application->get_object("TextEntry2");
-    if (gtk_widget_get_visible(entry1) && gtk_widget_get_visible(entry2) && key_pressed=="Return"){
+    // find intersections of two streets when "Return" is pressed
+    GtkToggleButton* find_button = (GtkToggleButton *) application->get_object("FindButton");
+    gboolean button_state = gtk_toggle_button_get_active(find_button);
+    if (button_state && key_pressed=="Return"){
 
         // get street1 entry
         GtkEntry* text_entry1 = (GtkEntry *) application->get_object("TextEntry1");
@@ -666,14 +668,14 @@ void act_on_key_press(ezgl::application *application, GdkEventKey */*event*/, ch
         if (first_ids.size()==0 || second_ids.size()==0 || first_ids[0] == second_ids[0]){
             std::cout<<"invalid entry"<<std::endl;
             return;
-        } 
-
+        }
+        
         // find intersection ids for two intersecting streets
         std::pair<int, int> street_ids;
         street_ids = std::make_pair(first_ids[0], second_ids[0]); 
         std::vector<int> intersections_id;
         intersections_id = find_intersections_of_two_streets(street_ids);
-
+        
         // intersections not found
         if (intersections_id.size()==0){
             std::cout<<"no intersections"<<std::endl;
@@ -706,19 +708,17 @@ void act_on_key_press(ezgl::application *application, GdkEventKey */*event*/, ch
 
 // A callback function for Find button 
 // it turns on/off the search bar
-void find_button(GtkWidget */*widget*/, ezgl::application *application){
-
-    std::cout << "Find Button Pressed" << std::endl;
-    
+void FindButton_callback(GtkToggleButton* widget, ezgl::application *application){
+    gboolean button_state = gtk_toggle_button_get_active(widget);
     GtkWidget* entry1 = (GtkWidget *) application->get_object("TextEntry1");
     GtkWidget* entry2 = (GtkWidget *) application->get_object("TextEntry2");
-    if (gtk_widget_get_visible(entry1) && gtk_widget_get_visible(entry2)){
-        gtk_widget_set_visible(entry1, false);
-        gtk_widget_set_visible(entry2, false);
-    }
-    else{
+    if (button_state){
         gtk_widget_set_visible(entry1, true);
         gtk_widget_set_visible(entry2, true);
+    }
+    else{
+        gtk_widget_set_visible(entry1, false);
+        gtk_widget_set_visible(entry2, false);
     }
 }
 
