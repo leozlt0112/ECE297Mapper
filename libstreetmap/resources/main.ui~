@@ -152,6 +152,19 @@
               </packing>
             </child>
             <child>
+              <object class="GtkToggleButton" id="FindButton">
+                <property name="label" translatable="yes">Find</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+              </object>
+              <packing>
+                <property name="left_attach">0</property>
+                <property name="top_attach">7</property>
+                <property name="width">3</property>
+              </packing>
+            </child>
+            <child>
               <placeholder/>
             </child>
             <child>
@@ -169,7 +182,8 @@
           </object>
           <packing>
             <property name="left_attach">1</property>
-            <property name="top_attach">2</property>
+            <property name="top_attach">0</property>
+            <property name="height">3</property>
           </packing>
         </child>
         <child>
@@ -199,6 +213,7 @@
           <object class="GtkEntry" id="TextEntry1">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
+            <property name="placeholder_text" translatable="yes">Enter first street name here</property>
           </object>
           <packing>
             <property name="left_attach">0</property>
@@ -209,17 +224,12 @@
           <object class="GtkEntry" id="TextEntry2">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
+            <property name="placeholder_text" translatable="yes">Enter second street name here</property>
           </object>
           <packing>
             <property name="left_attach">0</property>
             <property name="top_attach">1</property>
           </packing>
-        </child>
-        <child>
-          <placeholder/>
-        </child>
-        <child>
-          <placeholder/>
         </child>
       </object>
     </child>

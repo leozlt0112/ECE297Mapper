@@ -133,6 +133,7 @@ struct action_mem{
     // store intersections u clickded
     int last_clicked_intersection=-1;
     int last_clicked_POI=-1;
+    std::vector<int> last_searched_intersections;
     ezgl::rectangle last_visible_world;
 };
 
@@ -143,6 +144,9 @@ void initial_setup(ezgl::application *application, bool new_window);
 
 // events triggered by mouse clicks
 void act_on_mouse_click(ezgl::application* app, GdkEventButton* event, double x, double y);
+
+// events triggered by keyboard
+void act_on_key_press(ezgl::application* application, GdkEventKey *event, char *key_name);
 
 //Find button callback function
 //enter two street names: 
