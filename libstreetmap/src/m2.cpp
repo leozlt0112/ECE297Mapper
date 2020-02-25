@@ -634,7 +634,7 @@ void act_on_key_press(ezgl::application *application, GdkEventKey */*event*/, ch
     /*
     application->update_message("Key Pressed");
 
-    std::cout << key_name <<" key is pressed" << std::endl;
+    std::cout << key_name << " key is pressed" << std::endl;
     */
     
     // find intersections of two streets when "Return"
@@ -647,7 +647,7 @@ void act_on_key_press(ezgl::application *application, GdkEventKey */*event*/, ch
         std::string firstStreet(gtk_entry_get_text(text_entry1));
         std::cout<<"entry1:"<<firstStreet<<"\n";
 
-        //get street ids from street names    
+        //get street ids from street name 1
         std::vector<int> first_ids  = find_street_ids_from_partial_street_name(firstStreet);
         for (int i=0; i <first_ids.size(); ++i)
             std::cout << first_ids[i] << "  " << getStreetName(first_ids[i]) << std::endl;
@@ -657,36 +657,47 @@ void act_on_key_press(ezgl::application *application, GdkEventKey */*event*/, ch
         std::string secondStreet(gtk_entry_get_text(text_entry2));
         std::cout<<"entry2:"<<secondStreet<<"\n";
 
-        //get street ids from street names
+        // get street ids from street name 2
         std::vector<int> second_ids = find_street_ids_from_partial_street_name(secondStreet);
         for (int i=0; i <second_ids.size(); ++i)
             std::cout << second_ids[i] << "  " << getStreetName(second_ids[i]) << std::endl;
-
-        if (first_ids.size()==0 || second_ids.size()==0){
+        
+        // check if no streets found or both entries are the same street
+        if (first_ids.size()==0 || second_ids.size()==0 || first_ids[0] == second_ids[0]){
             std::cout<<"invalid entry"<<std::endl;
             return;
         } 
-        //the two streets are not the same 
-        if(first_ids[0] != second_ids[0]){
 
-            std::pair<int, int> street_ids;
-            street_ids = std::make_pair(first_ids[0], second_ids[0]); 
+        // find intersection ids for two intersecting streets
+        std::pair<int, int> street_ids;
+        street_ids = std::make_pair(first_ids[0], second_ids[0]); 
+        std::vector<int> intersections_id;
+        intersections_id = find_intersections_of_two_streets(street_ids);
 
-            //find intersection ids for two intersecting streets
-            std::vector<int> intersections_id;
-            intersections_id = find_intersections_of_two_streets(street_ids);
-
-            if (intersections_id.size()==0)
-                std::cout<<"no intersections"<<std::endl;
-            //highlight intersections 
-            for(int i=0; i<intersections_id.size(); ++i){
-                intersections[intersections_id[i]].highlight = true;
-                //print intersection info
-                std::cout << intersections_id[i] << "  " << intersections[intersections_id[i]].name <<std::endl;
-            }
-
-            application->refresh_drawing();
+        // intersections not found
+        if (intersections_id.size()==0){
+            std::cout<<"no intersections"<<std::endl;
+            return;
         }
+        
+        // intersections found and highlighted
+        for(int i=0; i<intersections_id.size(); ++i){
+            intersections[intersections_id[i]].highlight = true;
+            //print intersection info
+            std::cout << intersections_id[i] << "  " << intersections[intersections_id[i]].name <<std::endl;
+        }
+        
+        ezgl::rectangle visible_world = application->get_renderer()->get_visible_world();
+        float visible_width  = visible_world.width();
+        float visible_height = visible_world.height();
+        float desired_width  = 100;
+        float desired_height = 100/visible_width*visible_height;
+        ezgl::point2d starting_point(intersections[intersections_id[0]].x_ - desired_width/2,
+                                     intersections[intersections_id[0]].y_ - desired_height/2);
+        ezgl::rectangle new_world_view(starting_point, desired_width, desired_height);
+        application->get_renderer()->set_visible_world(new_world_view);
+        application->refresh_drawing();
+        
         return;
     }
 
@@ -695,10 +706,8 @@ void act_on_key_press(ezgl::application *application, GdkEventKey */*event*/, ch
 // A callback function for Find button 
 // it turns on/off the search bar
 void find_button(GtkWidget */*widget*/, ezgl::application *application){
-    
-    // Update the status bar message
-    application->update_message("Find Button Pressed");
-    std::cout << "please enter both street names:" << std::endl;
+
+    std::cout << "Find Button Pressed" << std::endl;
     
     GtkWidget* entry1 = (GtkWidget *) application->get_object("TextEntry1");
     GtkWidget* entry2 = (GtkWidget *) application->get_object("TextEntry2");

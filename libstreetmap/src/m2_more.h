@@ -149,7 +149,4 @@ void act_on_mouse_click(ezgl::application* app, GdkEventButton* event, double x,
 void act_on_key_press(ezgl::application* application, GdkEventKey *event, char *key_name);
 
 //Find button callback function
-//enter two street names: 
-//1. have all intersections between street names be highlighted 
-//2. print information about the intersections 
 void find_button(GtkWidget */*widget*/, ezgl::application *application);
