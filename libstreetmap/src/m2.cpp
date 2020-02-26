@@ -581,6 +581,9 @@ void draw_points_of_interests(ezgl::renderer *g) {
             if (POIs[poi].highlight) {
                 g->set_color(ezgl::MAGENTA);
                 g->fill_arc({x, y}, 5, 0, 360);
+                ezgl::surface *png_surface = ezgl::renderer::load_png("small_image.png");
+                g->draw_surface(png_surface, {x, y});
+                ezgl::renderer::free_surface(png_surface);
             }
             else {
                  g->set_color(ezgl::RED);
