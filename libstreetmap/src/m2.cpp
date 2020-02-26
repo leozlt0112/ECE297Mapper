@@ -626,6 +626,8 @@ void draw_street_names(ezgl::renderer *g) {
 void initial_setup(ezgl::application *application, bool new_window){
     // Update the status bar message
     application->update_message("EZGL Application"); 
+    GtkWindow* main_window = (GtkWindow *)application->get_object("MainWindow");
+    gtk_window_set_title(main_window, "Amazing Map");
   
     // hide the search bars by default
     GtkWidget* entry1 = (GtkWidget *) application->get_object("TextEntry1");
