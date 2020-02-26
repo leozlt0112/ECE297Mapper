@@ -280,20 +280,37 @@ void draw_all_street_segments(ezgl::renderer *g){
                     g->draw_line(point1, point2);
                 }
             }
-            // 0.016, 0
-            else{
+            // 0.6^8
+            else if (visible_width > 0.016 * initial_width){
                 if (this_segment.major_minor==2){
                     g->set_line_width(10);
                     g->set_color(255, 255, 255, 255);
                     g->draw_line(point1, point2);
                 }
                 else if (this_segment.major_minor==1){
-                    g->set_line_width(5);
+                    g->set_line_width(7);
                     g->set_color(200, 200, 200, 255);
                     g->draw_line(point1, point2);
                 }
                 else if (this_segment.major_minor==0){
-                    g->set_line_width(5);
+                    g->set_line_width(7);
+                    g->set_color(150, 150, 150, 255);
+                    g->draw_line(point1, point2);
+                }
+            }
+            else {
+                if (this_segment.major_minor==2){
+                    g->set_line_width(15);
+                    g->set_color(255, 255, 255, 255);
+                    g->draw_line(point1, point2);
+                }
+                else if (this_segment.major_minor==1){
+                    g->set_line_width(15);
+                    g->set_color(200, 200, 200, 255);
+                    g->draw_line(point1, point2);
+                }
+                else if (this_segment.major_minor==0){
+                    g->set_line_width(15);
                     g->set_color(150, 150, 150, 255);
                     g->draw_line(point1, point2);
                 }
@@ -430,6 +447,16 @@ void draw_features(ezgl::renderer *g) {
                     g->fill_poly(this_feature.allPoints);
                 }
             }
+            // non-closed
+            else{
+                for(int pts=0; pts<this_feature.allPoints.size()-1; pts++) {
+                    ezgl::point2d position1 = this_feature.allPoints[pts  ];
+                    ezgl::point2d position2 = this_feature.allPoints[pts+1];
+                    g->set_line_width(2);
+                    g->set_color(100, 150, 200, 255);
+                    g->draw_line(position1, position2);
+                }
+            }
         }
         // 0.6^6, 0.6^7
         else if (visible_width > 0.02 * initial_width){
@@ -473,6 +500,16 @@ void draw_features(ezgl::renderer *g) {
                 if (this_feature.type==Beach) {
                     g->set_color(125, 100, 75, 255);
                     g->fill_poly(this_feature.allPoints);
+                }
+            }
+            // non-closed
+            else{
+                for(int pts=0; pts<this_feature.allPoints.size()-1; pts++) {
+                    ezgl::point2d position1 = this_feature.allPoints[pts  ];
+                    ezgl::point2d position2 = this_feature.allPoints[pts+1];
+                    g->set_line_width(5);
+                    g->set_color(100, 150, 200, 255);
+                    g->draw_line(position1, position2);
                 }
             }
         }
@@ -547,15 +584,15 @@ void draw_points_of_interests(ezgl::renderer *g) {
             }
             else {
                  g->set_color(ezgl::RED);
-                g->fill_arc({x, y}, 5, 0, 360);
+                g->fill_arc({x, y}, 2, 0, 360);
             }
         }
     }
 }
 
 void draw_street_names(ezgl::renderer *g) {
-    g->set_font_size(20);
-    g->set_color(50, 100, 50, 255);
+    g->set_font_size(10);
+    g->set_color(0, 0, 0, 255);
     float visible_width = g->get_visible_world().width();
     float initial_width = initial_world.width();
     if (visible_width < 0.02 * initial_width){
@@ -574,7 +611,8 @@ void draw_street_names(ezgl::renderer *g) {
             // draw text
             g->set_text_rotation(angle);
             double segment_length = streetSeg_length[this_segment_idx];
-            g->draw_text(middle,street_name,std::min((double)(10*name_size),segment_length),10);
+            //g->draw_text(middle,street_name,std::min((double)(10*name_size),segment_length),10);
+            g->draw_text(middle,street_name,(double)(10*name_size),10);
         }
     }
 }
