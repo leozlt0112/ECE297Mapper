@@ -17,6 +17,7 @@
  */
 
 #include "ezgl/callback.hpp"
+extern ezgl::rectangle initial_world;
 
 namespace ezgl {
 
@@ -224,7 +225,11 @@ gboolean press_left(GtkWidget *, gpointer data)
   std::string main_canvas_id = application->get_main_canvas_id();
   auto canvas = application->get_canvas(main_canvas_id);
 
-  ezgl::translate_left(canvas, 5.0);
+  /*
+  ezgl::rectangle new_world = canvas->get_camera().get_world();
+  double new_left_bound = new_world.left() - new_world.width() / 5.0;
+  if (new_left_bound > initial_world.left())*/
+    ezgl::translate_left(canvas, 5.0);
 
   return TRUE;
 }

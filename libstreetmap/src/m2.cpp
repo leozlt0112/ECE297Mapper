@@ -648,7 +648,9 @@ void act_on_mouse_click(ezgl::application* app, GdkEventButton* event, double x,
     memory.last_clicked_POI = idForPOI;
     // highlight current clicked 
     if (idForPOI != -1) {
-        POIs[idForPOI].highlight = true; 
+        POIs[idForPOI].highlight = true;
+        std::string status_message = "Closest POI: " + POIs[idForPOI].name;
+        app->update_message(status_message);
     }
     
     //find closest intersection_id, -1 means too far away to any intersections
@@ -662,7 +664,7 @@ void act_on_mouse_click(ezgl::application* app, GdkEventButton* event, double x,
     if (id != -1) {
         intersections[id].highlight = true;
         std::string status_message = "Closest Intersection: " + intersections[id].name;
-       app->update_message(status_message);
+        app->update_message(status_message);
     }
 
     app->refresh_drawing();
