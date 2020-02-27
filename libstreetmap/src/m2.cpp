@@ -626,6 +626,8 @@ void draw_street_names(ezgl::renderer *g) {
 void initial_setup(ezgl::application *application, bool new_window){
     // Update the status bar message
     application->update_message("EZGL Application"); 
+    
+    // Update the title bar
     GtkWindow* main_window = (GtkWindow *)application->get_object("MainWindow");
     gtk_window_set_title(main_window, "Amazing Map");
   
@@ -635,9 +637,25 @@ void initial_setup(ezgl::application *application, bool new_window){
     gtk_widget_set_visible(entry1,false);
     gtk_widget_set_visible(entry2,false);
     
+    /*
     // link the find button with callback function
     GtkToggleButton* find_button = (GtkToggleButton *) application->get_object("FindButton");
     g_signal_connect(find_button, "toggled", G_CALLBACK(FindButton_callback), application);
+    */
+    
+    // link the test button with callback function
+    GtkButton* find_button = (GtkButton *) application->get_object("FindButton");
+    g_signal_connect(find_button, "clicked", G_CALLBACK(FindButton_callback), application);
+    
+    // Initialize the intersections search window.
+    // Link the deletion of popup window with callback function
+    GtkWindow* pop_window = (GtkWindow *) application->get_object("IntersectionsSearch");
+    gtk_window_set_title(pop_window, "Streets Intersections Search");
+    g_signal_connect(pop_window, "delete-event", G_CALLBACK(gtk_widget_hide_on_delete), application);
+    
+    // Link pop entry key press "Return" with callback function
+    GtkEntry* pop_entry = (GtkEntry *) application->get_object("Popup_Entry");
+    g_signal_connect(pop_entry, "key-release-event", G_CALLBACK(IntersectionsEntryReturn_callback), application);
 }
 
 void act_on_mouse_click(ezgl::application* app, GdkEventButton* event, double x, double y) {
@@ -671,7 +689,7 @@ void act_on_mouse_click(ezgl::application* app, GdkEventButton* event, double x,
         std::string status_message = "Closest Intersection: " + intersections[id].name;
         app->update_message(status_message);
     }
-
+    
     app->refresh_drawing();
 }
 
@@ -684,11 +702,45 @@ void act_on_key_press(ezgl::application *application, GdkEventKey */*event*/, ch
     std::cout << key_name << " key is pressed" << std::endl;
     */
     
-    // find intersections of two streets when "Return" is pressed
-    GtkToggleButton* find_button = (GtkToggleButton *) application->get_object("FindButton");
-    gboolean button_state = gtk_toggle_button_get_active(find_button);
+    /*
+    // read entry when it is visible, then perform actions accordingly
+    auto popCombo    = application->get_object("Results_Matched");
+    auto popCombo    = application->get_object("Results_Matched");
     if (button_state && key_pressed=="Return"){
-
+        std::string Street_1,Street_2;
+        GtkWindow* popWindow    = (GtkWindow*) application->get_object("IntersectionsSearch");
+        std::cout<<"yooo\n";
+        // get entry text
+        auto popEntry  = application->get_object("Popup_Entry");
+        std::string entryText(gtk_entry_get_text((GtkEntry*)popEntry));
+        // get and check the label
+        GtkLabel* popLabel = (GtkLabel*) application->get_object("Popup_Label");
+        std::string labelText(gtk_label_get_text(popLabel));
+        // check if prompting street name 1 or 2 entering
+        if (labelText == "Please enter the first street name"){
+            // get street1 entry
+            Street_1 = entryText;
+            std::cout<<"entry1:"<<Street_1<<"\n";
+            // update the label
+            gtk_label_set_text(popLabel, "Please select the first street name");
+            // clear and hide the entry
+            gtk_widget_set_visible((GtkWidget*)popEntry,false);
+            // populate the combo box
+            
+            // set the combo box visible
+            
+        }
+        else if (labelText == "Please enter the first street name"){
+            // get street2 entry
+            Street_2 = entryText;
+            std::cout<<"entry2:"<<Street_2<<"\n";
+        }
+        
+    }
+     */
+    
+        /*
+        {
         // get street1 entry
         GtkEntry* text_entry1 = (GtkEntry *) application->get_object("TextEntry1");
         std::string firstStreet(gtk_entry_get_text(text_entry1));
@@ -748,9 +800,12 @@ void act_on_key_press(ezgl::application *application, GdkEventKey */*event*/, ch
         
         return;
     }
+    */
+    
 
 }
 
+/*
 // A callback function for Find button 
 // it turns on/off the search bar
 void FindButton_callback(GtkToggleButton* widget, ezgl::application *application){
@@ -766,7 +821,35 @@ void FindButton_callback(GtkToggleButton* widget, ezgl::application *application
         gtk_widget_set_visible(entry2, false);
     }
 }
+*/
 
+// initialize the pop up window and present it
+void FindButton_callback(GtkButton* widget, ezgl::application *application){
+        // initialize entry (empty)
+        GtkEntry* entry = (GtkEntry*)application->get_object("Popup_Entry");
+        gtk_entry_set_text (entry, "");
+        // initialize combo box (hide)
+        GtkWidget* combo = (GtkWidget*)application->get_object("Results_Matched");
+        gtk_widget_set_visible (combo, false);
+        // initialize label ("first street name")
+        GtkLabel* label = (GtkLabel*)application->get_object("Popup_Label");
+        gtk_label_set_text (label, "Please enter the first street name");
+        // present the window
+        GtkWindow* popup = (GtkWindow*)application->get_object("IntersectionsSearch");
+        gtk_window_present (popup);
+}
+
+void IntersectionsEntryReturn_callback(GtkEntry* widget, GdkEventKey* event, ezgl::application *application){
+    // get key pressed
+    std::string key_released(gdk_keyval_name(event->keyval));
+    if ( key_released == "Return"){
+        // get the entry text
+        std::string entryText(gtk_entry_get_text(widget));
+        // store it in global variable
+        memory.last_entry = entryText;
+        std::cout<<entryText<<std::endl;
+    }
+}
 /*************************Helper Functions*************************/
 
 // uses global variable avg_lat (in radians)

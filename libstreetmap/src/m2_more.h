@@ -134,6 +134,7 @@ struct action_mem{
     int last_clicked_intersection=-1;
     int last_clicked_POI=-1;
     std::vector<int> last_searched_intersections;
+    std::string last_entry;
     ezgl::rectangle last_visible_world;
 };
 
@@ -148,5 +149,7 @@ void act_on_mouse_click(ezgl::application* app, GdkEventButton* event, double x,
 // events triggered by keyboard
 void act_on_key_press(ezgl::application* application, GdkEventKey* event, char *key_name);
 
-// Find button callback function
-void FindButton_callback(GtkToggleButton* widget, ezgl::application *application);
+// Test button callback function
+void FindButton_callback(GtkButton* widget, ezgl::application *application);
+
+void IntersectionsEntryReturn_callback(GtkEntry* widget, GdkEventKey* event, ezgl::application *application);
