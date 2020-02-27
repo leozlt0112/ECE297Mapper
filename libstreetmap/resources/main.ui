@@ -4,23 +4,13 @@
   <requires lib="gtk+" version="3.2"/>
   <object class="GtkWindow" id="IntersectionsSearch">
     <property name="can_focus">False</property>
+    <property name="resizable">False</property>
     <child>
       <object class="GtkGrid" id="OuteGrid">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <child>
-          <object class="GtkLabel" id="Label">
-            <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <property name="label" translatable="yes">Street 1</property>
-          </object>
-          <packing>
-            <property name="left_attach">0</property>
-            <property name="top_attach">0</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkEntry" id="StreetNameEntry">
+          <object class="GtkEntry" id="Popup_Entry">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
           </object>
@@ -30,7 +20,25 @@
           </packing>
         </child>
         <child>
-          <placeholder/>
+          <object class="GtkLabel" id="Popup_Label">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="label" translatable="yes">Please enter the first street name</property>
+          </object>
+          <packing>
+            <property name="left_attach">0</property>
+            <property name="top_attach">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkComboBoxText" id="Results_Matched">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+          </object>
+          <packing>
+            <property name="left_attach">0</property>
+            <property name="top_attach">2</property>
+          </packing>
         </child>
       </object>
     </child>
@@ -185,7 +193,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkToggleButton" id="FindButton">
+              <object class="GtkButton" id="FindButton">
                 <property name="label" translatable="yes">Find</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
