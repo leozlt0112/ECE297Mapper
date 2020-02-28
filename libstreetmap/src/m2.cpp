@@ -638,6 +638,7 @@ void initial_setup(ezgl::application *application, bool new_window){
     */
     
     // link the test button with callback function
+    // type casting the object you get with the corresponding object
     GtkButton* find_button = (GtkButton *) application->get_object("FindButton");
     g_signal_connect(find_button, "clicked", G_CALLBACK(FindButton_callback), application);
     
@@ -645,6 +646,7 @@ void initial_setup(ezgl::application *application, bool new_window){
     // Link the deletion of popup window with callback function
     GtkWindow* pop_window = (GtkWindow *) application->get_object("IntersectionsSearch");
     gtk_window_set_title(pop_window, "Streets Intersections Search");
+    // the second parameter is the signal that triggers the callback function, the fourth parameter is used as user data (the one i want to pass into the callback function)
     g_signal_connect(pop_window, "delete-event", G_CALLBACK(gtk_widget_hide_on_delete), NULL);
     
     // Link pop entry key press "Return" with callback function
@@ -698,6 +700,7 @@ void act_on_mouse_click(ezgl::application* app, GdkEventButton* event, double x,
     app->refresh_drawing();
 }
 
+// use key_release_event for signals instead of key_press
 void act_on_key_press(ezgl::application *application, GdkEventKey */*event*/, char *key_name)
 {
     std::string key_pressed(key_name);
