@@ -630,12 +630,6 @@ void initial_setup(ezgl::application *application, bool new_window){
     // Update the title bar
     GtkWindow* main_window = (GtkWindow *)application->get_object("MainWindow");
     gtk_window_set_title(main_window, "Amazing Map");
-  
-    // hide the search bars by default
-    GtkWidget* entry1 = (GtkWidget *) application->get_object("TextEntry1");
-    GtkWidget* entry2 = (GtkWidget *) application->get_object("TextEntry2");    
-    gtk_widget_set_visible(entry1,false);
-    gtk_widget_set_visible(entry2,false);
     
     /*
     // link the find button with callback function
@@ -651,11 +645,22 @@ void initial_setup(ezgl::application *application, bool new_window){
     // Link the deletion of popup window with callback function
     GtkWindow* pop_window = (GtkWindow *) application->get_object("IntersectionsSearch");
     gtk_window_set_title(pop_window, "Streets Intersections Search");
-    g_signal_connect(pop_window, "delete-event", G_CALLBACK(gtk_widget_hide_on_delete), application);
+    g_signal_connect(pop_window, "delete-event", G_CALLBACK(gtk_widget_hide_on_delete), NULL);
     
     // Link pop entry key press "Return" with callback function
     GtkEntry* pop_entry = (GtkEntry *) application->get_object("Popup_Entry");
-    g_signal_connect(pop_entry, "key-release-event", G_CALLBACK(IntersectionsEntryReturn_callback), application);
+    g_signal_connect(pop_entry, "key-release-event", G_CALLBACK(StreetsEntryReturn_callback), application);
+    
+    // editing-done doesn't work on GtkEntry! It's a lie!
+    //g_signal_connect((GtkCellEditable*)pop_entry, "editing-done", G_CALLBACK(Test_callback), application);
+    
+    // Link pop entry text change with callback function
+    g_signal_connect(pop_entry, "changed", G_CALLBACK(StreetsEntryChange_callback), application);
+    
+    // force the completion to show
+    GtkEntryCompletion* completion = gtk_entry_get_completion(pop_entry);
+    gtk_entry_completion_set_match_func (completion, forced_auto_completion, NULL, NULL);
+    gtk_entry_completion_set_text_column(completion, 1);
 }
 
 void act_on_mouse_click(ezgl::application* app, GdkEventButton* event, double x, double y) {
@@ -824,13 +829,12 @@ void FindButton_callback(GtkToggleButton* widget, ezgl::application *application
 */
 
 // initialize the pop up window and present it
-void FindButton_callback(GtkButton* widget, ezgl::application *application){
+void FindButton_callback(GtkButton* /*widget*/, ezgl::application *application){
         // initialize entry (empty)
         GtkEntry* entry = (GtkEntry*)application->get_object("Popup_Entry");
         gtk_entry_set_text (entry, "");
-        // initialize combo box (hide)
-        GtkWidget* combo = (GtkWidget*)application->get_object("Results_Matched");
-        gtk_widget_set_visible (combo, false);
+        // initialize status bar
+        GtkStatusbar* status = (GtkStatusbar*)application->get_object("PopupStatusBar");
         // initialize label ("first street name")
         GtkLabel* label = (GtkLabel*)application->get_object("Popup_Label");
         gtk_label_set_text (label, "Please enter the first street name");
@@ -839,7 +843,7 @@ void FindButton_callback(GtkButton* widget, ezgl::application *application){
         gtk_window_present (popup);
 }
 
-void IntersectionsEntryReturn_callback(GtkEntry* widget, GdkEventKey* event, ezgl::application *application){
+void StreetsEntryReturn_callback(GtkEntry* widget, GdkEventKey* event, ezgl::application *application){
     // get key pressed
     std::string key_released(gdk_keyval_name(event->keyval));
     if ( key_released == "Return"){
@@ -849,6 +853,38 @@ void IntersectionsEntryReturn_callback(GtkEntry* widget, GdkEventKey* event, ezg
         memory.last_entry = entryText;
         std::cout<<entryText<<std::endl;
     }
+}
+
+void StreetsEntryChange_callback(GtkEntry* widget, ezgl::application *application){
+    // get the auto completion and the auto completion list
+    GtkEntryCompletion* completion = gtk_entry_get_completion(widget);
+    GtkListStore*       list       = (GtkListStore*) gtk_entry_completion_get_model(completion);
+    // get all the auto completions
+    std::string entryText(gtk_entry_get_text(widget));
+    std::cout<<entryText<<std::endl;
+    std::vector<int> streets_idxs = find_street_ids_from_partial_street_name(entryText);
+    // clear and fill the list store
+    gtk_list_store_clear (list);
+    GtkTreeIter iter;
+    int i;
+    for(i=0; i<streets_idxs.size(); i++) {
+        gtk_list_store_append(list, &iter);
+        int street_idx = streets_idxs[i];
+        std::string street_name = getStreetName(street_idx);
+        street_name += " (";
+        street_name += std::to_string(street_idx);
+        street_name += ')';
+        const char* street_name_idx = street_name.c_str();
+        gtk_list_store_set(list, &iter, 0, street_idx, 1, street_name_idx, -1);
+    }
+}
+
+gboolean forced_auto_completion(GtkEntryCompletion *completion, const gchar *key, GtkTreeIter *iter, gpointer user_data){
+    return true;
+}
+
+void Test_callback(GtkEntry* widget, ezgl::application *application){
+    std::cout<<"it's alive!!!\n";
 }
 /*************************Helper Functions*************************/
 

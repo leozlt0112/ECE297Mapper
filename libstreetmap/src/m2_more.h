@@ -149,7 +149,16 @@ void act_on_mouse_click(ezgl::application* app, GdkEventButton* event, double x,
 // events triggered by keyboard
 void act_on_key_press(ezgl::application* application, GdkEventKey* event, char *key_name);
 
-// Test button callback function
+// Find button callback function
 void FindButton_callback(GtkButton* widget, ezgl::application *application);
 
-void IntersectionsEntryReturn_callback(GtkEntry* widget, GdkEventKey* event, ezgl::application *application);
+// "Return" button released on pop up entry  callback
+void StreetsEntryReturn_callback(GtkEntry* widget, GdkEventKey* event, ezgl::application *application);
+
+// text changed on pop up entry callback
+void StreetsEntryChange_callback(GtkEntry* widget, ezgl::application *application);
+
+gboolean forced_auto_completion(GtkEntryCompletion *completion, const gchar *key, GtkTreeIter *iter, gpointer user_data);
+
+// Test callback, feel free to modify and use it for any testing
+void Test_callback(GtkEntry* widget, ezgl::application *application);
