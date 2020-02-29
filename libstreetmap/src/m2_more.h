@@ -151,8 +151,13 @@ float lon_from_x(double x);
 
 // stores bunch of variables 
 struct action_mem{
-    // store intersections last highlighted
+    // store intersections last highlighted due to click
+    int last_clicked_intersections = -1;
+    // store intersections last highlighted due to search
+    std::vector<int> last_searched_intersections;
+    // store intersections last highlighted (those two above should not be used)
     std::vector<int> last_highlighted_intersections;
+    // store last highlighted poi due to click
     int last_clicked_POI=-1;
     std::vector<int> last_entry;
     std::unordered_map<std::string, int> last_autocompletion_list;
