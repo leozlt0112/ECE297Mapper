@@ -1,0 +1,30 @@
+0
+Bloor-Danforth Line
+
+1
+LIne 1 - Spadina Line
+
+2
+Line 1 - Spadina Line Extension
+
+3
+Line 1 Yonge-University
+
+4
+Line 2 Bloor-Danforth
+
+5
+Lower Bay
+
+6
+Scarborough RT
+
+7
+Sheppard Line
+
+8
+Vincent Yard
+
+9
+Yonge-University-Spadina Line
+

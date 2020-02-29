@@ -59,8 +59,10 @@ struct poi_info {
 
 struct highway_info {
     std::unordered_map<std::string,std::string> tags;   // store all the tags in a unordered_map
+    bool oneWay = false;                                        // whether one way or not
     std::vector<ezgl::point2d> allPoints;               // from, curve points, to
     OSMID wayOSMID;                                     // ID of this way
+    bool highlight = false;
 };
 
 struct railway_info {
@@ -85,7 +87,7 @@ std::unordered_map<int,poi_info> POIs_public_gathering;
 std::unordered_map<int,poi_info> POIs_other; 
 
 // vector[] storing all the highway_info that are major/medium/minor
-std::vector<highway_info> highways_major;
+std::vector<highway_info> highways_major; 
 std::vector<highway_info> highways_medium;
 std::vector<highway_info> highways_minor; 
 
@@ -173,7 +175,7 @@ struct action_mem{
     // last visible world, might be removed later
     ezgl::rectangle last_visible_world;
     // display railway
-    bool layer_railway_subway;
+    bool layer_railway_subway=false;
 };
 
 action_mem memory; 
@@ -198,6 +200,9 @@ void StreetsEntryChange_callback(GtkEntry* widget, ezgl::application *applicatio
 
 // it updates the global bool variable in memory, so that railways are drawn
 void Railways_CheckButton_callback(GtkToggleButton* widget, ezgl::application *application);
+
+// it updates the global bool variable in memory, so that motorway are highlighted
+void Motorways_CheckButton_callback(GtkToggleButton* widget, ezgl::application *application);
 
 // done search streets, reflect on the canvas
 void IntersectionsSearchResult(std::vector<int> intersections_found, ezgl::application *application);
