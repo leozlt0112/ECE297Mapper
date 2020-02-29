@@ -156,6 +156,7 @@ struct action_mem{
     int last_clicked_POI=-1;
     std::vector<int> last_searched_intersections;
     std::string last_entry;
+    std::unordered_map<std::string, int> last_autocompletion_list;
     ezgl::rectangle last_visible_world;
 };
 
