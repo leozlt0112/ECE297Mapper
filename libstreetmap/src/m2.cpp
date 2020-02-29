@@ -1,7 +1,5 @@
 #include "m2.h"
 #include "m2_more.h"
-#include "rectangle.hpp"
-#include "graphics.hpp"
         
 // draw map loads necessary variables and calls draw_map_blank_canvas() in the end.
 void draw_map () {
@@ -69,6 +67,52 @@ void draw_map_load (){
         }
         WayID_tags.insert(std::make_pair(this_way->id(), these_tags));
     }
+    
+    // std::unordered_map<OSMID, OSMNode*> NodeID_node;
+    for (int node=0; node<getNumberOfNodes(); ++node){
+        const OSMNode* this_node = getNodeByIndex(node);
+        NodeID_node.insert(std::make_pair(this_node->id(), this_node));
+    }
+    
+    
+    // streets loading
+    for (int way=0; way<getNumberOfWays(); ++way){
+        // find all the tags of this way
+        const OSMWay* this_way   = getWayByIndex(way);
+        OSMID         this_wayID = this_way->id();
+        std::unordered_map<std::string,std::string> these_tags = WayID_tags.find(this_wayID)->second;
+        // determine if is street
+        if (these_tags.find("highway") != these_tags.end()){
+            // find all the points coordinates
+            std::vector<OSMID>          all_nodes  = getWayMembers(this_way);
+            std::vector<ezgl::point2d>  all_coords_xy;
+            for (int i = 0; i < all_nodes.size(); ++i){
+                const OSMNode* this_node = NodeID_node.find(all_nodes[i])->second;
+                LatLon        coords_latlon = getNodeCoords(this_node);
+                ezgl::point2d coords_xy(x_from_lon(coords_latlon.lon()),
+                                        y_from_lat(coords_latlon.lat()));
+                all_coords_xy.push_back(coords_xy);
+            }
+            // determine major_minor
+            std::string highway_tag = these_tags.find("highway")->second;
+            int     major_minor = 0;
+            if      (highway_tag == "motorway"      || highway_tag == "trunk"           || 
+                     highway_tag == "primary"       || highway_tag == "secondary")              { major_minor = 2; }
+            else if (highway_tag == "motorway_link" || highway_tag == "trunk_link"      || 
+                     highway_tag == "primary_link"  || highway_tag == "secondary_link"  ||
+                     highway_tag == "tertiary"      || highway_tag == "tertiary_link")          { major_minor = 1; }
+            else                                                                                { major_minor = 0; }
+            // store all the data in one highway_info
+            highway_info this_info;
+            this_info.allPoints = all_coords_xy;
+            this_info.tags      = these_tags;
+            // insert the struct into the variable
+            if      (major_minor==2)                                                            { highways_major.push_back(this_info); }
+            else if (major_minor==1)                                                            { highways_medium.push_back(this_info); }
+            else                                                                                { highways_minor.push_back(this_info); }
+        }
+    }
+    
     
     // std::vector<segment_info> streetSegments;
     for(size_t i = 0; i < streetSegments.size(); ++i) {
@@ -139,7 +183,7 @@ void draw_map_load (){
 void draw_main_canvas (ezgl::renderer *g){
     out_of_bound_prevention(g); 
     draw_features(g); 
-    draw_all_street_segments(g); 
+    draw_all_highways(g);
     draw_intersections(g); 
     draw_points_of_interests(g); 
     draw_street_names(g);
@@ -181,139 +225,264 @@ void draw_intersections (ezgl::renderer *g){
     }
 }
 
-//draw all street segments. solid lines of width 3, with round ends, opaque
-void draw_all_street_segments(ezgl::renderer *g){
+void draw_all_highways(ezgl::renderer *g){
     //draw all the lines 
     g->set_line_cap(ezgl::line_cap::round); // round ends
     g->set_line_dash(ezgl::line_dash::none); // Solid line
-    float visible_width = g->get_visible_world().width();
-    float initial_width = initial_world.width();
-    std::cout<<visible_width/initial_width<<std::endl;
-    for(size_t i = 0; i < streetSegments.size(); ++i) {
-        segment_info   this_segment = streetSegments[i];
-        for (int pnt = 0; pnt < (this_segment.allPoints.size()-1); ++pnt){
-            //get coordinate of two points 
-            ezgl::point2d point1 = this_segment.allPoints[pnt  ];
-            ezgl::point2d point2 = this_segment.allPoints[pnt+1];
-            // draw the street segments according to zoom
-            // determine how much is zoomed in using if conditions
-            // 1, 0.6, 0.36
-            if (visible_width > 0.3 * initial_width){
-                if (this_segment.major_minor==2){
-                    g->set_line_width(1);
-                    g->set_color(255, 255, 255, 255);
-                    g->draw_line(point1, point2);
-                }
+    float visible_w = g->get_visible_world().width();
+    float visible_h = g->get_visible_world().height();
+    float initial_w = initial_world.width();
+    float initial_h = initial_world.height();
+    float zoom_factor = std::min(visible_w/initial_w, visible_h/initial_h);
+    std::cout<<zoom_factor<<std::endl;
+    // 1, 0.6, 0.36
+    if ( zoom_factor > 0.3 ){
+        // major highways
+        g->set_line_width(1);
+        g->set_color(255, 255, 255, 255);
+        for(size_t i = 0; i < highways_major.size(); ++i){
+            std::vector<ezgl::point2d> these_points = highways_major[i].allPoints;
+            for (int pnt = 0; pnt < (these_points.size()-1); ++pnt){
+                //get coordinate of two points 
+                ezgl::point2d point1 = these_points[pnt  ];
+                ezgl::point2d point2 = these_points[pnt+1];
+                g->draw_line(point1, point2);
             }
-            // 0.22
-            else if (visible_width > 0.2 * initial_width){
-                if (this_segment.major_minor==2){
-                    g->set_line_width(1);
-                    g->set_color(255, 255, 255, 255);
-                    g->draw_line(point1, point2);
-                }
-                else if (this_segment.major_minor==1){
-                    g->set_line_width(0.5);
-                    g->set_color(50, 50, 50, 255);
-                    g->draw_line(point1, point2);
-                }
+        }
+    }
+    // 0.22
+    else if ( zoom_factor > 0.2 ){
+        // medium highways    
+        g->set_line_width(0.5);
+        g->set_color(50, 50, 50, 255);
+        for(size_t i = 0; i < highways_medium.size(); ++i){
+            std::vector<ezgl::point2d> these_points = highways_medium[i].allPoints;
+            for (int pnt = 0; pnt < (these_points.size()-1); ++pnt){
+                //get coordinate of two points and draw
+                ezgl::point2d point1 = these_points[pnt  ];
+                ezgl::point2d point2 = these_points[pnt+1];
+                g->draw_line(point1, point2);
             }
-            // 0.12
-            else if (visible_width > 0.1 * initial_width){
-                if (this_segment.major_minor==2){
-                    g->set_line_width(1);
-                    g->set_color(255, 255, 255, 255);
-                    g->draw_line(point1, point2);
-                }
-                else if (this_segment.major_minor==1){
-                    g->set_line_width(0.5);
-                    g->set_color(100, 100, 100, 255);
-                    g->draw_line(point1, point2);
-                }
+        }
+        // major highways
+        g->set_line_width(1);
+        g->set_color(255, 255, 255, 255);
+        for(size_t i = 0; i < highways_major.size(); ++i){
+            std::vector<ezgl::point2d> these_points = highways_major[i].allPoints;
+            for (int pnt = 0; pnt < (these_points.size()-1); ++pnt){
+                //get coordinate of two points and draw
+                ezgl::point2d point1 = these_points[pnt  ];
+                ezgl::point2d point2 = these_points[pnt+1];
+                g->draw_line(point1, point2);
             }
-            // 0.07
-            else if (visible_width > 0.05 * initial_width){
-                if (this_segment.major_minor==2){
-                    g->set_line_width(1);
-                    g->set_color(255, 255, 255, 255);
-                    g->draw_line(point1, point2);
-                }
-                else if (this_segment.major_minor==1){
-                    g->set_line_width(0.5);
-                    g->set_color(155, 155, 155, 255);
-                    g->draw_line(point1, point2);
-                }
+        }
+    }
+    // 0.12
+    else if ( zoom_factor > 0.1 ){
+        // medium highways 
+        g->set_line_width(0.5);
+        g->set_color(100, 100, 100, 255);
+        for(size_t i = 0; i < highways_medium.size(); ++i){
+            std::vector<ezgl::point2d> these_points = highways_medium[i].allPoints;
+            for (int pnt = 0; pnt < (these_points.size()-1); ++pnt){
+                //get coordinate of two points and draw
+                ezgl::point2d point1 = these_points[pnt  ];
+                ezgl::point2d point2 = these_points[pnt+1];
+                g->draw_line(point1, point2);
             }
-            // 0.046
-            else if (visible_width > 0.04 * initial_width){
-                if (this_segment.major_minor==2){
-                    g->set_line_width(2);
-                    g->set_color(255, 255, 255, 255);
-                    g->draw_line(point1, point2);
-                }
-                else if (this_segment.major_minor==1){
-                    g->set_line_width(1);
-                    g->set_color(150, 150, 150, 255);
-                    g->draw_line(point1, point2);
-                }
-                else if (this_segment.major_minor==0){
-                    g->set_line_width(0.5);
-                    g->set_color(50, 50, 50, 255);
-                    g->draw_line(point1, point2);
-                }
+        }
+        // major highways
+        g->set_line_width(1);
+        g->set_color(255, 255, 255, 255);
+        for(size_t i = 0; i < highways_major.size(); ++i){
+            std::vector<ezgl::point2d> these_points = highways_major[i].allPoints;
+            for (int pnt = 0; pnt < (these_points.size()-1); ++pnt){
+                //get coordinate of two points and draw
+                ezgl::point2d point1 = these_points[pnt  ];
+                ezgl::point2d point2 = these_points[pnt+1];
+                g->draw_line(point1, point2);
             }
-            // 0.027
-            else if (visible_width > 0.02 * initial_width){
-                if (this_segment.major_minor==2){
-                    g->set_line_width(5);
-                    g->set_color(255, 255, 255, 255);
-                    g->draw_line(point1, point2);
-                }
-                else if (this_segment.major_minor==1){
-                    g->set_line_width(2);
-                    g->set_color(200, 200, 200, 255);
-                    g->draw_line(point1, point2);
-                }
-                else if (this_segment.major_minor==0){
-                    g->set_line_width(2);
-                    g->set_color(100, 100, 100, 255);
-                    g->draw_line(point1, point2);
-                }
+        }
+    }
+    // 0.07
+    else if ( zoom_factor > 0.05 ){
+        // medium highways 
+        g->set_line_width(0.5);
+        g->set_color(155, 155, 155, 255);
+        for(size_t i = 0; i < highways_medium.size(); ++i){
+            std::vector<ezgl::point2d> these_points = highways_medium[i].allPoints;
+            for (int pnt = 0; pnt < (these_points.size()-1); ++pnt){
+                //get coordinate of two points and draw
+                ezgl::point2d point1 = these_points[pnt  ];
+                ezgl::point2d point2 = these_points[pnt+1];
+                g->draw_line(point1, point2);
             }
-            // 0.6^8
-            else if (visible_width > 0.016 * initial_width){
-                if (this_segment.major_minor==2){
-                    g->set_line_width(10);
-                    g->set_color(255, 255, 255, 255);
-                    g->draw_line(point1, point2);
-                }
-                else if (this_segment.major_minor==1){
-                    g->set_line_width(7);
-                    g->set_color(200, 200, 200, 255);
-                    g->draw_line(point1, point2);
-                }
-                else if (this_segment.major_minor==0){
-                    g->set_line_width(7);
-                    g->set_color(150, 150, 150, 255);
-                    g->draw_line(point1, point2);
-                }
+        }
+        // major highways
+        g->set_line_width(1);
+        g->set_color(255, 255, 255, 255);
+        for(size_t i = 0; i < highways_major.size(); ++i){
+            std::vector<ezgl::point2d> these_points = highways_major[i].allPoints;
+            for (int pnt = 0; pnt < (these_points.size()-1); ++pnt){
+                //get coordinate of two points and draw
+                ezgl::point2d point1 = these_points[pnt  ];
+                ezgl::point2d point2 = these_points[pnt+1];
+                g->draw_line(point1, point2);
             }
-            else {
-                if (this_segment.major_minor==2){
-                    g->set_line_width(15);
-                    g->set_color(255, 255, 255, 255);
-                    g->draw_line(point1, point2);
-                }
-                else if (this_segment.major_minor==1){
-                    g->set_line_width(15);
-                    g->set_color(200, 200, 200, 255);
-                    g->draw_line(point1, point2);
-                }
-                else if (this_segment.major_minor==0){
-                    g->set_line_width(15);
-                    g->set_color(150, 150, 150, 255);
-                    g->draw_line(point1, point2);
-                }
+        }
+    }
+    // 0.046
+    else if ( zoom_factor > 0.04 ){
+        // minor highways
+        g->set_line_width(1);
+        g->set_color(50, 50, 50, 255);
+        for(size_t i = 0; i < highways_minor.size(); ++i){
+            std::vector<ezgl::point2d> these_points = highways_minor[i].allPoints;
+            for (int pnt = 0; pnt < (these_points.size()-1); ++pnt){
+                //get coordinate of two points and draw
+                ezgl::point2d point1 = these_points[pnt  ];
+                ezgl::point2d point2 = these_points[pnt+1];
+                g->draw_line(point1, point2);
+            }
+        }
+        // medium highways
+        g->set_line_width(1);
+        g->set_color(150, 150, 150, 255);
+        for(size_t i = 0; i < highways_medium.size(); ++i){
+            std::vector<ezgl::point2d> these_points = highways_medium[i].allPoints;
+            for (int pnt = 0; pnt < (these_points.size()-1); ++pnt){
+                //get coordinate of two points and draw
+                ezgl::point2d point1 = these_points[pnt  ];
+                ezgl::point2d point2 = these_points[pnt+1];
+                g->draw_line(point1, point2);
+            }
+        }
+        // major highways
+        g->set_line_width(2);
+        g->set_color(255, 255, 255, 255);
+        for(size_t i = 0; i < highways_major.size(); ++i){
+            std::vector<ezgl::point2d> these_points = highways_major[i].allPoints;
+            for (int pnt = 0; pnt < (these_points.size()-1); ++pnt){
+                //get coordinate of two points and draw
+                ezgl::point2d point1 = these_points[pnt  ];
+                ezgl::point2d point2 = these_points[pnt+1];
+                g->draw_line(point1, point2);
+            }
+        }
+    }
+    // 0.027
+    else if ( zoom_factor > 0.02 ){
+        // minor highways
+        g->set_line_width(2);
+        g->set_color(100, 100, 100, 255);
+        for(size_t i = 0; i < highways_minor.size(); ++i){
+            std::vector<ezgl::point2d> these_points = highways_minor[i].allPoints;
+            for (int pnt = 0; pnt < (these_points.size()-1); ++pnt){
+                //get coordinate of two points and draw
+                ezgl::point2d point1 = these_points[pnt  ];
+                ezgl::point2d point2 = these_points[pnt+1];
+                g->draw_line(point1, point2);
+            }
+        }
+        // medium highways
+        g->set_line_width(2);
+        g->set_color(200, 200, 200, 255);
+        for(size_t i = 0; i < highways_medium.size(); ++i){
+            std::vector<ezgl::point2d> these_points = highways_medium[i].allPoints;
+            for (int pnt = 0; pnt < (these_points.size()-1); ++pnt){
+                //get coordinate of two points and draw
+                ezgl::point2d point1 = these_points[pnt  ];
+                ezgl::point2d point2 = these_points[pnt+1];
+                g->draw_line(point1, point2);
+            }
+        }
+        // major highways
+        g->set_line_width(5);
+        g->set_color(255, 255, 255, 255);
+        for(size_t i = 0; i < highways_major.size(); ++i){
+            std::vector<ezgl::point2d> these_points = highways_major[i].allPoints;
+            for (int pnt = 0; pnt < (these_points.size()-1); ++pnt){
+                //get coordinate of two points and draw
+                ezgl::point2d point1 = these_points[pnt  ];
+                ezgl::point2d point2 = these_points[pnt+1];
+                g->draw_line(point1, point2);
+            }
+        }        
+    }
+    // 0.6^8 (0.016)
+    else if ( zoom_factor > 0.016 ){
+        // minor highways
+        g->set_line_width(3);
+        g->set_color(150, 150, 150, 255);
+        for(size_t i = 0; i < highways_minor.size(); ++i){
+            std::vector<ezgl::point2d> these_points = highways_minor[i].allPoints;
+            for (int pnt = 0; pnt < (these_points.size()-1); ++pnt){
+                //get coordinate of two points and draw
+                ezgl::point2d point1 = these_points[pnt  ];
+                ezgl::point2d point2 = these_points[pnt+1];
+                g->draw_line(point1, point2);
+            }
+        }
+        // medium highways
+        g->set_line_width(3);
+        g->set_color(200, 200, 200, 255);
+        for(size_t i = 0; i < highways_medium.size(); ++i){
+            std::vector<ezgl::point2d> these_points = highways_medium[i].allPoints;
+            for (int pnt = 0; pnt < (these_points.size()-1); ++pnt){
+                //get coordinate of two points and draw
+                ezgl::point2d point1 = these_points[pnt  ];
+                ezgl::point2d point2 = these_points[pnt+1];
+                g->draw_line(point1, point2);
+            }
+        }
+        // major highways
+        g->set_line_width(10);
+        g->set_color(255, 255, 255, 255);
+        for(size_t i = 0; i < highways_major.size(); ++i){
+            std::vector<ezgl::point2d> these_points = highways_major[i].allPoints;
+            for (int pnt = 0; pnt < (these_points.size()-1); ++pnt){
+                //get coordinate of two points and draw
+                ezgl::point2d point1 = these_points[pnt  ];
+                ezgl::point2d point2 = these_points[pnt+1];
+                g->draw_line(point1, point2);
+            }
+        }
+    }
+    else {
+        // minor highways
+        g->set_line_width(10);
+        g->set_color(150, 150, 150, 255);
+        for(size_t i = 0; i < highways_minor.size(); ++i){
+            std::vector<ezgl::point2d> these_points = highways_minor[i].allPoints;
+            for (int pnt = 0; pnt < (these_points.size()-1); ++pnt){
+                //get coordinate of two points and draw
+                ezgl::point2d point1 = these_points[pnt  ];
+                ezgl::point2d point2 = these_points[pnt+1];
+                g->draw_line(point1, point2);
+            }
+        }
+        // medium highways
+        g->set_line_width(10);
+        g->set_color(200, 200, 200, 255);
+        for(size_t i = 0; i < highways_medium.size(); ++i){
+            std::vector<ezgl::point2d> these_points = highways_medium[i].allPoints;
+            for (int pnt = 0; pnt < (these_points.size()-1); ++pnt){
+                //get coordinate of two points and draw
+                ezgl::point2d point1 = these_points[pnt  ];
+                ezgl::point2d point2 = these_points[pnt+1];
+                g->draw_line(point1, point2);
+            }
+        }
+        // major highways
+        g->set_line_width(10);
+        g->set_color(255, 255, 255, 255);
+        for(size_t i = 0; i < highways_major.size(); ++i){
+            std::vector<ezgl::point2d> these_points = highways_major[i].allPoints;
+            for (int pnt = 0; pnt < (these_points.size()-1); ++pnt){
+                //get coordinate of two points and draw
+                ezgl::point2d point1 = these_points[pnt  ];
+                ezgl::point2d point2 = these_points[pnt+1];
+                g->draw_line(point1, point2);
             }
         }
     }
