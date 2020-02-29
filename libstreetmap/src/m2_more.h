@@ -176,6 +176,10 @@ struct action_mem{
     ezgl::rectangle last_visible_world;
     // display railway
     bool layer_railway_subway=false;
+    // display all water bodies at all zoom level
+    bool layer_water_body=false;
+    // display all poi
+    bool layer_poi = false;
 };
 
 action_mem memory; 
@@ -203,6 +207,12 @@ void Railways_CheckButton_callback(GtkToggleButton* widget, ezgl::application *a
 
 // it updates the global bool variable in memory, so that motorway are highlighted
 void Motorways_CheckButton_callback(GtkToggleButton* widget, ezgl::application *application);
+
+// it updates the global bool variable in memory, so that water body are highlighted
+void WaterBody_CheckButton_callback(GtkToggleButton* widget, ezgl::application *application);
+
+// it updates the global bool variable in memory, so that all pois are highlighted
+void POI_CheckButton_callback(GtkToggleButton* widget, ezgl::application *application);
 
 // done search streets, reflect on the canvas
 void IntersectionsSearchResult(std::vector<int> intersections_found, ezgl::application *application);
