@@ -76,13 +76,13 @@ std::vector<feature_info> features;
 // a vector[POI_idx] storing poi_data with
 //std::vector<poi_info> POIs;
 
-std::vector<poi_info> POIs_entertainment;
+std::unordered_map<int,poi_info> POIs_entertainment;
 
-std::vector<poi_info> POIs_food;
+std::unordered_map<int,poi_info> POIs_food;
 
-std::vector<poi_info> POIs_public_gathering;
+std::unordered_map<int,poi_info> POIs_public_gathering;
 
-std::vector<poi_info> POIs_other; 
+std::unordered_map<int,poi_info> POIs_other; 
 
 // a vector[] storing all the highway_info that are major 
 std::vector<highway_info> highways_major;
