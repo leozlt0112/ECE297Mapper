@@ -13,15 +13,27 @@
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <child>
-          <object class="GtkDrawingArea" id="MainCanvas">
+          <object class="GtkStatusbar" id="StatusBar">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
-            <property name="hexpand">True</property>
-            <property name="vexpand">True</property>
+            <property name="orientation">vertical</property>
+            <property name="spacing">2</property>
           </object>
           <packing>
-            <property name="left_attach">1</property>
-            <property name="top_attach">0</property>
+            <property name="left_attach">0</property>
+            <property name="top_attach">1</property>
+            <property name="width">2</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkSeparator" id="Separator">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="orientation">vertical</property>
+          </object>
+          <packing>
+            <property name="left_attach">2</property>
+            <property name="top_attach">1</property>
           </packing>
         </child>
         <child>
@@ -176,30 +188,6 @@
           </packing>
         </child>
         <child>
-          <object class="GtkStatusbar" id="StatusBar">
-            <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <property name="orientation">vertical</property>
-            <property name="spacing">2</property>
-          </object>
-          <packing>
-            <property name="left_attach">0</property>
-            <property name="top_attach">1</property>
-            <property name="width">2</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkSeparator" id="Separator">
-            <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <property name="orientation">vertical</property>
-          </object>
-          <packing>
-            <property name="left_attach">2</property>
-            <property name="top_attach">1</property>
-          </packing>
-        </child>
-        <child>
           <object class="GtkBox" id="SideBar">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
@@ -218,11 +206,41 @@
               </packing>
             </child>
             <child>
+              <object class="GtkLabel" id="SideBar_Label">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="margin_left">11</property>
+                <property name="margin_right">10</property>
+                <property name="label" translatable="yes">label</property>
+                <property name="wrap">True</property>
+                <property name="ellipsize">middle</property>
+                <property name="width_chars">20</property>
+                <property name="max_width_chars">15</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+            <child>
               <placeholder/>
             </child>
           </object>
           <packing>
             <property name="left_attach">0</property>
+            <property name="top_attach">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkDrawingArea" id="MainCanvas">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="hexpand">True</property>
+            <property name="vexpand">True</property>
+          </object>
+          <packing>
+            <property name="left_attach">1</property>
             <property name="top_attach">0</property>
           </packing>
         </child>
@@ -246,7 +264,7 @@
   <object class="GtkWindow" id="IntersectionsSearch">
     <property name="can_focus">False</property>
     <property name="resizable">False</property>
-    <property name="default_width">300</property>
+    <property name="default_width">500</property>
     <child>
       <object class="GtkBox" id="Popup_Box">
         <property name="visible">True</property>
@@ -258,6 +276,7 @@
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="label" translatable="yes">Please enter the first street name</property>
+            <property name="justify">center</property>
           </object>
           <packing>
             <property name="expand">False</property>
