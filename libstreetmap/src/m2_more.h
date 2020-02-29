@@ -73,24 +73,15 @@ std::vector<segment_info> streetSegments;
 // a vector[features_idx] storing features_data
 std::vector<feature_info> features;
 
-// a vector[POI_idx] storing poi_data with
-//std::vector<poi_info> POIs;
-
+// unordered_map storing poi_data
 std::unordered_map<int,poi_info> POIs_entertainment;
-
 std::unordered_map<int,poi_info> POIs_food;
-
 std::unordered_map<int,poi_info> POIs_public_gathering;
-
 std::unordered_map<int,poi_info> POIs_other; 
 
-// a vector[] storing all the highway_info that are major 
+// vector[] storing all the highway_info that are major/medium/minor
 std::vector<highway_info> highways_major;
-
-// a vector[] storing all the highway_info that are medium 
 std::vector<highway_info> highways_medium;
-
-// a vector[] storing all the highway_info that are minor 
 std::vector<highway_info> highways_minor; 
 
 // a vector[way_index] storing all the tags
