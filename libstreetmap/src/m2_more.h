@@ -21,7 +21,8 @@
 #include <map>
 #include <vector>
 #include <algorithm>    // std::sor
-
+#include <iostream>
+#include <fstream>
 struct intersection_info{
     float x_;
     float y_;
@@ -49,7 +50,7 @@ struct feature_info {
 struct poi_info {
     float x_;                                   // position x
     float y_;                                   // position y
-    std::string type;                           // poi type
+    std::string type;
     std::string name;                           // poi name
     bool highlight = false; 
 };
@@ -63,9 +64,16 @@ std::vector<segment_info> streetSegments;
 // a vector[features_idx] storing features_data
 std::vector<feature_info> features;
 
-// a vector[POI_idx] storing poi_data
-std::vector<poi_info> POIs;
+// a vector[POI_idx] storing poi_data with
+//std::vector<poi_info> POIs;
 
+std::vector<poi_info> entertainment_POIS;
+
+std::vector<poi_info> food_POIS;
+
+std::vector<poi_info> public_gathering_POIS;
+
+std::vector<poi_info> other_POIS; 
 // a vector[way_index] storing all the tags
 std::unordered_map<OSMID, std::unordered_map<std::string,std::string>> WayID_tags;
 

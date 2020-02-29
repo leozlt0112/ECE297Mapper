@@ -2,7 +2,7 @@
 #include "m2_more.h"
 #include "rectangle.hpp"
 #include "graphics.hpp"
-        
+     
 // draw map loads necessary variables and calls draw_map_blank_canvas() in the end.
 void draw_map () {
     draw_map_load();
@@ -27,7 +27,7 @@ void draw_map_load (){
     intersections.resize(getNumIntersections());
     streetSegments.resize(getNumStreetSegments());
     features.resize(getNumFeatures());
-    POIs.resize(getNumPointsOfInterest());
+//    POIs.resize(getNumPointsOfInterest());
     
     // double max_lat, min_lat, max_lon, min_lon, avg_lat;
     // memory.initial_world_width
@@ -100,15 +100,42 @@ void draw_map_load (){
         else                                                                                                                { streetSegments[i].major_minor = 0; }
     }
     
-    // std::vector<poi_info> POIs;
-    for(int i=0; i< POIs.size(); i++ ) {
+    // std::vector<poiCategory> POIs;
+    for(int i=0; i< getNumPointsOfInterest(); i++ ) {
+        poi_info new_poi;
         LatLon this_position      = getPointOfInterestPosition(i);
-        POIs[i].x_   = x_from_lon(this_position.lon());
-        POIs[i].y_   = y_from_lat(this_position.lat());
-        POIs[i].name = getPointOfInterestName(i);
-        POIs[i].type = getPointOfInterestType(i);
-    }
-    
+        new_poi.x_   = x_from_lon(this_position.lon());
+        new_poi.y_   = y_from_lat(this_position.lat());
+        new_poi.name = getPointOfInterestName(i);
+        std::string poiCategory=getPointOfInterestType(i);
+        if( poiCategory=="ferry_terminal" || poiCategory== "theatre" 
+           || poiCategory == "community_centre" || poiCategory == "nightclub" 
+           || poiCategory == "pub" || poiCategory ==  "stripclub" 
+           || poiCategory == "cinema" || poiCategory == "bar" 
+           || poiCategory == "cafe" || poiCategory=="old_cafe" 
+                || poiCategory== "social_facility" || poiCategory == "lotto" || 
+                poiCategory=="betting" ) {
+            new_poi.type = "entertainment";
+            entertainment_POIS.push_back(new_poi);
+        }
+        
+        else if (poiCategory=="fast_food" || poiCategory == "restaurant" 
+                || poiCategory == "ice_cream" || poiCategory == "food_court"
+                || poiCategory == "vending_machine") {
+            new_poi.type = "food";
+            food_POIS.push_back(new_poi);
+        }
+        else if (poiCategory=="school" || poiCategory == "community_centre" 
+                    ||poiCategory=="parking" || poiCategory=="library" 
+                    || poiCategory=="post_office") {
+            new_poi.type = "public_gathering";
+            public_gathering_POIS.push_back(new_poi);
+        }
+        else {
+            new_poi.type = "other";
+            other_POIS.push_back(new_poi);
+        }    
+    }    
     // load features
     for (int featureid=0; featureid<featureID_featurePts.size(); featureid++) {
          int totalPtsCount = getFeaturePointCount(featureid); 
@@ -574,21 +601,67 @@ void draw_features(ezgl::renderer *g) {
 
 void draw_points_of_interests(ezgl::renderer *g) {
     float visible_width = g->get_visible_world().width();
+    
     if (visible_width < 2000){
-        for(int poi=0; poi<POIs.size(); poi++) {
-            float x = POIs[poi].x_;
-            float y = POIs[poi].y_;
-            if (POIs[poi].highlight) {
-                g->set_color(ezgl::MAGENTA);
-                g->fill_arc({x, y}, 5, 0, 360);
-                ezgl::surface *png_surface = ezgl::renderer::load_png("small_image.png");
-                g->draw_surface(png_surface, {x, y});
-                ezgl::renderer::free_surface(png_surface);
-            }
-            else {
-                 g->set_color(ezgl::RED);
+        for(int poi=0; poi<entertainment_POIS.size(); poi++) {
+            float x = entertainment_POIS[poi].x_;
+            float y = entertainment_POIS[poi].y_;
+            //if (entertainment_POIS[poi].highlight) {
+              //  g->set_color(ezgl::MAGENTA);
+              //  g->fill_arc({x, y}, 5, 0, 360);
+                //ezgl::surface *png_surface = ezgl::renderer::load_png("small_image.png");
+                //g->draw_surface(png_surface, {x, y});
+                //ezgl::renderer::free_surface(png_surface);
+           // }
+            //else {
+                g->set_color(ezgl::RED);
                 g->fill_arc({x, y}, 2, 0, 360);
-            }
+            //}
+        }
+        for(int poi=0; poi<food_POIS.size(); poi++) {
+            float x = food_POIS[poi].x_;
+            float y = food_POIS[poi].y_;
+//            if (food_POIS[poi].highlight) {
+//                g->set_color(ezgl::MAGENTA);
+//                g->fill_arc({x, y}, 5, 0, 360);
+//                //ezgl::surface *png_surface = ezgl::renderer::load_png("small_image.png");
+//                //g->draw_surface(png_surface, {x, y});
+//                //ezgl::renderer::free_surface(png_surface);
+//            }
+//            else {
+                g->set_color(ezgl::ORANGE);
+                g->fill_arc({x, y}, 2, 0, 360);
+//            }
+        }
+        for(int poi=0; poi<public_gathering_POIS.size(); poi++) {
+             float x = public_gathering_POIS[poi].x_;
+            float y = public_gathering_POIS[poi].y_;
+//            if (public_gathering_POIS[poi].highlight) {
+//                g->set_color(ezgl::MAGENTA);
+//                g->fill_arc({x, y}, 5, 0, 360);
+//                //ezgl::surface *png_surface = ezgl::renderer::load_png("small_image.png");
+//                //g->draw_surface(png_surface, {x, y});
+//                //ezgl::renderer::free_surface(png_surface);
+//            }
+//            else {
+                g->set_color(ezgl::YELLOW);
+                g->fill_arc({x, y}, 2, 0, 360);
+//            }
+        }
+        for(int poi=0; poi<other_POIS.size(); poi++) {
+             float x = other_POIS[poi].x_;
+            float y = other_POIS[poi].y_;
+//            if (other_POIS[poi].highlight) {
+//                g->set_color(ezgl::MAGENTA);
+//                g->fill_arc({x, y}, 5, 0, 360);
+//                //ezgl::surface *png_surface = ezgl::renderer::load_png("small_image.png");
+//                //g->draw_surface(png_surface, {x, y});
+//                //ezgl::renderer::free_surface(png_surface);
+//            }
+//            else {
+                g->set_color(ezgl::GREEN);
+                g->fill_arc({x, y}, 2, 0, 360);
+//            }
         }
     }
 }
@@ -672,16 +745,16 @@ void act_on_mouse_click(ezgl::application* app, GdkEventButton* event, double x,
     // find closedPOIid, -1 means too far away to any poi
     int idForPOI=find_closest_POI(pos);
     // un-highlight the last intersection
-    if(memory.last_clicked_POI !=-1) 
-        POIs[memory.last_clicked_POI].highlight = false; 
-    // set the value of last_clicked
-    memory.last_clicked_POI = idForPOI;
-    // highlight current clicked 
-    if (idForPOI != -1) {
-        POIs[idForPOI].highlight = true;
-        std::string status_message = "Closest POI: " + POIs[idForPOI].name;
-        app->update_message(status_message);
-    }
+//    if(memory.last_clicked_POI !=-1) 
+//        POIs[memory.last_clicked_POI].highlight = false; 
+//    // set the value of last_clicked
+//    memory.last_clicked_POI = idForPOI;
+//    // highlight current clicked 
+//    if (idForPOI != -1) {
+//        POIs[idForPOI].highlight = true;
+//        std::string status_message = "Closest POI: " + POIs[idForPOI].name;
+//        app->update_message(status_message);
+//    }
     
     //find closest intersection_id, -1 means too far away to any intersections
     int id = find_closest_intersection(pos);
