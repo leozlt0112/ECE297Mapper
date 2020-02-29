@@ -342,13 +342,6 @@ std::vector<int> find_street_ids_from_partial_street_name(std::string street_pre
     ++Prefix_after[Prefix_after.length() - 1];
     auto start_ptr = streetID_streetName.lower_bound(Prefix);
     auto end_ptr   = streetID_streetName.lower_bound(Prefix_after);
-    /*
-    std::cout<<"*******************************"<<std::endl;
-    std::cout<<street_prefix<<std::endl;
-    std::cout<<start_ptr->first<<std::endl;
-    std::cout<<end_ptr->first<<std::endl;
-    std::cout<<"*******************************"<<std::endl;
-     */
     for (auto ptr=start_ptr; ptr != end_ptr; ++ptr)
         result_d.push_back(ptr->second);
     return result_d;

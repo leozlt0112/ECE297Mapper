@@ -18,7 +18,10 @@
 #include "ezgl/application.hpp"
 #include "ezgl/graphics.hpp"
 #include "math.h"
+#include "rectangle.hpp"
+#include "graphics.hpp"
 #include <map>
+#include <unordered_map>
 #include <vector>
 #include <algorithm>    // std::sor
 #include <iostream>
@@ -55,6 +58,12 @@ struct poi_info {
     bool highlight = false; 
 };
 
+struct highway_info {
+    std::unordered_map<std::string,std::string> tags;   // store all the tags in a unordered_map
+    std::vector<ezgl::point2d> allPoints;               // from, curve points, to
+    OSMID wayOSMID;                                     // index of way this segment belongs to
+};
+
 // a vector[intersection_idx] storing intersection data
 std::vector<intersection_info> intersections;
 
@@ -73,9 +82,24 @@ std::vector<poi_info> food_POIS;
 
 std::vector<poi_info> public_gathering_POIS;
 
+<<<<<<< HEAD
 std::vector<poi_info> other_POIS; 
+=======
+// a vector[] storing all the highway_info that are major 
+std::vector<highway_info> highways_major;
+
+// a vector[] storing all the highway_info that are medium 
+std::vector<highway_info> highways_medium;
+
+// a vector[] storing all the highway_info that are minor 
+std::vector<highway_info> highways_minor; 
+
+>>>>>>> newbranch
 // a vector[way_index] storing all the tags
 std::unordered_map<OSMID, std::unordered_map<std::string,std::string>> WayID_tags;
+
+// a vector[node_index] storing Node IDs and nodes
+std::unordered_map<OSMID, const OSMNode*> NodeID_node;
 
 // a vector[streetSegIndex], each element stores distance. from m1_more.h
 extern std::vector<double> streetSeg_length;
@@ -114,8 +138,8 @@ void draw_main_canvas (ezgl::renderer *g);
 // draw all intersections
 void draw_intersections (ezgl::renderer *g);
 
-// draw all street segments 
-void draw_all_street_segments(ezgl::renderer *g);
+// draw all highways
+void draw_all_highways(ezgl::renderer *g);
 
 // draw all the features
 void draw_features(ezgl::renderer *g);
@@ -143,6 +167,7 @@ struct action_mem{
     int last_clicked_POI=-1;
     std::vector<int> last_searched_intersections;
     std::string last_entry;
+    std::unordered_map<std::string, int> last_autocompletion_list;
     ezgl::rectangle last_visible_world;
 };
 
