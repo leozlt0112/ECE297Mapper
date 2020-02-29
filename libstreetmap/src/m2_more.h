@@ -26,6 +26,7 @@
 #include <algorithm>    // std::sor
 #include <iostream>
 #include <fstream>
+
 struct intersection_info{
     float x_;
     float y_;
@@ -75,15 +76,14 @@ std::vector<feature_info> features;
 // a vector[POI_idx] storing poi_data with
 //std::vector<poi_info> POIs;
 
-std::vector<poi_info> entertainment_POIS;
+std::vector<poi_info> POIs_entertainment;
 
-std::vector<poi_info> food_POIS;
+std::vector<poi_info> POIs_food;
 
-std::vector<poi_info> public_gathering_POIS;
+std::vector<poi_info> POIs_public_gathering;
 
-<<<<<<< HEAD
-std::vector<poi_info> other_POIS; 
-=======
+std::vector<poi_info> POIs_other; 
+
 // a vector[] storing all the highway_info that are major 
 std::vector<highway_info> highways_major;
 
@@ -93,7 +93,6 @@ std::vector<highway_info> highways_medium;
 // a vector[] storing all the highway_info that are minor 
 std::vector<highway_info> highways_minor; 
 
->>>>>>> newbranch
 // a vector[way_index] storing all the tags
 std::unordered_map<OSMID, std::unordered_map<std::string,std::string>> WayID_tags;
 
