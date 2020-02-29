@@ -34,7 +34,6 @@ struct intersection_info{
  
 struct segment_info {
     bool oneWay;                                // if true, then can only travel in from->to direction
-    int major_minor=0;                          // determine how major it is. (0=minor, 1=medium, 2=major)
     std::vector<ezgl::point2d> allPoints;       // from, curve points, to
     float speedLimit;                           // in km/h
     OSMID wayOSMID;                             // index of way this segment belongs to
@@ -151,11 +150,10 @@ float lon_from_x(double x);
 
 // stores bunch of variables 
 struct action_mem{
-    // store intersections u clickded
-    int last_clicked_intersection=-1;
+    // store intersections last highlighted
+    std::vector<int> last_highlighted_intersections;
     int last_clicked_POI=-1;
-    std::vector<int> last_searched_intersections;
-    std::string last_entry;
+    std::vector<int> last_entry;
     std::unordered_map<std::string, int> last_autocompletion_list;
     ezgl::rectangle last_visible_world;
 };
@@ -179,6 +177,9 @@ void StreetsEntryReturn_callback(GtkEntry* widget, GdkEventKey* event, ezgl::app
 
 // text changed on pop up entry callback
 void StreetsEntryChange_callback(GtkEntry* widget, ezgl::application *application);
+
+// done search streets, reflect on the canvas
+void IntersectionsSearchResult(std::vector<int> intersections_found, ezgl::application *application);
 
 gboolean forced_auto_completion(GtkEntryCompletion *completion, const gchar *key, GtkTreeIter *iter, gpointer user_data);
 
