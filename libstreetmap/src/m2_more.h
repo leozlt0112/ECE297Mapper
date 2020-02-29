@@ -23,7 +23,7 @@
 #include <map>
 #include <unordered_map>
 #include <vector>
-#include <algorithm>    // std::sor
+#include <algorithm>    // std::sort
 #include <iostream>
 #include <fstream>
 
@@ -41,7 +41,6 @@ struct segment_info {
     OSMID wayOSMID;                             // index of way this segment belongs to
 };
 
-// a vector[intersection_id] storing intersection data
 struct feature_info {
     bool closed = false;                        // if true, it's closed (poly))
     std::string name;                           // feature name
@@ -61,7 +60,13 @@ struct poi_info {
 struct highway_info {
     std::unordered_map<std::string,std::string> tags;   // store all the tags in a unordered_map
     std::vector<ezgl::point2d> allPoints;               // from, curve points, to
-    OSMID wayOSMID;                                     // index of way this segment belongs to
+    OSMID wayOSMID;                                     // ID of this way
+};
+
+struct railway_info {
+    std::unordered_map<std::string,std::string> tags;   // store all the tags in a unordered_map
+    std::vector<ezgl::point2d> allPoints;               // from, curve points, to
+    OSMID wayOSMID;                                     // ID of this way
 };
 
 // a vector[intersection_idx] storing intersection data
@@ -89,6 +94,9 @@ std::unordered_map<OSMID, std::unordered_map<std::string,std::string>> WayID_tag
 
 // a vector[node_index] storing Node IDs and nodes
 std::unordered_map<OSMID, const OSMNode*> NodeID_node;
+
+// a multimap storing all the railway: subways
+std::multimap<std::string, railway_info> railways_subways;
 
 // a vector[streetSegIndex], each element stores distance. from m1_more.h
 extern std::vector<double> streetSeg_length;
@@ -127,8 +135,11 @@ void draw_main_canvas (ezgl::renderer *g);
 // draw all intersections
 void draw_intersections (ezgl::renderer *g);
 
-// draw all highways
+// draw all highways (all the streets/roads)
 void draw_all_highways(ezgl::renderer *g);
+
+// draw all railways
+void draw_all_railways(ezgl::renderer *g);
 
 // draw all the features
 void draw_features(ezgl::renderer *g);
@@ -151,20 +162,21 @@ float lon_from_x(double x);
 
 // stores bunch of variables 
 struct action_mem{
-    // store intersections last highlighted due to click
-    int last_clicked_intersections = -1;
-    // store intersections last highlighted due to search
-    std::vector<int> last_searched_intersections;
     // store intersections last highlighted (those two above should not be used)
     std::vector<int> last_highlighted_intersections;
     // store last highlighted poi due to click
     int last_clicked_POI=-1;
+    // entries recorder for pop up window
     std::vector<int> last_entry;
+    // auto completion list recorder
     std::unordered_map<std::string, int> last_autocompletion_list;
+    // last visible world, might be removed later
     ezgl::rectangle last_visible_world;
+    // display railway
+    bool layer_railway_subway;
 };
 
-action_mem memory;
+action_mem memory; 
 
 // initial setup 
 void initial_setup(ezgl::application *application, bool new_window);
@@ -184,9 +196,13 @@ void StreetsEntryReturn_callback(GtkEntry* widget, GdkEventKey* event, ezgl::app
 // text changed on pop up entry callback
 void StreetsEntryChange_callback(GtkEntry* widget, ezgl::application *application);
 
+// it updates the global bool variable in memory, so that railways are drawn
+void Railways_CheckButton_callback(GtkToggleButton* widget, ezgl::application *application);
+
 // done search streets, reflect on the canvas
 void IntersectionsSearchResult(std::vector<int> intersections_found, ezgl::application *application);
 
+// it forces the auto completion to show the entire liststore
 gboolean forced_auto_completion(GtkEntryCompletion *completion, const gchar *key, GtkTreeIter *iter, gpointer user_data);
 
 // Test callback, feel free to modify and use it for any testing
