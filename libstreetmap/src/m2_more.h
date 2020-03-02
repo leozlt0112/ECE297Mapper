@@ -190,6 +190,8 @@ struct action_mem{
     bool layer_water_body=false;
     // display all poi
     bool layer_poi = false;
+    // display directions
+    bool layer_street_directions = false;
 };
 
 action_mem memory; 
@@ -225,6 +227,9 @@ void WaterBody_CheckButton_callback(GtkToggleButton* widget, ezgl::application *
 
 // it updates the global bool variable in memory, so that all pois are highlighted
 void POI_CheckButton_callback(GtkToggleButton* widget, ezgl::application *application);
+
+// it updates the global bool variable in memory, so that all pois are highlighted
+void Directions_CheckButton_callback(GtkToggleButton* widget, ezgl::application *application);
 
 // done searching streets, reflect on the canvas
 void IntersectionsSearchResult(std::vector<int> intersections_found, ezgl::application *application);
