@@ -27,6 +27,7 @@
 #include <iostream>
 #include <fstream>
 
+/************ These are the information types that will be used ***************/
 struct intersection_info{
     float x_;
     float y_;
@@ -70,6 +71,8 @@ struct railway_info {
     std::vector<ezgl::point2d> allPoints;               // from, curve points, to
     OSMID wayOSMID;                                     // ID of this way
 };
+
+/************ These are the data structures that will be used (and not constantly updated) ***************/
 
 // a vector[intersection_idx] storing intersection data
 std::vector<intersection_info> intersections;
@@ -125,25 +128,27 @@ double max_lat, min_lat, max_lon, min_lon, avg_lat;
 // it stores the value of initial world size
 ezgl::rectangle initial_world;
 
-//prevent zooming out of bound
+/************ These are functions called in program ***************/
+
+// it prevents zooming out of bound
 void out_of_bound_prevention(ezgl::renderer *g);
 
-// load all the data
+// load all the data structures
 void draw_map_load ();
 
-// draw main canvas and related features
+// draw main canvas and call all the following drawing functions
 void draw_main_canvas (ezgl::renderer *g);
 
-// draw all intersections
+// draw all intersection points
 void draw_intersections (ezgl::renderer *g);
 
 // draw all highways (all the streets/roads)
 void draw_all_highways(ezgl::renderer *g);
 
-// draw all railways
+// draw all railways (only subway lines)
 void draw_all_railways(ezgl::renderer *g);
 
-// draw all the features
+// draw all the features (buildings rivers streams etc)
 void draw_features(ezgl::renderer *g);
 
 // draw all the points of interests
@@ -152,6 +157,8 @@ void draw_points_of_interests(ezgl::renderer *g);
 // draw all the street names
 void draw_street_names(ezgl::renderer *g);
 
+// it finds the closest  pois in the map.
+// return -1 if not found
 extern int find_closest_POI(LatLon my_position);
 
 // Converting latlon in degrees to x and y
@@ -162,7 +169,7 @@ float y_from_lat(float lat);
 float lat_from_y(double y);
 float lon_from_x(double x);
 
-// stores bunch of variables 
+/****** stores bunch of global variables that will be used and constantly updated ********/
 struct action_mem{
     // store intersections last highlighted (those two above should not be used)
     std::vector<int> last_highlighted_intersections;
@@ -184,22 +191,24 @@ struct action_mem{
 
 action_mem memory; 
 
-// initial setup 
+/****** These are callback functions when certain actions are performed ********/
+
+// initial setup when app is opened
 void initial_setup(ezgl::application *application, bool new_window);
 
 // events triggered by mouse clicks
 void act_on_mouse_click(ezgl::application* app, GdkEventButton* event, double x, double y);
 
-// events triggered by keyboard
+// events triggered by keyboard 
 void act_on_key_press(ezgl::application* application, GdkEventKey* event, char *key_name);
 
-// Find button callback function
+// Find button callback function, activate pop up window
 void FindButton_callback(GtkButton* widget, ezgl::application *application);
 
-// "Return" button released on pop up entry  callback
+// callback function triggered by "Return" button released on pop up entry callback
 void StreetsEntryReturn_callback(GtkEntry* widget, GdkEventKey* event, ezgl::application *application);
 
-// text changed on pop up entry callback
+// callback functio text changed on pop up entry, it updates the auto completion
 void StreetsEntryChange_callback(GtkEntry* widget, ezgl::application *application);
 
 // it updates the global bool variable in memory, so that railways are drawn
@@ -214,10 +223,10 @@ void WaterBody_CheckButton_callback(GtkToggleButton* widget, ezgl::application *
 // it updates the global bool variable in memory, so that all pois are highlighted
 void POI_CheckButton_callback(GtkToggleButton* widget, ezgl::application *application);
 
-// done search streets, reflect on the canvas
+// done searching streets, reflect on the canvas
 void IntersectionsSearchResult(std::vector<int> intersections_found, ezgl::application *application);
 
-// it forces the auto completion to show the entire liststore
+// it forces the auto completion to always show the correct list we stored
 gboolean forced_auto_completion(GtkEntryCompletion *completion, const gchar *key, GtkTreeIter *iter, gpointer user_data);
 
 // Test callback, feel free to modify and use it for any testing
