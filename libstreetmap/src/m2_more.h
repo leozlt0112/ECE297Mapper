@@ -157,6 +157,9 @@ void draw_points_of_interests(ezgl::renderer *g);
 // draw all the street names
 void draw_street_names(ezgl::renderer *g);
 
+// draw street sgements directions
+void draw_street_segments_directions (ezgl::renderer *g);
+
 // it finds the closest  pois in the map.
 // return -1 if not found
 extern int find_closest_POI(LatLon my_position);
