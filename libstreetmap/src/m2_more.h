@@ -191,10 +191,10 @@ struct action_mem{
     // display all poi
     bool layer_poi = false;
     // display directions
-    bool layer_street_directions = false;
+    std::vector<int> streets_with_directions;
 };
 
-action_mem memory; 
+action_mem memory;
 
 /****** These are callback functions when certain actions are performed ********/
 
