@@ -185,11 +185,11 @@ struct action_mem{
     // last visible world, might be removed later
     ezgl::rectangle last_visible_world;
     // display railway
-    bool layer_railway_subway=false;
+    bool layer_railway_subway=true;
     // display all water bodies at all zoom level
-    bool layer_water_body=false;
+    bool layer_water_body=true;
     // display all poi
-    bool layer_poi = false;
+    bool layer_poi = true;
     // display directions
     std::vector<int> streets_with_directions;
 };
