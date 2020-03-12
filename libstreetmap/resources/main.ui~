@@ -322,7 +322,7 @@
                 </child>
                 <child>
                   <object class="GtkCheckButton" id="Layer_Directions">
-                    <property name="label" translatable="yes">checkbutton</property>
+                    <property name="label" translatable="yes">Directions</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">False</property>

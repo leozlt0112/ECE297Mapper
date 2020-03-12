@@ -185,16 +185,16 @@ struct action_mem{
     // last visible world, might be removed later
     ezgl::rectangle last_visible_world;
     // display railway
-    bool layer_railway_subway=true;
+    bool layer_railway_subway=false;
     // display all water bodies at all zoom level
-    bool layer_water_body=true;
+    bool layer_water_body=false;
     // display all poi
-    bool layer_poi = true;
+    bool layer_poi = false;
     // display directions
     std::vector<int> streets_with_directions;
 };
 
-action_mem memory;
+action_mem memory; 
 
 /****** These are callback functions when certain actions are performed ********/
 
