@@ -36,8 +36,8 @@ struct intersection_info{
     bool highlight = false;
     // for m3
     std::vector<int> outEdges;
-    int reachingEdge;
-    double bestTime;
+    int reachingEdge = -1;
+    double bestTime = -1;
 };
  
 struct segment_info {
@@ -110,6 +110,9 @@ std::multimap<std::string, railway_info> railways_subways;
 
 // a vector[streetSegIndex], each element stores distance. from m1_more.h
 extern std::vector<double> streetSeg_length;
+
+// a vector[IntersectionIndex], each intersection vector stores StreetSegID ints
+extern std::vector<std::vector<int>> intersection_street_segments;
 
 // a vector[StreetIndex], each street vector stores streetSegmentIDs
 extern std::vector<std::vector<int>> street_street_segments;

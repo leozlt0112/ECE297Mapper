@@ -24,3 +24,7 @@
 struct WaveElem{
     
 };
+
+
+// a vector[intersection_idx] storing intersection data
+extern std::vector<intersection_info> intersections;
