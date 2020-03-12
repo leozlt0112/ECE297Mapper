@@ -16,3 +16,11 @@
 #include "m1.h"
 #include "m2.h"
 #include "m3.h"
+
+/************ These are the information types that will be used ***************/
+
+// this is a variable type for each element in variable WaveFront
+// this is a variable type during path finding only, does not store final result
+struct WaveElem{
+    
+};

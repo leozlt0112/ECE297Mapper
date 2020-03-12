@@ -29,10 +29,15 @@
 
 /************ These are the information types that will be used ***************/
 struct intersection_info{
+    // for m2
     float x_;
     float y_;
     std::string name;
     bool highlight = false;
+    // for m3
+    std::vector<int> outEdges;
+    int reachingEdge;
+    double bestTime;
 };
  
 struct segment_info {
