@@ -13,6 +13,8 @@
 
 #pragma once //protects against multiple inclusions of this header file
 #include "structs_and_classes.h"
+#include "m2.h"
+#include "m2_more.h"
 
 /************ These are the data structures that will be used ***************/
 
