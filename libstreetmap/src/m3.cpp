@@ -1,9 +1,8 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+#include "m3.h"
+#include "m2.h"
+#include "m2_more.h"
 
+<<<<<<< HEAD
 #include "m3.h"
 #include "m3_more.h"
 
@@ -49,3 +48,73 @@ void pathFind_load(){
         nodes[i].idx_pnt = i;
     }
 }
+=======
+
+double compute_path_travel_time(const std::vector<StreetSegmentIndex>& path, 
+                                const double turn_penalty){
+    double temp = 0.0;
+    return temp;
+}
+
+
+
+
+std::vector<StreetSegmentIndex> find_path_between_intersections(
+		          const IntersectionIndex intersect_id_start, 
+                  const IntersectionIndex intersect_id_end,
+                  const double turn_penalty){
+    std::vector<StreetSegmentIndex>  temp;
+    return temp;
+}
+
+
+
+// Returns the time required to "walk" along the path specified, in seconds.
+// The path is given as a vector of street segment ids. The vector can be of
+// size = 0, and in this case, it the function should return 0. The walking
+// time is the sum of the length/<walking_speed> for each street segment, plus
+// the given turn penalty, in seconds, per turn implied by the path. If there
+// is no turn, then there is no penalty.  As mentioned above, going from Bloor
+// Street West to Bloor street East is considered a turn
+double compute_path_walking_time(const std::vector<StreetSegmentIndex>& path, 
+                                 const double walking_speed, 
+                                 const double turn_penalty){  
+    double temp = 0.0;
+    return temp;
+    /* int turns; 
+   //empty vector
+    if(path.size() == 0){
+        return 0;
+    }
+    
+    //The walking time is the sum of the length/<walking_speed> for each street segment, plus
+    // the given turn penalty, in seconds, per turn implied by the path
+    
+    //count turns in the path (whenever the street id changes) 
+    for(int i=0; i< path.size(); ++i){
+        InfoStreetSegment this_Seg_info = getInfoStreetSegment (path[i]);
+        InfoStreetSegment next_Seg_info = getInfoStreetSegment (path[i+1]);
+        
+        //calculate turns by comparing street id with its the next street id. 
+        if(this_Seg_info.streetID != next_Seg_info.streetID){
+            turns = turns +1;
+        }
+    }
+    */
+}
+
+
+
+
+std::pair<std::vector<StreetSegmentIndex>, std::vector<StreetSegmentIndex> 
+         find_path_with_walk_to_pick_up(
+                          const IntersectionIndex start_intersection, 
+                          const IntersectionIndex end_intersection,
+                          const double turn_penalty,
+                          const double walking_speed, 
+                          const double walking_time_limit){
+    std::pair<std::vector<StreetSegmentIndex> temp1;
+    std::pair<std::vector<StreetSegmentIndex> temp2;
+    return temp1, temp2;
+}
+>>>>>>> commit to resolve conflict
