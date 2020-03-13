@@ -32,6 +32,9 @@ extern std::vector<intersection_info> intersections;
 // edge idx != segment indx
 extern std::vector<segment_info> streetSegments;
 
+// a vector[streetSegIndex], each element stores distance. from m1_more.h
+extern std::vector<double> streetSeg_length;
+
 /************ These are functions called in program ***************/
 
 void pathFind_load();
