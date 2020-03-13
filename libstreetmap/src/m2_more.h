@@ -13,6 +13,7 @@
 
 #pragma once
 #include "m1.h"
+#include "structs_and_classes.h"
 #include "StreetsDatabaseAPI.h"
 #include "OSMDatabaseAPI.h"
 #include "ezgl/application.hpp"
@@ -27,55 +28,6 @@
 #include <iostream>
 #include <fstream>
 
-/************ These are the information types that will be used ***************/
-struct intersection_info{
-    // for m2
-    float x_;
-    float y_;
-    std::string name;
-    bool highlight = false;
-    // for m3
-    std::vector<int> outEdges;
-    int reachingEdge = -1;
-    double bestTime = -1;
-};
- 
-struct segment_info {
-    bool oneWay;                                // if true, then can only travel in from->to direction
-    std::vector<ezgl::point2d> allPoints;       // from, curve points, to
-    float speedLimit;                           // in km/h
-    OSMID wayOSMID;                             // index of way this segment belongs to
-};
-
-struct feature_info {
-    bool closed = false;                        // if true, it's closed (poly))
-    std::string name;                           // feature name
-    FeatureType type;                           // feature type
-    std::vector<ezgl::point2d> allPoints;       // from, curve points, to
-    float area;                                 // area
-};
-
-struct poi_info {
-    float x_;                                   // position x
-    float y_;                                   // position y
-    std::string type;
-    std::string name;                           // poi name
-    bool highlight = false; 
-};
-
-struct highway_info {
-    std::unordered_map<std::string,std::string> tags;   // store all the tags in a unordered_map
-    bool oneWay = false;                                        // whether one way or not
-    std::vector<ezgl::point2d> allPoints;               // from, curve points, to
-    OSMID wayOSMID;                                     // ID of this way
-    bool highlight = false;
-};
-
-struct railway_info {
-    std::unordered_map<std::string,std::string> tags;   // store all the tags in a unordered_map
-    std::vector<ezgl::point2d> allPoints;               // from, curve points, to
-    OSMID wayOSMID;                                     // ID of this way
-};
 
 /************ These are the data structures that will be used (and not constantly updated) ***************/
 

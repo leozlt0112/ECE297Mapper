@@ -3,10 +3,10 @@
  ***********************************************/
 
 #pragma once //protects against multiple inclusions of this header file
+#include "structs_and_classes.h"
 #include "StreetsDatabaseAPI.h"
 #include "OSMDatabaseAPI.h"
 #include <map>
-class XY_;
 
 // it converts a pair of LatLon to a pair of XY_
 std::pair<XY_,XY_> LatLon_to_XY(std::pair<LatLon,LatLon> points);
@@ -46,12 +46,3 @@ std::unordered_map<OSMID, const OSMWay*> WayID_Way;
 std::unordered_map<OSMID, double> WayID_length;
 
 int find_closest_POI(LatLon my_position);
-
-//This is a new class XY_, similar to LatLon but it holds x,y coordinates instead
-class XY_{
-public:
-    double x_;
-    double y_;
-    XY_(){}
-    XY_(double x_in,double y_in){x_=x_in; y_=y_in;}
-};

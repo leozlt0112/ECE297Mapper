@@ -12,19 +12,26 @@
  */
 
 #pragma once //protects against multiple inclusions of this header file
+#include "structs_and_classes.h"
 
-#include "m1.h"
-#include "m2.h"
-#include "m3.h"
+/************ These are the data structures that will be used ***************/
 
-/************ These are the information types that will be used ***************/
+// a vector[Node_idx] storing Nodes
+// Node_idx is the same as intersection idx
+std::vector<Node> nodes;
 
-// this is a variable type for each element in variable WaveFront
-// this is a variable type during path finding only, does not store final result
-struct WaveElem{
-    
-};
+// a vector[Edge_idx] storing Edges
+// Edge_idx is not the same as segment idx
+std::vector<Edge> edges;
 
-
-// a vector[intersection_idx] storing intersection data
+// a vector[node_idx] storing nodes
+// node idx == intersection indx
 extern std::vector<intersection_info> intersections;
+
+// a vector[edge_idx] storing edges
+// edge idx != segment indx
+extern std::vector<segment_info> streetSegments;
+
+/************ These are functions called in program ***************/
+
+void pathFind_load();
