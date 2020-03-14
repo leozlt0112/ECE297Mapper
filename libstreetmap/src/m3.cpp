@@ -1,6 +1,5 @@
 #include "m3.h"
 #include "m3_more.h"
-
 void pathFind_load(){
     nodes.resize(intersections.size());
     
@@ -80,7 +79,7 @@ double compute_path_travel_time(const std::vector<StreetSegmentIndex>& path,
         // there is already a function find_street_segment_travel_time()
         // and a data structure streetSeg_time[]
         // use either one of them to substitute the division.
-        seg_travel_time += (streetSeg_length[path[segCount]] / streetSegments[path[segCount]].speedLimit);
+        seg_travel_time += streetSeg_time[path[segCount]];
     }    
         
     //The travel time is the sum of the length/speed-limit of each street segment, plus the
@@ -110,7 +109,7 @@ double compute_path_walking_time(const std::vector<StreetSegmentIndex>& path,
     int turns = 0; 
    //empty vector
     if(path.size() == 0){
-        return 0;
+        return 0.0;
     }
        
     //count turns in the path (whenever the street id changes) 

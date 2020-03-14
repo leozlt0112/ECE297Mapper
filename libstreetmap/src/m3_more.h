@@ -15,7 +15,6 @@
 #include "structs_and_classes.h"
 #include "m2.h"
 #include "m2_more.h"
-
 /************ These are the data structures that will be used ***************/
 
 // a vector[Node_idx] storing Nodes
@@ -38,5 +37,5 @@ extern std::vector<segment_info> streetSegments;
 extern std::vector<double> streetSeg_length;
 
 /************ These are functions called in program ***************/
-
+extern std::vector<double> streetSeg_time;
 void pathFind_load();
