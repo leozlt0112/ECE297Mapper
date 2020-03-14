@@ -75,7 +75,11 @@ double compute_path_travel_time(const std::vector<StreetSegmentIndex>& path,
     }
      
     //adds up travel time for all the segs in the path
-    for(int segCount=0; segCount< path.size(); ++segCount){       
+    for(int segCount=0; segCount< path.size(); ++segCount){ 
+        // DAVE's COMMENT: don't calculate the division here, go to M1, 
+        // there is already a function find_street_segment_travel_time()
+        // and a data structure streetSeg_time[]
+        // use either one of them to substitute the division.
         seg_travel_time += (streetSeg_length[path[segCount]] / streetSegments[path[segCount]].speedLimit);
     }    
         
