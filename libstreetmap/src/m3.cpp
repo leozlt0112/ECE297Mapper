@@ -99,19 +99,24 @@ std::vector<StreetSegmentIndex> find_path_between_intersections(
 		          const IntersectionIndex intersect_id_start, 
                   const IntersectionIndex intersect_id_end,
                   const double turn_penalty){
-   //std::vector<StreetSegmentIndex>  temp;
-   // return temp;
+   std::vector<StreetSegmentIndex>  temp;
+   return temp;
    //define travelTime as min heap
    //std::priority_queue<double, std::vector<double>, std::greater<double>> travelTime;
-    list<WaveElem> waveFront; //Nodes to explore next
+    /*list<WaveElem> waveFront; //Nodes to explore next
     waveFront.push_back(WaveElem(intersect_id_start,NO_EDGE)); //source node
     
     while(waveFront.size() != 0){
         WaveElem current_node = waveFront.front();
         //remove node from waveFront
         waveFront.pop_front();
-        current_node.node->reachingEdge = current_node.edgeID;
         
+        //update the edge with shorter travel time
+        if(current_node.travelTime < current_node.node->bestTime){          
+            current_node.node->reachingEdge = current_node.edgeID;
+            current_node.node->bestTime = current_node.travelTime;
+            
+        }
         //reach destination 
         if(current_node.node->idx_pnt == intersect_id_end){
             //return true;
@@ -120,9 +125,9 @@ std::vector<StreetSegmentIndex> find_path_between_intersections(
         //go through all the outedge of current_node
         for(int i=0; i< (current_node.node->outEdges.size()); ++i){
             Node to_node = current_node.node->outEdges[i].to //?
-            waveFront.push_back(WaveElem(to_node,(current_node.node->outEdges[i]));
+            waveFront.push_back(WaveElem(to_node, (current_node.node->outEdges[i]), (current_node.node->bestTime)+);//?          
         }
-    }
+    }*/
     
     
 }
