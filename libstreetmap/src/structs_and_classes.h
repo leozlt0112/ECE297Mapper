@@ -103,7 +103,7 @@ struct WaveElem{
     Node* node;
     int edgeID;
     double travelTime; //total time to reach the node
-    WaveElem(Node* n, int id) {node = n; edgeID = id; travelTime = time;}
+    WaveElem(Node* n, int id, double time) {node = n; edgeID = id; travelTime = time;}
 };
 
 
