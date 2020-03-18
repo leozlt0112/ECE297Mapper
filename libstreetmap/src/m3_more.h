@@ -39,3 +39,4 @@ extern std::vector<double> streetSeg_length;
 /************ These are functions called in program ***************/
 extern std::vector<double> streetSeg_time;
 void pathFind_load();
+std::vector<StreetSegmentIndex> path_search_result(const IntersectionIndex intersect_id_end);
