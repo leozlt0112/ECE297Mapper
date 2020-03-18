@@ -106,5 +106,10 @@ struct WaveElem{
     WaveElem(Node* n, int id, double time) {node = n; edgeID = id; travelTime = time;}
 };
 
-
+//define comparison with travelTime in WaveElem for priority_queue
+    struct compareTravelTime{
+        bool operator()(const WaveElem& element_1, const WaveElem& element_2 )const{
+            return (element_1.travelTime < element_2.travelTime);
+        }
+    };
 
