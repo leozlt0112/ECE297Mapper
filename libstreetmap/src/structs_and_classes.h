@@ -84,6 +84,8 @@ struct Node{
     // Shortest time to travel from starting point to this Node
     // remember to set it to large number at the beginning of each path finding function
     double  bestTime;
+    //visited flag
+    bool visited = false; //initial to false 
 };
 
 // this is a variable type for each Edge.
@@ -95,6 +97,8 @@ struct Edge{
     int from;
     // idx of "to" Node
     int to;
+    //travel time of the edge 
+    double edgeTravelTime; 
 };
 
 // this is a variable type for each element in variable WaveFront
