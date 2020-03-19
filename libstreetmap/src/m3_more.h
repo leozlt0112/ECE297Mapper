@@ -15,6 +15,7 @@
 #include "structs_and_classes.h"
 #include "m2.h"
 #include "m2_more.h"
+#include <queue> //std::priority_queue
 /************ These are the data structures that will be used ***************/
 
 // a vector[Node_idx] storing Nodes
