@@ -1,7 +1,6 @@
 #include "m3.h"
 #include "m3_more.h"
 #include <queue> //std::priority_queue
-#include <list>
 #define NO_EDGE -1
 void pathFind_load(){
     nodes.resize(intersections.size());
@@ -170,8 +169,9 @@ std::vector<StreetSegmentIndex> find_path_between_intersections(
 
 std::vector<StreetSegmentIndex> path_search_result(const IntersectionIndex intersect_id_end){
     std::vector<StreetSegmentIndex> path;
-    WaveElem current_node.node->idx_pnt = intersect_id_end;
-    int pre_edge = current_node.node->reachingEdge;
+    WaveElem currentNode;
+    currentNode.node->idx_pnt = intersect_id_end;
+    int pre_edge = currentNode.node->reachingEdge;
     
     //transverse the path
     while(pre_edge != NO_EDGE){
@@ -180,15 +180,15 @@ std::vector<StreetSegmentIndex> path_search_result(const IntersectionIndex inter
         int from = getInfoStreetSegment(pre_edge).from;
         int to = getInfoStreetSegment(pre_edge).to;
         //update current_node
-        if(from = current_node.node->idx_pnt){
-            current_node.node->idx_pnt = to;
+        if(from = currentNode.node->idx_pnt){
+            currentNode.node->idx_pnt = to;
         }
-        if(to = current_node.node->idx_pnt){
-            current_node.node->idx_pnt = from;
+        if(to = currentNode.node->idx_pnt){
+            currentNode.node->idx_pnt = from;
         }
         
         //update pre_edge
-        pre_edge = current_node.node->reachingEdge;       
+        pre_edge = currentNode.node->reachingEdge;       
     }
     
     return path;       
