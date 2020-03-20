@@ -107,6 +107,7 @@ struct WaveElem{
     Node* node;
     int edgeID;
     double travelTime; //total time to reach the node
+    double estimateTravelTime; //estimated travel time to des ( best time + distance/ max speed limit of the city)
     WaveElem(Node* n, int id, double time) {node = n; edgeID = id; travelTime = time;}
     WaveElem() {
         node = NULL;
