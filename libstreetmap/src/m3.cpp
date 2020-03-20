@@ -89,7 +89,7 @@ std::vector<StreetSegmentIndex> find_path_between_intersections(
                 
                 //check if turn
                 //compare street id of this_seg with reaching_edge of current_node
-                int turns = 0;
+                int turn = 0;
                 if (current_node.edgeID != NO_EDGE){
                     int this_seg_id = edges[current_node.edgeID].idx_seg;
                     int next_seg_id = edges[current_node.node->outEdges[i]].idx_seg;
@@ -98,10 +98,10 @@ std::vector<StreetSegmentIndex> find_path_between_intersections(
                     InfoStreetSegment next_Seg_info = getInfoStreetSegment (next_seg_id);
                     //calculate turns by comparing street id with its the next street id. 
                     if(this_Seg_info.streetID != next_Seg_info.streetID){
-                             turns = 1;
+                             turn = 1;
                     }
                 }
-                totalTravelTime = (current_node.node->bestTime) + this_edgeTravelTime + (turns*turn_penalty);
+                totalTravelTime = (current_node.node->bestTime) + this_edgeTravelTime + (turn*turn_penalty);
 
                 //update waveFront 
                 waveFront.push(WaveElem(to_node, current_node.node->outEdges[i], totalTravelTime)); 
