@@ -109,7 +109,7 @@ std::vector<StreetSegmentIndex> find_path_between_intersections(
 
     //define waveFront with root node with least travel time. 
     std::priority_queue<WaveElem, std::vector<WaveElem>, compareTravelTime> waveFront; //Nodes to explore next
-    waveFront.push(WaveElem(intersect_id_start,NO_EDGE,0.0)); //source node
+    waveFront.push(WaveElem(&(nodes[intersect_id_start]),NO_EDGE,0.0)); //source node
     
     while(!waveFront.empty()){
         WaveElem current_node = waveFront.top();
@@ -138,7 +138,7 @@ std::vector<StreetSegmentIndex> find_path_between_intersections(
             if(edges[current_node.node->outEdges[i]].from == current_node.node->idx_pnt){                                
                 if(nodes[ edges[current_node.node->outEdges[i]].to ].visited == false){ 
                     //get the reaching node
-                    Node to_node = nodes[ edges[current_node.node->outEdges[i]].to ];                                       
+                    Node* to_node = &(nodes[ edges[current_node.node->outEdges[i]].to ]);                                       
                     //outEdge[i] edge travel time 
                     double this_edgeTravelTime = edges[ current_node.node->outEdges[i] ].edgeTravelTime;
                     
