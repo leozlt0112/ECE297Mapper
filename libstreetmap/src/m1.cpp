@@ -178,7 +178,7 @@ void pathFind_load(){
         //initialize bestTime of all nodes to 100000000.00
         nodes[i].bestTime = 100000000.00; //for comparison of less travel_time
         //initial visited to false 
-        nodes[i].visited = false; 
+        //nodes[i].visited = false; 
     }
 }
 

@@ -88,9 +88,9 @@ std::vector<StreetSegmentIndex> find_path_between_intersections(
             //if(edges[current_node.node->outEdges[i]].from == current_node.node->idx_pnt){                                
             //    if(nodes[ edges[current_node.node->outEdges[i]].to ].visited == false){ 
                     //get the reaching node
-                    Node* to_node = &(nodes[ edges[current_node.node->outEdges[i]].to ]);                                       
+                    Node* to_node = &(nodes[ edges[((current_node.node)->outEdges)[i]].to ]);                                       
                     //outEdge[i] edge travel time 
-                    double this_edgeTravelTime = edges[ current_node.node->outEdges[i] ].edgeTravelTime;
+                    double this_edgeTravelTime = edges[((current_node.node)->outEdges)[i]].edgeTravelTime;
                     
                     //total travel time so far //?
                     double totalTravelTime = 0.0;
@@ -98,18 +98,20 @@ std::vector<StreetSegmentIndex> find_path_between_intersections(
                     //count turns in the path (whenever the street id changes) 
                     //compare street id of this_seg with reaching_edge of current_node
                     int turns = 0;
-                    int seg_id = edges[current_node.node->outEdges[i]].idx_seg;                    
-                    InfoStreetSegment this_Seg_info = getInfoStreetSegment (edges[current_node.edgeID].idx_seg);
+                    int seg_id = edges[current_node.node->outEdges[i]].idx_seg;
+                    Edge* edge_temp = &(edges[current_node.edgeID]);
+                    int segment_idx_temp = edge_temp->idx_seg;
+                    InfoStreetSegment this_Seg_info = getInfoStreetSegment (segment_idx_temp);
                     InfoStreetSegment next_Seg_info = getInfoStreetSegment (seg_id);
                     //calculate turns by comparing street id with its the next street id. 
                     if(this_Seg_info.streetID != next_Seg_info.streetID){
-                             turns = turns +1;
+                             turns = 1;
                     }
                     
                     totalTravelTime = (current_node.node->bestTime) + this_edgeTravelTime + (turns*turn_penalty);
                                    
                     //update waveFront 
-                    waveFront.push(WaveElem(to_node, seg_id, totalTravelTime)); 
+                    waveFront.push(WaveElem(to_node, current_node.node->outEdges[i], totalTravelTime)); 
             //    }
             }                          
         //}
@@ -128,7 +130,7 @@ std::vector<StreetSegmentIndex> path_search_result(const IntersectionIndex inter
         //update pre_seg
         pre_seg = edges[pre_edge].idx_seg;
         
-        path.push_back(pre_seg);
+        path.insert(path.begin(),pre_seg);
         //get node at the other end of pre_edge
 //        int from = getInfoStreetSegment(pre_seg).from;
 //        int to = getInfoStreetSegment(pre_seg).to;
@@ -141,7 +143,7 @@ std::vector<StreetSegmentIndex> path_search_result(const IntersectionIndex inter
 //        }
         // update current_node
         currentNode =  &(nodes[edges[pre_edge].from]);
-        //update pre_edge
+        // update pre_edge
         pre_edge = currentNode->reachingEdge; 
         
     }
