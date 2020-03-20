@@ -27,8 +27,6 @@
 #include <algorithm>    // std::sort
 #include <iostream>
 #include <fstream>
-
-
 /************ These are the data structures that will be used (and not constantly updated) ***************/
 
 // a vector[intersection_idx] storing intersection data

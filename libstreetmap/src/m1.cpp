@@ -21,7 +21,7 @@
 #include "m1.h"
 #include "m1_more.h"
 #include <algorithm>    // std::sort
- 
+
 bool load_map(std::string map_path) {
     //Indicates whether the map has loaded successfully
     bool load_successful = loadStreetsDatabaseBIN(map_path); 
@@ -129,8 +129,57 @@ bool load_map(std::string map_path) {
         }
         WayID_length.insert(std::make_pair(this_way->id(), distance));
     }
-    
+    pathFind_load();
     return true;
+}
+void pathFind_load(){
+    nodes.resize(getNumIntersections());
+    
+    // std::vector<Edge> edges;
+    // std::vector<Node> nodes; => outEdges only
+    for(size_t i = 0; i < getNumStreetSegments(); ++i) {
+        // get the info
+        InfoStreetSegment this_info = getInfoStreetSegment(i);
+        // declare a new edge
+        Edge new_edge;
+               
+        //store edge travel time 
+        new_edge.edgeTravelTime = streetSeg_time[i];
+                
+        // store one direction edge
+        new_edge.idx_seg = i;
+        new_edge.from    = this_info.from;
+        new_edge.to      = this_info.to;        
+        
+        // push one direction edge
+        edges.push_back(new_edge);
+        
+        // store into outEdges of "from" Node
+        // because current edge is always the last element, edge_idx = size-1
+        nodes[new_edge.from].outEdges.push_back(edges.size()-1);
+        
+        if (!(this_info.oneWay)){
+            // store opposite direction edge
+            new_edge.from = this_info.to;
+            new_edge.to   = this_info.from;
+
+            // push opposite direction edge
+            edges.push_back(new_edge);
+            
+            // store into outEdges of "from" Node
+            // because current edge is always the last element, edge_idx = size-1
+            nodes[new_edge.from].outEdges.push_back(edges.size()-1);
+        }
+    }
+    
+    // std::vector<Node> nodes;
+    for(size_t i = 0; i < nodes.size(); ++i) {
+        nodes[i].idx_pnt = i;
+        //initialize bestTime of all nodes to 100000000.00
+        nodes[i].bestTime = 100000000.00; //for comparison of less travel_time
+        //initial visited to false 
+        nodes[i].visited = false; 
+    }
 }
 
 void close_map() {   

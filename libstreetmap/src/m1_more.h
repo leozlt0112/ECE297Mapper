@@ -46,3 +46,13 @@ std::unordered_map<OSMID, const OSMWay*> WayID_Way;
 std::unordered_map<OSMID, double> WayID_length;
 
 int find_closest_POI(LatLon my_position);
+
+void pathFind_load();
+
+// a vector[Node_idx] storing Nodes
+// Node_idx is the same as intersection idx
+std::vector<Node> nodes;
+
+// a vector[Edge_idx] storing Edges
+// Edge_idx is not the same as segment idx
+std::vector<Edge> edges;

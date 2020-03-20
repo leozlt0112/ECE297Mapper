@@ -20,11 +20,11 @@
 
 // a vector[Node_idx] storing Nodes
 // Node_idx is the same as intersection idx
-std::vector<Node> nodes;
+extern std::vector<Node> nodes;
 
 // a vector[Edge_idx] storing Edges
 // Edge_idx is not the same as segment idx
-std::vector<Edge> edges;
+extern std::vector<Edge> edges;
 
 // a vector[node_idx] storing nodes
 // node idx == intersection indx
@@ -39,5 +39,5 @@ extern std::vector<double> streetSeg_length;
 
 /************ These are functions called in program ***************/
 extern std::vector<double> streetSeg_time;
-void pathFind_load();
+
 std::vector<StreetSegmentIndex> path_search_result(const IntersectionIndex intersect_id_end);
