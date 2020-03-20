@@ -42,4 +42,4 @@ extern std::vector<double> streetSeg_time;
 
 std::vector<StreetSegmentIndex> path_search_result(const IntersectionIndex intersect_id_end);
 
-find_walking_path(const IntersectionIndex start_intersection, const IntersectionIndex walk_intersection);
+ std::vector<StreetSegmentIndex> find_walking_path(const IntersectionIndex start_intersection, const IntersectionIndex walk_intersection);
