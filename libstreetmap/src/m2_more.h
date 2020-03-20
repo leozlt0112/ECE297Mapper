@@ -195,5 +195,8 @@ void IntersectionsSearchResult(std::vector<int> intersections_found, ezgl::appli
 // it forces the auto completion to always show the correct list we stored
 gboolean forced_auto_completion(GtkEntryCompletion *completion, const gchar *key, GtkTreeIter *iter, gpointer user_data);
 
+// it updates label of the path_find button
+void PathFind_Button_callback(GtkToggleButton* widget, ezgl::application *application);
+
 // Test callback, feel free to modify and use it for any testing
 void Test_callback(GtkEntry* widget, ezgl::application *application);
