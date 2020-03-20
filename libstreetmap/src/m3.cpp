@@ -70,51 +70,43 @@ std::vector<StreetSegmentIndex> find_path_between_intersections(
         if(current_node.travelTime < current_node.node->bestTime){             
             current_node.node->reachingEdge = current_node.edgeID;
             current_node.node->bestTime = current_node.travelTime;
-            //update visited flag 
-        //    current_node.node->visited = true;
             
-        }
-        
-        //reach destination 
-        if(current_node.node->idx_pnt == intersect_id_end){           
-            return path_search_result(intersect_id_end); // later
-            //check if path exits???           
-        }
-        
-        //go through all the outEdges of the current_node
-        for(int i=0; i< (current_node.node->outEdges.size()); ++i){
-            //only store un-visited outEdges
-            //get to_node of all outEdges???
-            //if(edges[current_node.node->outEdges[i]].from == current_node.node->idx_pnt){                                
-            //    if(nodes[ edges[current_node.node->outEdges[i]].to ].visited == false){ 
-                    //get the reaching node
-                    Node* to_node = &(nodes[ edges[((current_node.node)->outEdges)[i]].to ]);                                       
-                    //outEdge[i] edge travel time 
-                    double this_edgeTravelTime = edges[((current_node.node)->outEdges)[i]].edgeTravelTime;
-                    
-                    //total travel time so far //?
-                    double totalTravelTime = 0.0;
-                    
-                    //count turns in the path (whenever the street id changes) 
-                    //compare street id of this_seg with reaching_edge of current_node
-                    int turns = 0;
-                    int seg_id = edges[current_node.node->outEdges[i]].idx_seg;
-                    Edge* edge_temp = &(edges[current_node.edgeID]);
-                    int segment_idx_temp = edge_temp->idx_seg;
-                    InfoStreetSegment this_Seg_info = getInfoStreetSegment (segment_idx_temp);
-                    InfoStreetSegment next_Seg_info = getInfoStreetSegment (seg_id);
+            //reach destination
+            if(current_node.node->idx_pnt == intersect_id_end){           
+                return path_search_result(intersect_id_end);     
+            }
+
+            //go through all the outEdges of the current_node
+            for(int i=0; i< (current_node.node->outEdges.size()); ++i){
+                //get to_node of one outEdge
+                Node* to_node = &(nodes[ edges[((current_node.node)->outEdges)[i]].to ]);                                       
+
+                //update the travel time
+                double totalTravelTime = 0.0;
+                
+                //outEdge[i] edge travel time 
+                double this_edgeTravelTime = edges[((current_node.node)->outEdges)[i]].edgeTravelTime;
+                
+                //check if turn
+                //compare street id of this_seg with reaching_edge of current_node
+                int turns = 0;
+                if (current_node.edgeID != NO_EDGE){
+                    int this_seg_id = edges[current_node.edgeID].idx_seg;
+                    int next_seg_id = edges[current_node.node->outEdges[i]].idx_seg;
+                    //std::cout << "\n\n\n -------------------\n"<<this_seg_id<<"\n"<<current_node.edgeID<<"\n -------------------\n\n\n";
+                    InfoStreetSegment this_Seg_info = getInfoStreetSegment (this_seg_id);
+                    InfoStreetSegment next_Seg_info = getInfoStreetSegment (next_seg_id);
                     //calculate turns by comparing street id with its the next street id. 
                     if(this_Seg_info.streetID != next_Seg_info.streetID){
                              turns = 1;
                     }
-                    
-                    totalTravelTime = (current_node.node->bestTime) + this_edgeTravelTime + (turns*turn_penalty);
-                                   
-                    //update waveFront 
-                    waveFront.push(WaveElem(to_node, current_node.node->outEdges[i], totalTravelTime)); 
-            //    }
-            }                          
-        //}
+                }
+                totalTravelTime = (current_node.node->bestTime) + this_edgeTravelTime + (turns*turn_penalty);
+
+                //update waveFront 
+                waveFront.push(WaveElem(to_node, current_node.node->outEdges[i], totalTravelTime)); 
+            }   
+        }                       
     }
     return temp;
 }

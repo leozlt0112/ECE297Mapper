@@ -153,7 +153,7 @@ void pathFind_load(){
         
         // push one direction edge
         edges.push_back(new_edge);
-        
+         
         // store into outEdges of "from" Node
         // because current edge is always the last element, edge_idx = size-1
         nodes[new_edge.from].outEdges.push_back(edges.size()-1);
