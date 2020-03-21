@@ -42,6 +42,7 @@ double compute_path_travel_time(const std::vector<StreetSegmentIndex>& path,
 }
 
 
+
 // Returns a path (route) between the start intersection and the end
 // intersection, if one exists. This routine should return the shortest path
 // between the given intersections, where the time penalty to turn right or
