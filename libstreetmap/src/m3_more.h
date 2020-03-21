@@ -37,9 +37,17 @@ extern std::vector<segment_info> streetSegments;
 // a vector[streetSegIndex], each element stores distance. from m1_more.h
 extern std::vector<double> streetSeg_length;
 
+// a vector[streetSegment_idx] storing street_segment_data
+extern std::vector<segment_info> streetSegments;
+
 /************ These are functions called in program ***************/
 extern std::vector<double> streetSeg_time;
 
+//Returns the distance between two coordinates in meters
+double find_distance_between_two_points(std::pair<LatLon, LatLon> points);
+
 std::vector<StreetSegmentIndex> path_search_result(const IntersectionIndex intersect_id_end);
 
- std::vector<StreetSegmentIndex> find_walking_path(const IntersectionIndex start_intersection, const IntersectionIndex walk_intersection);
+std::vector<StreetSegmentIndex> find_walking_path(const IntersectionIndex start_intersection, const IntersectionIndex walk_intersection, const double turn_penalty,
+                                                   const double walking_speed);
+

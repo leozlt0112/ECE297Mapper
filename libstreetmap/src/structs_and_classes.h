@@ -84,8 +84,6 @@ struct Node{
     // Shortest time to travel from starting point to this Node
     // remember to set it to large number at the beginning of each path finding function
     double  bestTime;
-    //visited flag
-   // bool visited = false; //initial to false 
 };
 
 // this is a variable type for each Edge.
@@ -107,19 +105,23 @@ struct WaveElem{
     Node* node;
     int edgeID;
     double travelTime; //total time to reach the node
-    double estimateTravelTime; //estimated travel time to des ( best time + distance/ max speed limit of the city)
+    double estimateTravelTime; //estimated travel time to destination
     WaveElem(Node* n, int id, double time) {node = n; edgeID = id; travelTime = time;}
-    WaveElem() {
-        node = NULL;
-        edgeID=0;
-        travelTime=0.0;
-    }
+    WaveElem(Node* n, int id, double time, double estimateTime) {node = n; edgeID = id; travelTime = time; estimateTravelTime = estimateTime;}
+    WaveElem() {node = NULL; edgeID=0; travelTime=0.0; estimateTravelTime=0.0;} 
 };
 
 //define comparison with travelTime in WaveElem for priority_queue
     struct compareTravelTime{
         bool operator()(const WaveElem& element_1, const WaveElem& element_2 )const{
             return (element_1.travelTime > element_2.travelTime);
+        }
+    };
+    
+//define comparison with estimateTravelTime in WaveElem for priority_queue
+    struct compareEstimateTravelTime{
+        bool operator()(const WaveElem& element_1, const WaveElem& element_2 )const{
+            return (element_1.estimateTravelTime > element_2.estimateTravelTime);
         }
     };
 
