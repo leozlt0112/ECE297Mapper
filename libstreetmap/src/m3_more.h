@@ -13,6 +13,7 @@
 
 #pragma once //protects against multiple inclusions of this header file
 #include "structs_and_classes.h"
+#include "m1.h"
 #include "m2.h"
 #include "m2_more.h"
 #include <queue> //std::priority_queue
@@ -43,11 +44,7 @@ extern std::vector<segment_info> streetSegments;
 /************ These are functions called in program ***************/
 extern std::vector<double> streetSeg_time;
 
-//Returns the distance between two coordinates in meters
-double find_distance_between_two_points(std::pair<LatLon, LatLon> points);
-
 std::vector<StreetSegmentIndex> path_search_result(const IntersectionIndex intersect_id_end);
 
 std::vector<StreetSegmentIndex> find_walking_path(const IntersectionIndex start_intersection, const IntersectionIndex walk_intersection, const double turn_penalty,
                                                    const double walking_speed);
-

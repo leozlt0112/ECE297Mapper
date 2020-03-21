@@ -13,6 +13,7 @@
 
 #pragma once
 #include "m1.h"
+#include "m3.h"
 #include "structs_and_classes.h"
 #include "StreetsDatabaseAPI.h"
 #include "OSMDatabaseAPI.h"
@@ -30,33 +31,33 @@
 /************ These are the data structures that will be used (and not constantly updated) ***************/
 
 // a vector[intersection_idx] storing intersection data
-std::vector<intersection_info> intersections;
+extern std::vector<intersection_info> intersections;
 
 // a vector[streetSegment_idx] storing street_segment_data
-std::vector<segment_info> streetSegments;
+extern std::vector<segment_info> streetSegments;
 
 // a vector[features_idx] storing features_data
-std::vector<feature_info> features;
+extern std::vector<feature_info> features;
 
 // unordered_map storing poi_data
-std::unordered_map<int,poi_info> POIs_entertainment;
-std::unordered_map<int,poi_info> POIs_food;
-std::unordered_map<int,poi_info> POIs_public_gathering;
-std::unordered_map<int,poi_info> POIs_other; 
+extern std::unordered_map<int,poi_info> POIs_entertainment;
+extern std::unordered_map<int,poi_info> POIs_food;
+extern std::unordered_map<int,poi_info> POIs_public_gathering;
+extern std::unordered_map<int,poi_info> POIs_other; 
 
 // vector[] storing all the highway_info that are major/medium/minor
-std::vector<highway_info> highways_major; 
-std::vector<highway_info> highways_medium;
-std::vector<highway_info> highways_minor; 
+extern std::vector<highway_info> highways_major; 
+extern std::vector<highway_info> highways_medium;
+extern std::vector<highway_info> highways_minor; 
 
 // a vector[way_index] storing all the tags
-std::unordered_map<OSMID, std::unordered_map<std::string,std::string>> WayID_tags;
+extern std::unordered_map<OSMID, std::unordered_map<std::string,std::string>> WayID_tags;
 
 // a vector[node_index] storing Node IDs and nodes
-std::unordered_map<OSMID, const OSMNode*> NodeID_node;
+extern std::unordered_map<OSMID, const OSMNode*> NodeID_node;
 
 // a multimap storing all the railway: subways
-std::multimap<std::string, railway_info> railways_subways;
+extern std::multimap<std::string, railway_info> railways_subways;
 
 // a vector[streetSegIndex], each element stores distance. from m1_more.h
 extern std::vector<double> streetSeg_length;
@@ -81,10 +82,10 @@ extern std::multimap<std::string, int> streetID_streetName;
 
 // In Degrees: max_lat, min_lat, max_lon, min_lon
 // In Radians: avg_lat
-double max_lat, min_lat, max_lon, min_lon, avg_lat;
+extern double max_lat, min_lat, max_lon, min_lon, avg_lat;
 
 // it stores the value of initial world size
-ezgl::rectangle initial_world;
+extern ezgl::rectangle initial_world;
 
 /************ These are functions called in program ***************/
 
@@ -118,6 +119,9 @@ void draw_street_names(ezgl::renderer *g);
 // draw street sgements directions
 void draw_street_segments_directions (ezgl::renderer *g);
 
+// draw the path found in the path finding utilities
+void draw_path_found(ezgl::renderer *g);
+
 // it finds the closest  pois in the map.
 // return -1 if not found
 extern int find_closest_POI(LatLon my_position);
@@ -150,9 +154,18 @@ struct action_mem{
     bool layer_poi = false;
     // display directions
     std::vector<int> streets_with_directions;
+    // path finding state:
+    //  0 = OFF
+    //  1 = ON, driving
+    //  2 = ON, walking + driving
+    int path_finding_state=0;
+    // path finding intersections
+    std::vector<int> path_finding_intersections;
+    // path found
+    std::vector<int> path_found;
 };
 
-action_mem memory; 
+extern action_mem memory; 
 
 /****** These are callback functions when certain actions are performed ********/
 
@@ -196,7 +209,7 @@ void IntersectionsSearchResult(std::vector<int> intersections_found, ezgl::appli
 gboolean forced_auto_completion(GtkEntryCompletion *completion, const gchar *key, GtkTreeIter *iter, gpointer user_data);
 
 // it updates label of the path_find button
-void PathFind_Button_callback(GtkToggleButton* widget, ezgl::application *application);
+void PathFind_Button_callback(GtkButton* widget, ezgl::application *application);
 
 // Test callback, feel free to modify and use it for any testing
 void Test_callback(GtkEntry* widget, ezgl::application *application);
