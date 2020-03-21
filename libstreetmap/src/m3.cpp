@@ -244,16 +244,38 @@ double compute_path_walking_time(const std::vector<StreetSegmentIndex>& path,
                           const double walking_speed, 
                           const double walking_time_limit){
      
-     std::pair<std::vector<StreetSegmentIndex>, std::vector<StreetSegmentIndex>> temp;
-     std::vector<StreetSegmentIndex> temp1;
-     std::vector<StreetSegmentIndex> temp2;
-     temp = std::make_pair(temp1,temp2);
-     return temp;      
+     //std::pair<std::vector<StreetSegmentIndex>, std::vector<StreetSegmentIndex>> temp;
+     //std::vector<StreetSegmentIndex> temp1;
+     //std::vector<StreetSegmentIndex> temp2;
+     //temp = std::make_pair(temp1,temp2);
+     //return temp;      
      //find k walkable intersection within time limit      
      //find drive path for all k intersections 
      
      //easy version
-     /*Node walk_node;
+     std::vector <StreetSegmentIndex> walk_path;
+     std::vector <StreetSegmentIndex> drive_path;
+     std::vector <StreetSegmentIndex> best_drive_path;
+     std::vector <StreetSegmentIndex> best_walk_path; 
+     double driving_time = 99999999999999999;
+     for (int i=0; i<nodes.size(); i++) {
+        // Node intersect_node = nodes [i];
+         walk_path = find_path_between_intersections(start_intersection, i,turn_penalty);
+         double walking_time=compute_path_walking_time(walk_path, walking_speed, turn_penalty);
+         if(walking_time < walking_time_limit) {
+             drive_path = find_path_between_intersections(i,end_intersection,turn_penalty);
+             double temp_time= compute_path_travel_time(drive_path,turn_penalty);
+             if (driving_time > temp_time) {
+                 driving_time = temp_time;
+                 best_drive_path = drive_path;
+                 best_walk_path =walk_path;
+             }
+         }
+     }
+      std::pair<std::vector<StreetSegmentIndex>, std::vector<StreetSegmentIndex>> path_with_walk;
+      std::make_pair(best_drive_path, best_walk_path);
+      return path_with_walk;
+     /*Node walk_node; 
      int walk_inter_id;
      double walking_time = 0.0;
      double drive_time_before = 0.0;
@@ -276,10 +298,10 @@ double compute_path_walking_time(const std::vector<StreetSegmentIndex>& path,
     }*/  
 }
  
- std::vector<StreetSegmentIndex> find_walking_path(const IntersectionIndex start_intersection,
-                                                   const IntersectionIndex walk_intersection,
-                                                   const double turn_penalty,
-                                                   const double walking_speed){
+ std::vector<StreetSegmentIndex> find_walking_path(
+		          const IntersectionIndex intersect_id_start, 
+                  const IntersectionIndex intersect_id_end,
+                  const double turn_penalty){
      std::vector<StreetSegmentIndex> temp;
      return temp;     
     //need to change travel_time to walking_time!!!!
