@@ -107,7 +107,7 @@ struct WaveElem{
     double travelTime; //total time to reach the node
     double estimateTravelTime; //estimated travel time to destination
     WaveElem(Node* n, int id, double time) {node = n; edgeID = id; travelTime = time;} //for Dijstra
-    WaveElem(Node* n, int id, double estimateTime) {node = n; edgeID = id; estimateTravelTime = estimateTime;}
+    WaveElem(Node* n, int id, double time, double estimateTime) {node = n; edgeID = id; travelTime = time; estimateTravelTime = estimateTime;}
     WaveElem() {node = NULL; edgeID=0; travelTime=0.0; estimateTravelTime=0.0;}
 };
 
