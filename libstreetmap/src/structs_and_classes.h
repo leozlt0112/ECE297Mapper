@@ -108,7 +108,7 @@ struct WaveElem{
     double estimateTravelTime; //estimated travel time to destination
     WaveElem(Node* n, int id, double time) {node = n; edgeID = id; travelTime = time;} //for Dijstra
     WaveElem(Node* n, int id, double estimateTime) {node = n; edgeID = id; estimateTravelTime = estimateTime;}
-    WaveElem() {node = NULL; edgeID=0; travelTime=0.0; estimateTravelTime=0.0;} 
+    WaveElem() {node = NULL; edgeID=0; travelTime=0.0; estimateTravelTime=0.0;}
 };
 
 //define comparison with travelTime in WaveElem for priority_queue

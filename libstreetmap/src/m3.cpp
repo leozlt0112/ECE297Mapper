@@ -274,7 +274,7 @@ double compute_path_walking_time(const std::vector<StreetSegmentIndex>& path,
              if (driving_time > temp_time) {
                  driving_time = temp_time;
                  best_drive_path = drive_path;
-                 best_walk_path =walk_path;
+                 best_walk_path = walk_path;
              }
          }
      }
@@ -311,14 +311,12 @@ double compute_path_walking_time(const std::vector<StreetSegmentIndex>& path,
                                                    const IntersectionIndex walk_intersection,
                                                    const double turn_penalty,
                                                    const double walking_speed){
-    std::vector<StreetSegmentIndex> temp;
-    return temp;     
-    //need to change travel_time to walking_time!!!!
+   // std::vector<StreetSegmentIndex> temp;
+   // return temp;     
+    // same variable is used here now for travel_time and walk_time
      
-   /*std::vector<StreetSegmentIndex> empty_path;
-   
-    //reset all elements 
-    for(int i=0; i < nodes.size(); ++i){
+   std::vector<StreetSegmentIndex> empty_path;
+   for(int i=0; i < nodes.size(); ++i){
         //reset reachingEdge to NO_EDGE
         nodes[i].reachingEdge= NO_EDGE;
         //reset bestTime of all nodes to 100000000.00
@@ -352,7 +350,7 @@ double compute_path_walking_time(const std::vector<StreetSegmentIndex>& path,
                 double totalTravelTime = 0.0;
                 
                 //outEdge[i] edge travel time 
-                double this_edgeTravelTime = edges[((current_node.node)->outEdges)[i]].edgeTravelTime;
+                double this_edgeTravelTime = streetSeg_length[(edges[((current_node.node)->outEdges)[i]].idx_seg)] / walking_speed ;
                 
                 //check if turn
                 //compare street id of this_seg with reaching_edge of current_node
