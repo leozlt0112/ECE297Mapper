@@ -266,7 +266,7 @@ double compute_path_walking_time(const std::vector<StreetSegmentIndex>& path,
      double driving_time = 99999999;
      for (int i=0; i<nodes.size(); i++) {
         // Node intersect_node = nodes [i];
-         walk_path = find_path_between_intersections(start_intersection, i,turn_penalty);
+         walk_path = find_walking_path(start_intersection, i, turn_penalty, walking_speed);
          double walking_time=compute_path_walking_time(walk_path, walking_speed, turn_penalty);
          if(walking_time < walking_time_limit) {
              drive_path = find_path_between_intersections(i,end_intersection,turn_penalty);

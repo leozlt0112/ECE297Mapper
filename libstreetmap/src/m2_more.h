@@ -163,6 +163,7 @@ struct action_mem{
     std::vector<int> path_finding_intersections;
     // path found
     std::vector<int> path_found;
+    std::vector<int> walk_path_found;
 };
 
 extern action_mem memory; 
