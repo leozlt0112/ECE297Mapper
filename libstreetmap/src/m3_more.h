@@ -52,8 +52,20 @@ extern std::vector<segment_info> streetSegments;
 /************ These are functions called in program ***************/
 extern std::vector<double> streetSeg_time;
 
-std::vector<StreetSegmentIndex> path_search_result(const IntersectionIndex intersect_id_end);
-std::vector<StreetSegmentIndex> path_walk_search_result(const IntersectionIndex intersect_id_end);
+std::pair<std::vector<StreetSegmentIndex>,int> find_path_between_intersections_multi_starts(
+                                                const std::vector<int> intersect_ids_start, 
+                                                const IntersectionIndex intersect_id_end,
+                                                const double turn_penalty,
+                                                const double walking_speed);
 
-std::vector<StreetSegmentIndex> find_walking_path(const IntersectionIndex start_intersection, const IntersectionIndex walk_intersection, const double turn_penalty,
-                                                   const double walking_speed);
+std::pair<std::vector<StreetSegmentIndex>,int> path_search_result(const IntersectionIndex intersect_id_end);
+std::vector<StreetSegmentIndex>                path_walk_search_result(const IntersectionIndex intersect_id_end);
+
+std::vector<StreetSegmentIndex> find_walking_path(const IntersectionIndex start_intersection, 
+                                                  const IntersectionIndex walk_intersection, 
+                                                  const double turn_penalty,
+                                                  const double walking_speed);
+ std::vector<int>               find_walkable_inters( const IntersectionIndex start_intersection,
+                                                      const double turn_penalty,
+                                                      const double walking_speed,
+                                                      const double walking_time_limit);
