@@ -402,14 +402,17 @@ double compute_path_walking_time(const std::vector<StreetSegmentIndex>& path,
                           const double walking_speed, 
                           const double walking_time_limit){
      
-     //std::pair<std::vector<StreetSegmentIndex>, std::vector<StreetSegmentIndex>> temp;
-     //std::vector<StreetSegmentIndex> temp1;
-     //std::vector<StreetSegmentIndex> temp2;
-     //temp = std::make_pair(temp1,temp2);
-     //return temp;     
-
-     //find k walkable intersection within time limit      
-     //find drive path for all k intersections 
+     // use Dijkstra to find all walkable intersections
+     std::vector<int> walkable_inters = find_walkable_inters(start_intersection,turn_penalty, walking_speed, walking_time_limit);
+     // find the final drive path and final walk_intersections
+     std::pair<std::vector<StreetSegmentIndex>,int> drivePath_and_walkInter = find_path_between_intersections_multi_starts(walkable_inters,end_intersection,turn_penalty,walking_speed);
+     std::vector<StreetSegmentIndex> drivePath = drivePath_and_walkInter.first;
+     int walkInter = drivePath_and_walkInter.second;
+     // find walk path
+     std::vector<int> walkPath  = path_walk_search_result(walkInter);
+     // return whole path
+     return std::make_pair(walkPath, drivePath);
+     /*
      
      //easy version
      std::vector <StreetSegmentIndex> empty_path;
@@ -419,15 +422,7 @@ double compute_path_walking_time(const std::vector<StreetSegmentIndex>& path,
      std::vector <StreetSegmentIndex> best_walk_path; 
      double maximum_distance = walking_speed * walking_time_limit;
      double best_driving_time = 99999999;
-     // use Dijkstra to find all walkable intersections
-     std::vector<int> walkable_inters = find_walkable_inters(start_intersection,turn_penalty, walking_speed, walking_time_limit);
-     std::pair<std::vector<StreetSegmentIndex>,int> astar_drivePath_start = find_path_between_intersections_multi_starts(walkable_inters,end_intersection,turn_penalty,walking_speed);
-     std::vector<StreetSegmentIndex> astar_drivePath = astar_drivePath_start.first;
-     int astar_walk_inter = astar_drivePath_start.second;
-     std::vector<int> astar_walkPath  = path_walk_search_result(astar_walk_inter);
-     std::cout<<"\n\nwalking_time:"<< walking_time_limit <<" walkable_pnts:" << walkable_inters.size()<<" walk_path:"<<astar_walkPath.size()<<" drive_path:"<<astar_drivePath.size()<<"\n\n";
-     return std::make_pair(astar_walkPath, astar_drivePath);
-     /*
+     
      for (int i=0; i<nodes.size(); i++) {
         // Node intersect_node = nodes [i];
          LatLon point1 = getIntersectionPosition(start_intersection);
