@@ -273,46 +273,15 @@ double compute_path_walking_time(const std::vector<StreetSegmentIndex>& path,
      //find drive path for all k intersections 
      
      //easy version
-     std::vector<StreetSegmentIndex> empty_path;
+     std::vector <StreetSegmentIndex> empty_path;
      std::vector <StreetSegmentIndex> walk_path;
      std::vector <StreetSegmentIndex> drive_path;
      std::vector <StreetSegmentIndex> best_drive_path;
      std::vector <StreetSegmentIndex> best_walk_path; 
      double maximum_distance = walking_speed * walking_time_limit;
-     double driving_time = 99999999;
+     double best_driving_time = 99999999;
      for (int i=0; i<nodes.size(); i++) {
         // Node intersect_node = nodes [i];
-<<<<<<< HEAD
-         walk_path = find_walking_path(start_intersection, i, turn_penalty, walking_speed);        
-         double walking_time = compute_path_walking_time(walk_path, walking_speed, turn_penalty);
-        // If the end_intersection turns out to be within the walking time limit, 
-        // you can choose what to return, but you should not crash.
-         if(walking_time = walking_time_limit) {
-             drive_path = walk_path;
-             best_drive_path = drive_path;
-             best_walk_path = walk_path;
-         }
-         if(walking_time < walking_time_limit) {
-            //Note that a start_intersection can be a pick-up intersection. If this happens, the first vector should be empty
-            // (size = 0).
-            if(start_intersection == i){
-                best_walk_path = empty_path;
-            }
-            
-             drive_path = find_path_between_intersections(i, end_intersection, turn_penalty);
-             double temp_time = compute_path_travel_time(drive_path, turn_penalty);
-             
-             if (driving_time > temp_time) {
-                 driving_time = temp_time;
-                 best_drive_path = drive_path;
-                 best_walk_path = walk_path;
-             }
-         }
-     }    
-      std::pair<std::vector<StreetSegmentIndex>, std::vector<StreetSegmentIndex>> path_with_walk;
-      std::make_pair(best_drive_path, best_walk_path);
-      return path_with_walk;
-=======
          LatLon point1 = getIntersectionPosition(start_intersection);
          LatLon point2 = getIntersectionPosition(i); 
          double this_distance = find_distance_between_two_points(std::make_pair(point1, point2));
@@ -322,16 +291,17 @@ double compute_path_walking_time(const std::vector<StreetSegmentIndex>& path,
              if(walking_time < walking_time_limit) {
                  drive_path = find_path_between_intersections(i,end_intersection,turn_penalty);
                  double temp_time= compute_path_travel_time(drive_path,turn_penalty);
-                 if (driving_time > temp_time) {
-                     driving_time = temp_time;
-                     best_drive_path = drive_path;
+                 if (temp_time < best_driving_time) {
+                     best_driving_time = temp_time;
                      best_walk_path = walk_path;
+                     best_drive_path = drive_path;
                  }
              }
          }
      }
      std::pair<std::vector<StreetSegmentIndex>, std::vector<StreetSegmentIndex>> path_with_walk;
-     path_with_walk=std::make_pair(best_drive_path, best_walk_path);
+     //std::cout<<"\n\n\ndriving path:"<<best_drive_path.size()<<" walk path:"<<best_walk_path.size()<<"\n\n\n";
+     path_with_walk=std::make_pair(best_walk_path, best_drive_path);
      return path_with_walk;
       
      /*Node walk_node; 
@@ -355,7 +325,6 @@ double compute_path_walking_time(const std::vector<StreetSegmentIndex>& path,
             //check if the fastest path            
         }
      }*/
->>>>>>> made changes to find_path_with_walk
 }
  
  
@@ -368,49 +337,49 @@ double compute_path_walking_time(const std::vector<StreetSegmentIndex>& path,
     // same variable is used here now for travel_time and walk_time
      
    std::vector<StreetSegmentIndex> empty_path;
-   for(int i=0; i < nodes.size(); ++i){
+   for(int i=0; i < nodes_w.size(); ++i){
         //reset reachingEdge to NO_EDGE
-        nodes[i].reachingEdge= NO_EDGE;
-        //reset bestTime of all nodes to 100000000.00
-        nodes[i].bestTime = 100000000.00;
+        nodes_w[i].reachingEdge= NO_EDGE;
+        //reset bestTime of all nodes_w to 100000000.00
+        nodes_w[i].bestTime = 100000000.00;
     }
     //define waveFront with root node with least travel time. 
     std::priority_queue<WaveElem, std::vector<WaveElem>, compareTravelTime> waveFront;
-    waveFront.push(WaveElem(&(nodes[start_intersection]), NO_EDGE, 0.0)); //source node
+    waveFront.push(WaveElem(&(nodes_w[start_intersection]), NO_EDGE, 0.0)); //source node
     
     while(!waveFront.empty()){
         WaveElem current_node = waveFront.top();
         //remove node from waveFront
         waveFront.pop();
         
-        //update the edge with shorter travel time
+        //update the edge_w with shorter travel time
         if(current_node.travelTime < current_node.node->bestTime){             
             current_node.node->bestTime = current_node.travelTime;
             current_node.node->reachingEdge = current_node.edgeID;
             
             //reach destination
             if(current_node.node->idx_pnt == walk_intersection){           
-                return path_search_result(walk_intersection);     
+                return path_walk_search_result(walk_intersection);     
             }
             
            //go through all the outEdges of the current_node
             for(int i=0; i< (current_node.node->outEdges.size()); ++i){
                 //get to_node of one outEdge
                 // to_node of the current out_edge
-                Node* to_node = &(nodes[ edges[((current_node.node)->outEdges)[i]].to ]);                                       
+                Node* to_node = &(nodes_w[ edges_w[((current_node.node)->outEdges)[i]].to ]);                                       
 
                 //update the travel time 
                 double totalTravelTime = 0.0;
                 
                 //outEdge[i] edge travel time 
-                double this_edgeTravelTime = streetSeg_length[(edges[((current_node.node)->outEdges)[i]].idx_seg)] / walking_speed ;
+                double this_edgeTravelTime = streetSeg_length[edges_w[((current_node.node)->outEdges)[i]].idx_seg] / walking_speed ;
                 
                 //check if turn
                 //compare street id of this_seg with reaching_edge of current_node
                 int turn = 0;
                 if (current_node.edgeID != NO_EDGE){
-                    int this_seg_id = edges[current_node.edgeID].idx_seg;
-                    int next_seg_id = edges[current_node.node->outEdges[i]].idx_seg;
+                    int this_seg_id = edges_w[current_node.edgeID].idx_seg;
+                    int next_seg_id = edges_w[current_node.node->outEdges[i]].idx_seg;
                     InfoStreetSegment this_Seg_info = getInfoStreetSegment (this_seg_id);
                     InfoStreetSegment next_Seg_info = getInfoStreetSegment (next_seg_id);
                     //calculate turns by comparing street id with its the next street id. 
@@ -428,6 +397,27 @@ double compute_path_walking_time(const std::vector<StreetSegmentIndex>& path,
     return empty_path;
  }
  
+ std::vector<StreetSegmentIndex> path_walk_search_result(const IntersectionIndex intersect_id_end){
+    std::vector<StreetSegmentIndex> path;
+    Node* currentNode = &(nodes_w[intersect_id_end]);
+    int pre_edge = currentNode->reachingEdge;
+    int pre_seg;
+    //transverse the path
+    while(pre_edge != NO_EDGE){
+        //update pre_seg
+        pre_seg = edges_w[pre_edge].idx_seg;
+        
+        path.insert(path.begin(),pre_seg);
+        
+        // update current_node
+        currentNode =  &(nodes_w[edges_w[pre_edge].from]);
+        // update pre_edge
+        pre_edge = currentNode->reachingEdge; 
+        
+    }
+    
+    return path;       
+}
  
 /*//return k intersection within time_limit with its walking_path 
   std::vector<std::vector<StreetSegmentIndex>> find_walking_path_within_speedlimit(const IntersectionIndex start_intersection,

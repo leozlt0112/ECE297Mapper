@@ -56,3 +56,11 @@ extern std::vector<Node> nodes;
 // a vector[Edge_idx] storing Edges
 // Edge_idx is not the same as segment idx
 extern std::vector<Edge> edges;
+
+// a vector[Node_idx] storing Nodes for walking
+// Node_idx is the same as intersection idx
+extern std::vector<Node> nodes_w;
+
+// a vector[Edge_idx] storing Edges for walking
+// Edge_idx is not the same as segment idx
+extern std::vector<Edge> edges_w;

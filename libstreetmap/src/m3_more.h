@@ -27,6 +27,14 @@ extern std::vector<Node> nodes;
 // Edge_idx is not the same as segment idx
 extern std::vector<Edge> edges;
 
+// a vector[Node_idx] storing Nodes for walking
+// Node_idx is the same as intersection idx
+extern std::vector<Node> nodes_w;
+
+// a vector[Edge_idx] storing Edges for walking
+// Edge_idx is not the same as segment idx
+extern std::vector<Edge> edges_w;
+
 // a vector[node_idx] storing nodes
 // node idx == intersection indx
 extern std::vector<intersection_info> intersections;
@@ -45,6 +53,7 @@ extern std::vector<segment_info> streetSegments;
 extern std::vector<double> streetSeg_time;
 
 std::vector<StreetSegmentIndex> path_search_result(const IntersectionIndex intersect_id_end);
+std::vector<StreetSegmentIndex> path_walk_search_result(const IntersectionIndex intersect_id_end);
 
 std::vector<StreetSegmentIndex> find_walking_path(const IntersectionIndex start_intersection, const IntersectionIndex walk_intersection, const double turn_penalty,
                                                    const double walking_speed);
