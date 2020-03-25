@@ -114,14 +114,14 @@ struct WaveElem{
 //define comparison with travelTime in WaveElem for priority_queue
     struct compareTravelTime{
         bool operator()(const WaveElem& element_1, const WaveElem& element_2 )const{
-            return (element_1.travelTime > element_2.travelTime);
+            return (element_1.travelTime >= element_2.travelTime);
         }
     };
     
 //define comparison with estimateTravelTime in WaveElem for priority_queue
     struct compareEstimateTravelTime{
         bool operator()(const WaveElem& element_1, const WaveElem& element_2 )const{
-            return (element_1.estimateTravelTime > element_2.estimateTravelTime);
+            return (element_1.estimateTravelTime >= element_2.estimateTravelTime);
         }
     };
 
