@@ -38,6 +38,7 @@ double compute_path_travel_time(const std::vector<StreetSegmentIndex>& path,
     //The travel time is the sum of the length/speed-limit of each street segment, plus the
     // given turn_penalty (in seconds) per turn implied by the path. 
     travel_time =  seg_travel_time + (turns*turn_penalty);
+    std::cout<<"\ntravel_time"<<travel_time;
     return travel_time;
 }
 
@@ -55,8 +56,8 @@ std::vector<StreetSegmentIndex> find_path_between_intersections(
 		          const IntersectionIndex intersect_id_start, 
                   const IntersectionIndex intersect_id_end,
                   const double turn_penalty){
-   std::vector<StreetSegmentIndex> empty_path;
-   
+   std::vector<StreetSegmentIndex> empty_path; 
+   //std::cout<<"\n start:"<<intersect_id_start<<"\n end:"<<intersect_id_end<<std::endl;
     //reset all elements 
     for(int i=0; i < nodes.size(); ++i){
         //reset reachingEdge to NO_EDGE

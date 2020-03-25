@@ -154,12 +154,12 @@ struct action_mem{
     bool layer_poi = false;
     // display directions
     std::vector<int> streets_with_directions;
-    // path finding state:
+    // path finding mode:
     //  0 = OFF
     //  1 = ON, driving
     //  2 = ON, walking + driving
     int path_finding_state=0;
-    // path finding intersections
+    // path finding intersections: starting point and end point
     std::vector<int> path_finding_intersections;
     // path found
     std::vector<int> path_found;
