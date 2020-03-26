@@ -173,6 +173,7 @@ std::vector<StreetSegmentIndex> find_path_between_intersections(
     }
     return empty_path;
  }
+    return empty_path;
 }
 
 // This function is similar to find_path_between_intersections() except it takes
@@ -297,6 +298,7 @@ std::pair<std::vector<StreetSegmentIndex>,int> find_path_between_intersections_m
     }
     return std::make_pair(empty_path,-1);
  }
+    return std::make_pair(empty_path,-1);
 }
 
 // it traces back all the street segments that are driven through starting from 
