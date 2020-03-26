@@ -45,7 +45,7 @@ double compute_path_travel_time(const std::vector<StreetSegmentIndex>& path,
     //The travel time is the sum of the length/speed-limit of each street segment, plus the
     // given turn_penalty (in seconds) per turn implied by the path. 
     travel_time =  seg_travel_time + (turns*turn_penalty);
-    std::cout<<"\ntravel_time"<<travel_time;
+    //std::cout<<"\ntravel_time"<<travel_time;
     return travel_time;
 }
 

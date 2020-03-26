@@ -122,6 +122,9 @@ void draw_street_segments_directions (ezgl::renderer *g);
 // draw the path found in the path finding utilities
 void draw_path_found(ezgl::renderer *g);
 
+// print the path found in the path finding utilities
+void print_path_found();
+
 // it finds the closest  pois in the map.
 // return -1 if not found
 extern int find_closest_POI(LatLon my_position);
