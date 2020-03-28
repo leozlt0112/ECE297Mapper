@@ -61,4 +61,13 @@ std::vector<CourierSubpath> traveling_courier(
 		            const std::vector<DeliveryInfo>& deliveries,
 	       	        const std::vector<int>& depots, 
 		            const float turn_penalty, 
-		            const float truck_capacity);
+		            const float truck_capacity){
+    // find a random depot to begin with
+    depots[depots.size()/2];
+    // loop through the vector deliveries
+    for (;;);
+    // find a closest depot to end
+    
+    // return the path
+    
+}
