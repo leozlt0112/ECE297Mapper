@@ -49,21 +49,37 @@ extern std::vector<double> streetSeg_length;
 // a vector[streetSegment_idx] storing street_segment_data
 extern std::vector<segment_info> streetSegments;
 
-/************ These are functions called in program ***************/
 extern std::vector<double> streetSeg_time;
 
+/************ These are functions called in program ***************/
+
+// This function is similar to find_path_between_intersections() except it takes
+// multiple starting point instead of one.
+// It returns a pair of a vector and an int
+// The vector is the shortest path (route) between all the start intersections 
+// and intersect_id_end
+// The int is one of the start_intersection that correlated to the path returned.
 std::pair<std::vector<StreetSegmentIndex>,int> find_path_between_intersections_multi_starts(
                                                 const std::vector<int> intersect_ids_start, 
                                                 const IntersectionIndex intersect_id_end,
                                                 const double turn_penalty);
 
+// it traces back all the street segments that are driven through starting from 
+// the intersect_id_end.
+// The function returns the indicis of the street segments and the starting
+// point correlated to the path.
 std::pair<std::vector<StreetSegmentIndex>,int> path_search_result(const IntersectionIndex intersect_id_end);
+
+// it traces back all the street segments that are walked through starting from 
+// the intersect_id_end.
+// The function returns the indicis of the street segments
 std::vector<StreetSegmentIndex>                path_walk_search_result(const IntersectionIndex intersect_id_end);
 
-std::vector<StreetSegmentIndex> find_walking_path(const IntersectionIndex start_intersection, 
-                                                  const IntersectionIndex walk_intersection, 
-                                                  const double turn_penalty,
-                                                  const double walking_speed);
+
+// This function uses Dijkstra algorithm to find all the shortest path to find
+// all the shortest paths  from the parameter start_intersection to all the 
+// walkable intersections within the distance = walking_speed * walking_time_limit. 
+// The function returns the vector of indicis of those walkable intersections.
  std::vector<int>               find_walkable_inters( const IntersectionIndex start_intersection,
                                                       const double turn_penalty,
                                                       const double walking_speed,

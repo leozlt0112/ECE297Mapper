@@ -12,4 +12,9 @@
  */
 
 #pragma once
-
+#include <map>
+#include <unordered_map>
+#include "structs_and_classes.h"
+#include "m1.h"
+#include "m2.h"
+#include "m3.h"

@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 
+#include "m4_more.h"
 #include "m4.h"
 
 // This routine takes in a vector of N deliveries (pickUp, dropOff
@@ -62,12 +63,164 @@ std::vector<CourierSubpath> traveling_courier(
 	       	        const std::vector<int>& depots, 
 		            const float turn_penalty, 
 		            const float truck_capacity){
+    std::cout<<"function called\n";
+    // deliveries_flags that records whether picked up or dropped off
+    // Updates after a pickup or a drop-off
+    std::vector<std::pair<bool,bool>> pickUp_dropOff_flags(deliveries.size(),std::make_pair(false,false));
+    
+    // truck_deliv_idxs records all the <deliveries indices, 0> on the truck
+    // Push back an element after a pickup. remove an element after a drop-off
+    std::unordered_map<int,int> truck_deliv_idxs;
+    // truck_deliv_weight records the total weight on the truck
+    // Increases after a pickup, decreases after a drop-off
+    float                       truck_deliv_weight = 0;
+    // truck_pos_idx records the current position of the truck
+    // Updates every time the truck moves from one point to another
+    int                         truck_inter_idx;
+    // truck_pos_latlon records the current position of the truck
+    // Updates every time the truck moves from one point to another
+    LatLon                      truck_inter_latlon;
+    
+    // check_pos_idx temporarily records the position we are checking
+    // Updates every time we are checking another point
+    int             check_inter_idx;
+    // check_pos_latlon temporarily records the position we are checking
+    // Updates every time we are checking another point
+    LatLon          check_inter_latlon;
+    // check_length records the distance between truck and check
+    // Updates every time we are checking another point
+    int             check_length;
+    // check_deliv_idx records the deliveries index we are checking
+    // Updates every time we are checking another point
+    /* this is the same thing as i inside for loop */
+    
+    // result_inter_idx records the closest position we found
+    // Updates every time we found another point with closer position
+    int             result_inter_idx = -1;
+    // result_inter_latlon records the closest position we found
+    // Updates every time we found another point with closer position
+    LatLon          result_inter_latlon;
+    // result_length records the shortest distance we found
+    // Updates every time we found another point with closer position
+    int             result_length = 999999999;
+    // result_deliv_idx records the deliveries index with shortest distance
+    // Updates every time we found another point with closer position
+    int             result_deliv_idx;
+    // result_deliv_idx records whether we are going to pick up or drop off
+    // Updates every time we found another point with closer position
+    // true = pickup      false = drop-off
+    bool            result_deliv_stat = true;
+    
+    // start_intersection_pickups records the pickups of start_intersections
+    std::vector<unsigned> start_intersection_pickups;
+    // final_path records the final path to return
+    // Updates every time we found another path
+    std::vector<CourierSubpath> final_path;
+    
     // find a random depot to begin with
-    depots[depots.size()/2];
-    // loop through the vector deliveries
-    for (;;);
+    truck_inter_idx    = depots[depots.size()/2];
+    truck_inter_latlon = getIntersectionPosition(truck_inter_idx);
+    
+    // keep picking up and dropping off until truck is empty
+    do{
+        result_length = 999999999;
+        result_inter_idx = -1;
+        
+        // find the closest delivery point
+        for (int i = 0; i < deliveries.size(); ++i){
+            // check the pickup of deliveries[i]
+            check_inter_idx = deliveries[i].pickUp;
+            // check legality: not picked up yet && do not exceed weight limit
+            if (!pickUp_dropOff_flags[i].first && (truck_deliv_weight + deliveries[i].itemWeight) < truck_capacity){
+                // check distance: shorter than the result_length
+                check_inter_latlon = getIntersectionPosition(check_inter_idx);
+                check_length = find_distance_between_two_points(std::make_pair(truck_inter_latlon,check_inter_latlon));
+                if (check_length < result_length){
+                    result_inter_idx    = check_inter_idx;
+                    result_inter_latlon = check_inter_latlon;
+                    result_length       = check_length;
+                    result_deliv_idx    = i;
+                    result_deliv_stat   = true;
+                }
+            }
+            
+            // check the drop-off of deliveries[i]
+            check_inter_idx = deliveries[i].dropOff;
+            // check legality: picked up but not dropped off yet
+            if (pickUp_dropOff_flags[i].first && !pickUp_dropOff_flags[i].second){
+                // check distance: shorter than the result_length
+                check_inter_latlon = getIntersectionPosition(check_inter_idx);
+                check_length = find_distance_between_two_points(std::make_pair(truck_inter_latlon,check_inter_latlon));
+                if (check_length < result_length){
+                    result_inter_idx    = check_inter_idx;
+                    result_inter_latlon = check_inter_latlon;
+                    result_length       = check_length;
+                    result_deliv_idx    = i;
+                    result_deliv_stat   = false;
+                }
+            }         
+        }
+        
+        // if it is -1, it means there are no more deliveries, time to stop
+        if (result_inter_idx != -1){
+            // update the final path when it's actually moving
+            if (truck_inter_idx != result_inter_idx){
+                CourierSubpath subpath;
+                subpath.start_intersection = truck_inter_idx;
+                subpath.end_intersection   = result_inter_idx;
+                subpath.subpath = find_path_between_intersections(truck_inter_idx,result_inter_idx,turn_penalty);
+                subpath.pickUp_indices = start_intersection_pickups;
+                start_intersection_pickups.clear();
+                final_path.push_back(subpath);
+            }
+
+            // update start_intersection_pickups
+            if (result_deliv_stat){
+                start_intersection_pickups.push_back(result_deliv_idx);
+            }
+
+            // update the truck load and flags
+            //  picked up
+            if (result_deliv_stat){
+                // update the truck load
+                truck_deliv_idxs.insert(std::make_pair(result_deliv_idx, 0));
+                truck_deliv_weight += deliveries[result_deliv_idx].itemWeight;
+                // update the flags
+                pickUp_dropOff_flags[result_deliv_idx].first = true;
+            }
+            //  dropped off
+            else{
+                // update the truck load
+                truck_deliv_idxs.erase(result_deliv_idx);
+                truck_deliv_weight -= deliveries[result_deliv_idx].itemWeight;
+                // update the flags
+                pickUp_dropOff_flags[result_deliv_idx].second = true;
+            }
+            // update the truck position
+            truck_inter_idx    = result_inter_idx;
+            truck_inter_latlon = result_inter_latlon;
+        }
+    }while (result_inter_idx != -1);
+    
     // find a closest depot to end
+    result_length = 999999999;
+    for (int i = 0; i < depots.size(); ++i){
+        check_inter_idx = depots[i];
+        check_inter_latlon = getIntersectionPosition(check_inter_idx);
+        check_length = find_distance_between_two_points(std::make_pair(truck_inter_latlon,check_inter_latlon));
+        if (check_length < result_length){
+            result_inter_idx    = check_inter_idx;
+            result_length       = check_length;
+        }
+    }
+    
+    // update the final path
+    CourierSubpath subpath;
+    subpath.start_intersection = truck_inter_idx;
+    subpath.end_intersection   = result_inter_idx;
+    subpath.subpath = find_path_between_intersections(truck_inter_idx,result_inter_idx,turn_penalty);
+    final_path.push_back(subpath);
     
     // return the path
-    
+    return final_path;
 }
