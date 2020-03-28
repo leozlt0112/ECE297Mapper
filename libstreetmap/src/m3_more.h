@@ -55,8 +55,7 @@ extern std::vector<double> streetSeg_time;
 std::pair<std::vector<StreetSegmentIndex>,int> find_path_between_intersections_multi_starts(
                                                 const std::vector<int> intersect_ids_start, 
                                                 const IntersectionIndex intersect_id_end,
-                                                const double turn_penalty,
-                                                const double walking_speed);
+                                                const double turn_penalty);
 
 std::pair<std::vector<StreetSegmentIndex>,int> path_search_result(const IntersectionIndex intersect_id_end);
 std::vector<StreetSegmentIndex>                path_walk_search_result(const IntersectionIndex intersect_id_end);

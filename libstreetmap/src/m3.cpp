@@ -185,8 +185,7 @@ std::vector<StreetSegmentIndex> find_path_between_intersections(
 std::pair<std::vector<StreetSegmentIndex>,int> find_path_between_intersections_multi_starts(
                                     const std::vector<int> intersect_ids_start, 
                                     const IntersectionIndex intersect_id_end,
-                                    const double turn_penalty,
-                                    const double walking_speed){
+                                    const double turn_penalty){
    std::vector<StreetSegmentIndex> empty_path;
    
     //reset all elements 
@@ -394,7 +393,7 @@ double compute_path_walking_time(const std::vector<StreetSegmentIndex>& path,
      // use Dijkstra to find all walkable intersections
      std::vector<int> walkable_inters = find_walkable_inters(start_intersection,turn_penalty, walking_speed, walking_time_limit);
      // find the final drive path and final walk_intersections
-     std::pair<std::vector<StreetSegmentIndex>,int> drivePath_and_walkInter = find_path_between_intersections_multi_starts(walkable_inters,end_intersection,turn_penalty,walking_speed);
+     std::pair<std::vector<StreetSegmentIndex>,int> drivePath_and_walkInter = find_path_between_intersections_multi_starts(walkable_inters,end_intersection,turn_penalty);
      std::vector<StreetSegmentIndex> drivePath = drivePath_and_walkInter.first;
      int walkInter = drivePath_and_walkInter.second;
      // find walk path
