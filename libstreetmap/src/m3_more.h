@@ -77,7 +77,7 @@ std::pair<std::vector<StreetSegmentIndex>,int> find_path_between_intersections_m
 // The int in the tuple is one of the end intersection that correlated to the 
 // path returned.
 // The float in the tuple is the travel time of this path
-std::vector<std::tuple<std::vector<StreetSegmentIndex>,int,int>> find_path_between_intersections_multi_ends(
+std::vector<std::tuple<std::vector<StreetSegmentIndex>,int,float>> find_path_between_intersections_multi_ends(
                                                 const IntersectionIndex intersect_id_start, 
                                                 const std::vector<int> intersect_ids_end,
                                                 const double turn_penalty);
