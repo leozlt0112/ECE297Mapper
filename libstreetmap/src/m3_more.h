@@ -18,6 +18,8 @@
 #include "m2_more.h"
 #include <tuple>
 #include <queue> //std::priority_queue
+#include <unordered_set>
+#include <map>
 /************ These are the data structures that will be used ***************/
 
 // a vector[Node_idx] storing Nodes
@@ -71,15 +73,19 @@ std::pair<std::vector<StreetSegmentIndex>,int> find_path_between_intersections_m
 
 // This function is similar to find_path_between_intersections() except it takes
 // multiple end points instead of one.
-// It returns a vector of tuples of <a vector, an int, a float>
-// The vector in the tuple is the shortest path (route) between all the start 
-// intersections and intersect_id_end 
-// The int in the tuple is one of the end intersection that correlated to the 
-// path returned.
-// The float in the tuple is the travel time of this path
-std::vector<std::tuple<std::vector<StreetSegmentIndex>,int,float>> find_path_between_intersections_multi_ends(
+// It returns a multimap of < a float, <a vector, an int, a float>>
+// The key float is the travel time of this path  
+// The vector in the tuple the shortest path (route) between all the start 
+// intersections and intersect_id_end
+// The first int in the tuple is the end intersection idx that correlated 
+// to the path returned.
+// The seconf int in the tuple is the delivery idx that correlated 
+// to the path returned
+// The bool in the tool is the indicator whether it is pickUp or dropOff
+// correlated to the path returned
+std::multimap<float, std::tuple<std::vector<StreetSegmentIndex>,int,int,bool>> find_path_between_intersections_multi_ends(
                                                 const IntersectionIndex intersect_id_start, 
-                                                const std::vector<int> intersect_ids_end,
+                                                const std::unordered_multimap<int, std::pair<int,bool>> intersect_ids_end,
                                                 const double turn_penalty);
 
 // it traces back all the street segments that are driven through starting from 

@@ -472,20 +472,24 @@ std::pair<std::vector<StreetSegmentIndex>,int> find_path_between_intersections_m
     return std::make_pair(empty_path,-1);
 }
 
-/*
 // This function is similar to find_path_between_intersections() except it takes
 // multiple end points instead of one.
-// It returns a vector of tuples of <a vector, an int, a float>
-// The vector in the tuple is the shortest path (route) between all the start 
-// intersections and intersect_id_end 
-// The int in the tuple is one of the end intersection that correlated to the 
-// path returned.
-// The float in the tuple is the travel time of this path
-std::vector<std::tuple<std::vector<StreetSegmentIndex>,int,float>> find_path_between_intersections_multi_ends(
+// It returns a multimap of < a float, <a vector, an int, a float>>
+// The key float is the travel time of this path  
+// The vector in the tuple the shortest path (route) between all the start 
+// intersections and intersect_id_end
+// The first int in the tuple is the end intersection idx that correlated 
+// to the path returned.
+// The seconf int in the tuple is the delivery idx that correlated 
+// to the path returned
+// The bool in the tool is the indicator whether it is pickUp or dropOff
+// correlated to the path returned
+std::multimap<float, std::tuple<std::vector<StreetSegmentIndex>,int,int,bool>> find_path_between_intersections_multi_ends(
                                                 const IntersectionIndex intersect_id_start, 
-                                                const std::vector<int> intersect_ids_end,
+                                                const std::unordered_multimap<int, std::pair<int,bool>> intersect_ids_end,
                                                 const double turn_penalty){
-   std::vector<StreetSegmentIndex> empty_path;
+   std::multimap<float, std::tuple<std::vector<StreetSegmentIndex>,int,int,bool>>  result_paths;
+   std::unordered_multimap<int, std::pair<int,bool>> ends_to_check = intersect_ids_end;
    
     //reset all elements 
     for(int i=0; i < nodes.size(); ++i){
@@ -495,37 +499,56 @@ std::vector<std::tuple<std::vector<StreetSegmentIndex>,int,float>> find_path_bet
         nodes[i].bestTime = 100000000.00;
     }
     //define waveFront with root node with least travel time. 
-    waveFront.push(WaveElem(&(nodes[intersect_id_start]), NO_EDGE, 0.0)); //source node
+    std::priority_queue<WaveElem, std::vector<WaveElem>, compareTravelTime> waveFront;
+    // push in source nodes
+    waveFront.push(WaveElem(&(nodes[intersect_id_start]), NO_EDGE, 0.0)); 
+    //source node
     while(!waveFront.empty()){
         WaveElem current_node = waveFront.top();
         //remove node from waveFront
         waveFront.pop();
         
         //update the edge_w with shorter travel time
-        if(current_node.travelTime <= walking_time_limit && current_node.travelTime < current_node.node->bestTime){             
+        if(!ends_to_check.empty() && current_node.travelTime < current_node.node->bestTime){             
             current_node.node->bestTime = current_node.travelTime;
             current_node.node->reachingEdge = current_node.edgeID;
-            // push this node into return vector
-            walkable_intersections.push_back(current_node.node->idx_pnt);
             
-           //go through all the outEdges of the current_node
+            // reach one destination. 
+            if(ends_to_check.find(current_node.node->idx_pnt) != ends_to_check.end()){ 
+                // remove this end from ends_to_check because a path is found
+                ends_to_check.erase(current_node.node->idx_pnt);
+                // traceback this path
+                std::tuple<std::vector<StreetSegmentIndex>,int,float> traceback_tuple
+                                        = path_search_result(current_node.node->idx_pnt);
+                // push this path into result
+                auto range = intersect_ids_end.equal_range(current_node.node->idx_pnt);
+                for (auto itr = range.first; itr != range.second; ++itr){
+                    result_paths.insert(std::make_pair(std::get<2>(traceback_tuple),
+                        std::make_tuple(std::get<0>(traceback_tuple), 
+                                        current_node.node->idx_pnt, 
+                                        itr->second.first,
+                                        itr->second.second)));
+                }
+            }
+            
+            //go through all the outEdges of the current_node
             for(int i=0; i< (current_node.node->outEdges.size()); ++i){
-                //get to_node of one outEdge
+                // get to_node of one outEdge
                 // to_node of the current out_edge
-                Node* to_node = &(nodes_w[ edges_w[((current_node.node)->outEdges)[i]].to ]);                                       
+                Node* to_node = &(nodes[ edges[((current_node.node)->outEdges)[i]].to ]);                                       
 
                 //update the travel time 
                 double totalTravelTime = 0.0;
                 
                 //outEdge[i] edge travel time 
-                double this_edgeTravelTime = streetSeg_length[edges_w[((current_node.node)->outEdges)[i]].idx_seg] / walking_speed ;
+                double this_edgeTravelTime = edges[((current_node.node)->outEdges)[i]].edgeTravelTime;
                 
                 //check if turn
                 //compare street id of this_seg with reaching_edge of current_node
                 int turn = 0;
                 if (current_node.edgeID != NO_EDGE){
-                    int this_seg_id = edges_w[current_node.edgeID].idx_seg;
-                    int next_seg_id = edges_w[current_node.node->outEdges[i]].idx_seg;
+                    int this_seg_id = edges[current_node.edgeID].idx_seg;
+                    int next_seg_id = edges[current_node.node->outEdges[i]].idx_seg;
                     InfoStreetSegment this_Seg_info = getInfoStreetSegment (this_seg_id);
                     InfoStreetSegment next_Seg_info = getInfoStreetSegment (next_seg_id);
                     //calculate turns by comparing street id with its the next street id. 
@@ -541,6 +564,5 @@ std::vector<std::tuple<std::vector<StreetSegmentIndex>,int,float>> find_path_bet
         }      
     }
     
-    return walkable_intersections;
+    return result_paths;
  }
-*/
