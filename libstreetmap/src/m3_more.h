@@ -14,6 +14,7 @@
 #pragma once //protects against multiple inclusions of this header file
 #include "structs_and_classes.h"
 #include "m1.h"
+#include "m1_more.h"
 #include "m2.h"
 #include "m2_more.h"
 #include <tuple>

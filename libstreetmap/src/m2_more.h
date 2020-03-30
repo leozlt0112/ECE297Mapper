@@ -13,6 +13,7 @@
 
 #pragma once
 #include "m1.h"
+#include "m1_more.h"
 #include "m3.h"
 #include "structs_and_classes.h"
 #include "StreetsDatabaseAPI.h"
@@ -124,10 +125,6 @@ void draw_path_found(ezgl::renderer *g);
 
 // print the path found in the path finding utilities
 void print_path_found();
-
-// it finds the closest  pois in the map.
-// return -1 if not found
-extern int find_closest_POI(LatLon my_position);
 
 // Converting latlon in degrees to x and y
 float x_from_lon(float lon);

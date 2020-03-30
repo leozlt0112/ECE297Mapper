@@ -28,6 +28,9 @@ std::vector<std::vector<int>> intersection_street_segments;
 // a vector[StreetIndex], each street vector stores streetSegmentIDs
 std::vector<std::vector<int>> street_street_segments;
 
+// a vector[StreetSegIndex], each stores streetIndex
+std::vector<int> street_segments_street;
+
 // a vector[StreetIndex], each street vector stores IntersectionIDs
 std::vector<std::vector<int>> street_intersections;
 
@@ -104,6 +107,7 @@ bool load_map(std::string map_path) {
     for (int streetSegment = 0; streetSegment < getNumStreetSegments(); ++streetSegment) {       
         int street_id = getInfoStreetSegment(streetSegment).streetID; 
         street_street_segments[street_id].push_back(streetSegment);
+        street_segments_street.push_back(street_id);
     }
     
     // std::vector<std::vector<int>> street_intersections;

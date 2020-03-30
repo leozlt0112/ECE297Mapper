@@ -24,11 +24,10 @@ double compute_path_travel_time(const std::vector<StreetSegmentIndex>& path,
     
     //count turns in the path (whenever the street id changes) 
     for(int i=0; i< (path.size()-1); ++i){
-        InfoStreetSegment this_Seg_info = getInfoStreetSegment (path[i]);
-        InfoStreetSegment next_Seg_info = getInfoStreetSegment (path[i+1]);
-        
+        int this_seg_id = path[i];
+        int next_seg_id = path[i+1];
         //calculate turns by comparing street id with its the next street id. 
-        if(this_Seg_info.streetID != next_Seg_info.streetID){
+        if(street_segments_street[this_seg_id] != street_segments_street[next_seg_id]){
             turns = turns +1;
         }
     }
@@ -69,11 +68,10 @@ double compute_path_walking_time(const std::vector<StreetSegmentIndex>& path,
        
     //count turns in the path (whenever the street id changes) 
     for(int i=0; i< (path.size()-1); ++i){
-        InfoStreetSegment this_Seg_info = getInfoStreetSegment (path[i]);
-        InfoStreetSegment next_Seg_info = getInfoStreetSegment (path[i+1]);
-        
+        int this_seg_id = path[i];
+        int next_seg_id = path[i+1];
         //calculate turns by comparing street id with its the next street id. 
-        if(this_Seg_info.streetID != next_Seg_info.streetID){
+        if(street_segments_street[this_seg_id] != street_segments_street[next_seg_id]){
             turns = turns +1;
         }
     }
@@ -166,10 +164,8 @@ std::vector<StreetSegmentIndex> find_path_between_intersections(
                     int this_seg_id = edges[current_node.edgeID].idx_seg;
                     int next_seg_id = edges[current_node.node->outEdges[i]].idx_seg;
                     //std::cout << "\n\n\n -------------------\n"<<this_seg_id<<"\n"<<current_node.edgeID<<"\n -------------------\n\n\n";
-                    InfoStreetSegment this_Seg_info = getInfoStreetSegment (this_seg_id);
-                    InfoStreetSegment next_Seg_info = getInfoStreetSegment (next_seg_id);
                     //calculate turns by comparing street id with its the next street id. 
-                    if(this_Seg_info.streetID != next_Seg_info.streetID){
+                    if(street_segments_street[this_seg_id] != street_segments_street[next_seg_id]){
                             turn = 1;
                     }
                 }
@@ -315,10 +311,8 @@ std::tuple<std::vector<StreetSegmentIndex>,int,float> path_search_result(const I
                 if (current_node.edgeID != NO_EDGE){
                     int this_seg_id = edges_w[current_node.edgeID].idx_seg;
                     int next_seg_id = edges_w[current_node.node->outEdges[i]].idx_seg;
-                    InfoStreetSegment this_Seg_info = getInfoStreetSegment (this_seg_id);
-                    InfoStreetSegment next_Seg_info = getInfoStreetSegment (next_seg_id);
                     //calculate turns by comparing street id with its the next street id. 
-                    if(this_Seg_info.streetID != next_Seg_info.streetID){
+                    if(street_segments_street[this_seg_id] != street_segments_street[next_seg_id]){
                             turn = 1;
                     }
                 }
@@ -435,10 +429,8 @@ std::pair<std::vector<StreetSegmentIndex>,int> find_path_between_intersections_m
                     int this_seg_id = edges[current_node.edgeID].idx_seg;
                     int next_seg_id = edges[current_node.node->outEdges[i]].idx_seg;
                     //std::cout << "\n\n\n -------------------\n"<<this_seg_id<<"\n"<<current_node.edgeID<<"\n -------------------\n\n\n";
-                    InfoStreetSegment this_Seg_info = getInfoStreetSegment (this_seg_id);
-                    InfoStreetSegment next_Seg_info = getInfoStreetSegment (next_seg_id);
                     //calculate turns by comparing street id with its the next street id. 
-                    if(this_Seg_info.streetID != next_Seg_info.streetID){
+                    if(street_segments_street[this_seg_id] != street_segments_street[next_seg_id]){
                             turn = 1;
                     }
                 }
@@ -549,10 +541,8 @@ std::multimap<float, std::tuple<std::vector<StreetSegmentIndex>,int,int,bool>> f
                 if (current_node.edgeID != NO_EDGE){
                     int this_seg_id = edges[current_node.edgeID].idx_seg;
                     int next_seg_id = edges[current_node.node->outEdges[i]].idx_seg;
-                    InfoStreetSegment this_Seg_info = getInfoStreetSegment (this_seg_id);
-                    InfoStreetSegment next_Seg_info = getInfoStreetSegment (next_seg_id);
                     //calculate turns by comparing street id with its the next street id. 
-                    if(this_Seg_info.streetID != next_Seg_info.streetID){
+                    if(street_segments_street[this_seg_id] != street_segments_street[next_seg_id]){
                             turn = 1;
                     }
                 }

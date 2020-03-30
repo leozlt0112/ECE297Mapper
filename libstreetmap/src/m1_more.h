@@ -18,6 +18,9 @@ extern std::vector<std::vector<int>> intersection_street_segments;
 // a vector[StreetIndex], each street vector stores streetSegmentIDs
 extern std::vector<std::vector<int>> street_street_segments;
 
+// a vector[StreetSegIndex], each stores streetIndex
+extern std::vector<int> street_segments_street;
+
 // a vector[StreetIndex], each street vector stores IntersectionIDs
 extern std::vector<std::vector<int>> street_intersections;
 
