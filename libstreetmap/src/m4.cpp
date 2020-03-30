@@ -315,8 +315,6 @@ std::vector<CourierSubpath> traveling_courier(
     // 
     std::vector<int> result_path;
     
-//    CourierSubpath subpath;
-    
     // start_intersection_pickups records the pickups of start_intersections
     std::vector<unsigned> start_intersection_pickups;
     // final_path records the final path to return
@@ -364,7 +362,7 @@ std::vector<CourierSubpath> traveling_courier(
     // keep picking up and dropping off until no more deliveries
     do{
         result_inter_idx = -1;
-        std::cout<<"hey2\n";
+        // std::cout<<"hey2\n";
         // find the closest delivery from delivery
         found = false;
         check_all_paths = all_paths_deliv_deliv.find(truck_inter_idx)->second;
@@ -404,7 +402,6 @@ std::vector<CourierSubpath> traveling_courier(
                 // update the truck load and flags
                 //  picked up
                 if (result_deliv_stat){
-                    std::cout<<"hey3a ";
                     // update the truck load
                     truck_deliv_idxs.insert(result_deliv_idx);
                     truck_deliv_weight += deliveries[result_deliv_idx].itemWeight;
@@ -413,7 +410,6 @@ std::vector<CourierSubpath> traveling_courier(
                 }
                 //  dropped off
                 else{
-                    std::cout<<"hey3b ";
                     // update the truck load
                     truck_deliv_idxs.erase(result_deliv_idx);
                     truck_deliv_weight -= deliveries[result_deliv_idx].itemWeight;
