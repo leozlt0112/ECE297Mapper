@@ -31,7 +31,7 @@ constexpr int BAD_ARGUMENTS_EXIT_CODE = 2;  //Invalid command-line usage
 
 //The default map to load if none is specified
 //std::string default_map_path = "/cad2/ece297s/public/maps/toronto_canada.streets.bin";
-std::string default_map_path = "/cad2/ece297s/public/maps/london_england.streets.bin";
+std::string default_map_path = "/cad2/ece297s/public/maps/toronto_canada.streets.bin";
 
 int main(int argc, char** argv) {
 
@@ -48,7 +48,7 @@ int main(int argc, char** argv) {
         std::cerr << "  If no map_file_path is provided a default map is loaded.\n";
         return BAD_ARGUMENTS_EXIT_CODE;
     }
-
+    
     //Load the map and related data structures
     bool load_success = load_map(map_path);
     if(!load_success) {
