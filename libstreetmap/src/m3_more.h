@@ -16,6 +16,7 @@
 #include "m1.h"
 #include "m2.h"
 #include "m2_more.h"
+#include <tuple>
 #include <queue> //std::priority_queue
 /************ These are the data structures that will be used ***************/
 
@@ -49,7 +50,11 @@ extern std::vector<double> streetSeg_length;
 // a vector[streetSegment_idx] storing street_segment_data
 extern std::vector<segment_info> streetSegments;
 
+// street segment and time
 extern std::vector<double> streetSeg_time;
+
+// the maximum speed_limit in the city
+extern float max_speed_limit ;
 
 /************ These are functions called in program ***************/
 
@@ -64,11 +69,24 @@ std::pair<std::vector<StreetSegmentIndex>,int> find_path_between_intersections_m
                                                 const IntersectionIndex intersect_id_end,
                                                 const double turn_penalty);
 
+// This function is similar to find_path_between_intersections() except it takes
+// multiple end points instead of one.
+// It returns a vector of tuples of <a vector, an int, a float>
+// The vector in the tuple is the shortest path (route) between all the start 
+// intersections and intersect_id_end 
+// The int in the tuple is one of the end intersection that correlated to the 
+// path returned.
+// The float in the tuple is the travel time of this path
+std::vector<std::tuple<std::vector<StreetSegmentIndex>,int,int>> find_path_between_intersections_multi_ends(
+                                                const IntersectionIndex intersect_id_start, 
+                                                const std::vector<int> intersect_ids_end,
+                                                const double turn_penalty);
+
 // it traces back all the street segments that are driven through starting from 
 // the intersect_id_end.
-// The function returns the indicis of the street segments and the starting
-// point correlated to the path.
-std::pair<std::vector<StreetSegmentIndex>,int> path_search_result(const IntersectionIndex intersect_id_end);
+// The function returns the indicis of the street segments, the starting
+// point correlated to the path, and the total time of the path.
+std::tuple<std::vector<StreetSegmentIndex>,int,float> path_search_result(const IntersectionIndex intersect_id_end);
 
 // it traces back all the street segments that are walked through starting from 
 // the intersect_id_end.

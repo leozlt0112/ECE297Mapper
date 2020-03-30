@@ -76,17 +76,6 @@ std::vector<StreetSegmentIndex> find_path_between_intersections(
     std::priority_queue<WaveElem, std::vector<WaveElem>, compareEstimateTravelTime> waveFront; //Nodes to explore next
    
     /************ A***************/
-    //find the max (float speedLimit)speed limit (in km/h) of the city 
-    //initialize max to the speed limit of streetseg[0]
-    InfoStreetSegment this_info = getInfoStreetSegment(0);
-    float max_speed_limit = this_info.speedLimit;
-    for(int i = 1; i < getNumStreetSegments(); ++i) { 
-       InfoStreetSegment seg_info = getInfoStreetSegment(i);
-       float this_seg_speed_limit = seg_info.speedLimit;
-       if(max_speed_limit < this_seg_speed_limit){
-           max_speed_limit = this_seg_speed_limit;
-       }
-    }
     
     
  if(max_speed_limit != 0){      
@@ -118,7 +107,7 @@ std::vector<StreetSegmentIndex> find_path_between_intersections(
             
             //reach destination
             if(current_node.node->idx_pnt == intersect_id_end){           
-                return path_search_result(intersect_id_end).first;     
+                return std::get<0>(path_search_result(intersect_id_end));     
             }
 
             //go through all the outEdges of the current_node
@@ -199,17 +188,6 @@ std::pair<std::vector<StreetSegmentIndex>,int> find_path_between_intersections_m
     std::priority_queue<WaveElem, std::vector<WaveElem>, compareEstimateTravelTime> waveFront; //Nodes to explore next
    
     /************ A***************/
-    //find the max (float speedLimit)speed limit (in km/h) of the city 
-    //initialize max to the speed limit of streetseg[0]
-    InfoStreetSegment this_info = getInfoStreetSegment(0);
-    float max_speed_limit = this_info.speedLimit;
-    for(int i = 1; i < getNumStreetSegments(); ++i) { 
-       InfoStreetSegment seg_info = getInfoStreetSegment(i);
-       float this_seg_speed_limit = seg_info.speedLimit;
-       if(max_speed_limit < this_seg_speed_limit){
-           max_speed_limit = this_seg_speed_limit;
-       }
-    }
     
  if(max_speed_limit != 0){   
      // push all starting pnts into the wavefront
@@ -241,8 +219,9 @@ std::pair<std::vector<StreetSegmentIndex>,int> find_path_between_intersections_m
             current_node.node->reachingEdge = current_node.edgeID;
             
             //reach destination
-            if(current_node.node->idx_pnt == intersect_id_end){           
-                return path_search_result(intersect_id_end);     
+            if(current_node.node->idx_pnt == intersect_id_end){ 
+                std::tuple<std::vector<StreetSegmentIndex>,int,float> result_tuple = path_search_result(intersect_id_end);
+                return std::make_pair(std::get<0>(result_tuple), std::get<1>(result_tuple));     
             }
 
             //go through all the outEdges of the current_node
@@ -302,11 +281,12 @@ std::pair<std::vector<StreetSegmentIndex>,int> find_path_between_intersections_m
 
 // it traces back all the street segments that are driven through starting from 
 // the intersect_id_end.
-// The function returns the indicis of the street segments and the starting
-// point correlated to the path.
-std::pair<std::vector<StreetSegmentIndex>,int> path_search_result(const IntersectionIndex intersect_id_end){
+// The function returns the indicis of the street segments, the starting
+// point correlated to the path, and the total time of the path.
+std::tuple<std::vector<StreetSegmentIndex>,int,float> path_search_result(const IntersectionIndex intersect_id_end){
     std::vector<StreetSegmentIndex> path;
     Node* currentNode = &(nodes[intersect_id_end]);
+    float totalTime = currentNode -> bestTime;
     int pre_edge = currentNode->reachingEdge;
     int pre_seg;
     //transverse the path
@@ -323,7 +303,7 @@ std::pair<std::vector<StreetSegmentIndex>,int> path_search_result(const Intersec
         
     }
     
-    return std::make_pair(path,currentNode->idx_pnt); 
+    return std::make_tuple(path, currentNode->idx_pnt, totalTime); 
 }
 
 // Returns the time required to "walk" along the path specified, in seconds.

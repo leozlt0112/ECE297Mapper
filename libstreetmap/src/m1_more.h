@@ -45,6 +45,9 @@ extern std::unordered_map<OSMID, const OSMWay*> WayID_Way;
 // a map, each stores <way ID, way length>
 extern std::unordered_map<OSMID, double> WayID_length;
 
+// the maximum speed_limit in the city
+extern float max_speed_limit ;
+
 int find_closest_POI(LatLon my_position);
 
 void pathFind_load();
