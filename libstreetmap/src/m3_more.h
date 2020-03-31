@@ -75,12 +75,14 @@ std::pair<std::vector<StreetSegmentIndex>,int> find_path_between_intersections_m
 // This function is similar to find_path_between_intersections() except it takes
 // multiple end points instead of one.
 // It returns a multimap of < a float, <a vector, an int, a float>>
-// multimap<travel_time, tuple<path, end_inter_idx, end_deliv_idx, pORd, delivORdepot>>
+// multimap<travel_time, tuple<path, end_inter_idx, end_deliv_or_depot_idx, pORd, delivORdepot>>
 std::multimap<float, std::tuple<std::vector<StreetSegmentIndex>,int,int,bool,bool>> find_path_between_intersections_multi_ends(
                                                 const IntersectionIndex intersect_id_start, 
                                                 const std::unordered_multimap<int, std::tuple<int,bool,bool>> intersect_ids_end,
                                                 const double turn_penalty);
 
+// This function is similar to find_path_between_intersections() except it takes
+// multiple start points end points instead of one.
 // multimap<travel_time, tuple<path, end_inter_idx, end_deliv_idx, pORd, start_inter_idx, delivORdepot>>
 std::multimap<float, std::tuple<std::vector<StreetSegmentIndex>,int,int,bool,int,bool>> find_path_between_intersections_multi_starts_ends(
                                                 const std::vector<int> intersect_ids_start, 
