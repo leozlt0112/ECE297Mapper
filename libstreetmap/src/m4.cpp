@@ -57,6 +57,8 @@
 //  
 // If no valid route to make *all* the deliveries exists, this routine must
 // return an empty (size == 0) vector.
+
+/*
 std::vector<CourierSubpath> traveling_courier_a(
 		            const std::vector<DeliveryInfo>& deliveries,
 	       	        const std::vector<int>& depots, 
@@ -91,7 +93,7 @@ std::vector<CourierSubpath> traveling_courier_a(
     int             check_length;
     // check_deliv_idx records the deliveries index we are checking
     // Updates every time we are checking another point
-    /* this is the same thing as i inside for loop */
+    // this is the same thing as i inside for loop
     
     // result_inter_idx records the closest position we found
     // Updates every time we found another point with closer position
@@ -222,7 +224,7 @@ std::vector<CourierSubpath> traveling_courier_a(
     
     // return the path
     return final_path;
-}
+}*/
 
 std::vector<CourierSubpath> traveling_courier(
 		            const std::vector<DeliveryInfo>& deliveries,
@@ -231,22 +233,28 @@ std::vector<CourierSubpath> traveling_courier(
 		            const float truck_capacity){
     std::cout<<"function called\n";
     
-    // all_inter_deliveries stores all the intersection idx of both pick up and 
+    // all_inter_deliv_and_depot stores all the intersection idx of both pick up and 
     // drop-off of deliveries. 
-    std::unordered_multimap<int, std::pair<int,bool>> all_inter_deliveries;
+    // unordered_multimap<inter_idx, tuple<deliv/depot_idx, pORd, delivORdepot>>
+    std::unordered_multimap<int, std::tuple<int,bool,bool>> all_inter_deliv_and_depot;
     for (int i = 0; i < deliveries.size(); ++i){
-        all_inter_deliveries.insert(std::make_pair(deliveries[i].pickUp,
-                                                    std::make_pair(i, true)));
-        all_inter_deliveries.insert(std::make_pair(deliveries[i].dropOff,
-                                                    std::make_pair(i, false)));
+        all_inter_deliv_and_depot.insert(std::make_pair(deliveries[i].pickUp,
+                                                    std::make_tuple(i,true,true)));
+        all_inter_deliv_and_depot.insert(std::make_pair(deliveries[i].dropOff,
+                                                    std::make_tuple(i,false,true)));
+    }
+    for (int i = 0; i < depots.size(); ++i){
+        all_inter_deliv_and_depot.insert(std::make_pair(depots[i],
+                                                    std::make_tuple(i,false,false)));
     }
     
     // all_paths_depot_deliv stores all the paths from any depot to any delivery
-    std::multimap<float, std::tuple<std::vector<StreetSegmentIndex>,int,int,bool,int>>
+    // multimap<travel_time, tuple<path, end_inter_idx, end_deliv_idx, pORd, start_inter_idx, delivORdepot>>
+    std::multimap<float, std::tuple<std::vector<StreetSegmentIndex>,int,int,bool,int,bool>>
                                                         all_paths_depot_deliv;
     all_paths_depot_deliv = find_path_between_intersections_multi_starts_ends(
                                                         depots, 
-                                                        all_inter_deliveries,
+                                                        all_inter_deliv_and_depot,
                                                         turn_penalty);
     /* OLD VER
     // all_paths_depot_deliv stores all the paths from any depot to any delivery
@@ -256,19 +264,19 @@ std::vector<CourierSubpath> traveling_courier(
     for (int i = 0; i < depots.size(); ++i){
         all_paths_depot_deliv.push_back(
         find_path_between_intersections_multi_ends( depots[i],
-                                                    all_inter_deliveries,
+                                                    all_inter_deliv_and_depot,
                                                     turn_penalty));
     }*/
     // all_paths_deliv_deliv stores all the paths from any delivery to any delivery
-    // unordered_map<start_inter_idx, multimap<time, tuple<path, end_inter_idx, end_deliv_idx, pORd>>>
-    std::unordered_map<int,std::multimap<float, std::tuple<std::vector<StreetSegmentIndex>,int,int,bool>>>
+    // unordered_map<start_inter_idx, multimap<time, tuple<path, end_inter_idx, end_deliv_idx, pORd, delivORdepot>>>
+    std::unordered_map<int,std::multimap<float, std::tuple<std::vector<StreetSegmentIndex>,int,int,bool,bool>>>
                                                         all_paths_deliv_deliv;
-    for (const auto& i: all_inter_deliveries){
+    for (const auto& i: all_inter_deliv_and_depot){
         all_paths_deliv_deliv.insert(
         std::make_pair( 
         i.first,
         find_path_between_intersections_multi_ends( i.first,
-                                                    all_inter_deliveries,
+                                                    all_inter_deliv_and_depot,
                                                     turn_penalty)));
     }
     
@@ -335,8 +343,8 @@ std::vector<CourierSubpath> traveling_courier(
     // find closest delivery from depot
     bool found = false;
     for (auto itr = all_paths_depot_deliv.begin(); itr != all_paths_depot_deliv.end() && !found; ++itr){
-        // check legality
-        if (std::get<3>(itr -> second)){
+        // check legality: is a delivery spot && is a pickup spot
+        if (std::get<5>(itr -> second) && std::get<3>(itr -> second)){
             result_path       = std::get<0>(itr -> second);
             result_inter_idx  = std::get<1>(itr -> second);
             result_deliv_idx  = std::get<2>(itr -> second);
@@ -375,15 +383,18 @@ std::vector<CourierSubpath> traveling_courier(
         for (auto itr = check_all_paths.begin(); itr != check_all_paths.end() && !found; ++itr){
             // check legality:
             int i = std::get<2>(itr -> second);
+            bool is_delivery_spot = std::get<4>(itr -> second);
             bool check_deliv_stat = std::get<3>(itr -> second);
+            // is a delivery spot &&(
             //     (is a pickUp spot  && 
             //      not picked up yet && 
             //      do not exceed weight limit) ||
             //     (is a dropOff spot &&
             //      picked up         &&
-            //      not dropped off yet)
-            if ((check_deliv_stat  && !pickUp_dropOff_flags[i].first && (truck_deliv_weight + deliveries[i].itemWeight) < truck_capacity) ||
-                (!check_deliv_stat &&  pickUp_dropOff_flags[i].first && !pickUp_dropOff_flags[i].second)){
+            //      not dropped off yet)            )
+            if (  is_delivery_spot &&
+                ((check_deliv_stat && !pickUp_dropOff_flags[i].first && (truck_deliv_weight + deliveries[i].itemWeight) < truck_capacity) ||
+                (!check_deliv_stat &&  pickUp_dropOff_flags[i].first && !pickUp_dropOff_flags[i].second))){
                 result_path       = std::get<0>(itr -> second);
                 result_inter_idx  = std::get<1>(itr -> second);
                 result_deliv_idx  = std::get<2>(itr -> second);
@@ -432,6 +443,27 @@ std::vector<CourierSubpath> traveling_courier(
     }while (result_inter_idx != -1);
     
     // find a closest depot to end
+    found = false;
+    auto check_all_paths = all_paths_deliv_deliv.find(truck_inter_idx)->second;
+    for (auto itr = check_all_paths.begin(); itr != check_all_paths.end() && !found; ++itr){
+        // check legality: is not a delivery spot (== is a depot spot)
+        int i = std::get<2>(itr -> second);
+        bool is_delivery_spot = std::get<4>(itr -> second);
+        if (!is_delivery_spot){
+            result_path       = std::get<0>(itr -> second);
+            result_inter_idx  = std::get<1>(itr -> second);
+            // update the final path
+            CourierSubpath subpath;
+            subpath.start_intersection = truck_inter_idx;
+            subpath.end_intersection   = result_inter_idx;
+            subpath.subpath            = result_path;
+            final_path.push_back(subpath);
+            // update bool
+            found = true;
+        }
+    }
+    /* OLD VER
+    // find a closest depot to end
     result_length = 999999999;
     for (int i = 0; i < depots.size(); ++i){
         check_inter_idx = depots[i];
@@ -447,7 +479,7 @@ std::vector<CourierSubpath> traveling_courier(
     subpath.start_intersection = truck_inter_idx;
     subpath.end_intersection   = result_inter_idx;
     subpath.subpath = find_path_between_intersections(truck_inter_idx,result_inter_idx,turn_penalty);
-    final_path.push_back(subpath);
+    final_path.push_back(subpath);*/
     
     // return the path
     return final_path;

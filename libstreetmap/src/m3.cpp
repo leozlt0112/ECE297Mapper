@@ -476,12 +476,12 @@ std::pair<std::vector<StreetSegmentIndex>,int> find_path_between_intersections_m
 // to the path returned
 // The bool in the tool is the indicator whether it is pickUp or dropOff
 // correlated to the path returned
-std::multimap<float, std::tuple<std::vector<StreetSegmentIndex>,int,int,bool>> find_path_between_intersections_multi_ends(
+std::multimap<float, std::tuple<std::vector<StreetSegmentIndex>,int,int,bool,bool>> find_path_between_intersections_multi_ends(
                                                 const IntersectionIndex intersect_id_start, 
-                                                const std::unordered_multimap<int, std::pair<int,bool>> intersect_ids_end,
+                                                const std::unordered_multimap<int, std::tuple<int,bool,bool>> intersect_ids_end,
                                                 const double turn_penalty){
-   std::multimap<float, std::tuple<std::vector<StreetSegmentIndex>,int,int,bool>>  result_paths;
-   std::unordered_multimap<int, std::pair<int,bool>> ends_to_check = intersect_ids_end;
+   std::multimap<float, std::tuple<std::vector<StreetSegmentIndex>,int,int,bool,bool>>  result_paths;
+   std::unordered_multimap<int, std::tuple<int,bool,bool>> ends_to_check = intersect_ids_end;
    
     //reset all elements 
     for(int i=0; i < nodes.size(); ++i){
@@ -518,8 +518,9 @@ std::multimap<float, std::tuple<std::vector<StreetSegmentIndex>,int,int,bool>> f
                     result_paths.insert(std::make_pair(std::get<2>(traceback_tuple),
                         std::make_tuple(std::get<0>(traceback_tuple), 
                                         current_node.node->idx_pnt, 
-                                        itr->second.first,
-                                        itr->second.second)));
+                                        std::get<0>(itr->second),
+                                        std::get<1>(itr->second),
+                                        std::get<2>(itr->second))));
                 }
             }
             
@@ -557,13 +558,13 @@ std::multimap<float, std::tuple<std::vector<StreetSegmentIndex>,int,int,bool>> f
     return result_paths;
  }
 
-// multimap<travel_time, tuple<path, end_inter_idx, end_deliv_idx, pORd, start_inter_idx>>
-std::multimap<float, std::tuple<std::vector<StreetSegmentIndex>,int,int,bool,int>> find_path_between_intersections_multi_starts_ends(
+// multimap<travel_time, tuple<path, end_inter_idx, end_deliv_idx, pORd, start_inter_idx, delivORdepot>>
+std::multimap<float, std::tuple<std::vector<StreetSegmentIndex>,int,int,bool,int,bool>> find_path_between_intersections_multi_starts_ends(
                                                 const std::vector<int> intersect_ids_start, 
-                                                const std::unordered_multimap<int, std::pair<int,bool>> intersect_ids_end,
+                                                const std::unordered_multimap<int, std::tuple<int,bool,bool>> intersect_ids_end,
                                                 const double turn_penalty){
-   std::multimap<float, std::tuple<std::vector<StreetSegmentIndex>,int,int,bool,int>> result_paths;
-   std::unordered_multimap<int, std::pair<int,bool>> ends_to_check = intersect_ids_end;
+   std::multimap<float, std::tuple<std::vector<StreetSegmentIndex>,int,int,bool,int,bool>> result_paths;
+   std::unordered_multimap<int, std::tuple<int,bool,bool>> ends_to_check = intersect_ids_end;
    
     //reset all elements 
     for(int i=0; i < nodes.size(); ++i){
@@ -602,9 +603,10 @@ std::multimap<float, std::tuple<std::vector<StreetSegmentIndex>,int,int,bool,int
                     result_paths.insert(std::make_pair(std::get<2>(traceback_tuple),
                         std::make_tuple(std::get<0>(traceback_tuple), 
                                         current_node.node->idx_pnt, 
-                                        itr->second.first,
-                                        itr->second.second,
-                                        std::get<1>(traceback_tuple))));
+                                        std::get<0>(itr->second),
+                                        std::get<1>(itr->second),
+                                        std::get<1>(traceback_tuple),
+                                        std::get<2>(itr->second))));
                 }
             }
             
