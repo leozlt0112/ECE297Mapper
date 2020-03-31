@@ -233,7 +233,6 @@ std::vector<CourierSubpath> traveling_courier(
     
     // all_inter_deliveries stores all the intersection idx of both pick up and 
     // drop-off of deliveries. 
-    // unordered_set makes sure it's non-repetitive
     std::unordered_multimap<int, std::pair<int,bool>> all_inter_deliveries;
     for (int i = 0; i < deliveries.size(); ++i){
         all_inter_deliveries.insert(std::make_pair(deliveries[i].pickUp,
@@ -242,9 +241,16 @@ std::vector<CourierSubpath> traveling_courier(
                                                     std::make_pair(i, false)));
     }
     
-    
     // all_paths_depot_deliv stores all the paths from any depot to any delivery
-    // vector[depots_idx] = multimap<time, pair<path, end_inter_idx>>
+    std::multimap<float, std::tuple<std::vector<StreetSegmentIndex>,int,int,bool,int>>
+                                                        all_paths_depot_deliv;
+    all_paths_depot_deliv = find_path_between_intersections_multi_starts_ends(
+                                                        depots, 
+                                                        all_inter_deliveries,
+                                                        turn_penalty);
+    /* OLD VER
+    // all_paths_depot_deliv stores all the paths from any depot to any delivery
+    // vector[depots_idx] = multimap<time, tuple<path, end_inter_idx, end_deliv_idx, pORd>>
     std::vector<std::multimap<float, std::tuple<std::vector<StreetSegmentIndex>,int,int,bool>>>
                                                         all_paths_depot_deliv;
     for (int i = 0; i < depots.size(); ++i){
@@ -252,9 +258,9 @@ std::vector<CourierSubpath> traveling_courier(
         find_path_between_intersections_multi_ends( depots[i],
                                                     all_inter_deliveries,
                                                     turn_penalty));
-    }
+    }*/
     // all_paths_deliv_deliv stores all the paths from any delivery to any delivery
-    // unordered_map<start_inter_idx, multimap<time, pair<path, end_inter_idx>>>
+    // unordered_map<start_inter_idx, multimap<time, tuple<path, end_inter_idx, end_deliv_idx, pORd>>>
     std::unordered_map<int,std::multimap<float, std::tuple<std::vector<StreetSegmentIndex>,int,int,bool>>>
                                                         all_paths_deliv_deliv;
     for (const auto& i: all_inter_deliveries){
@@ -328,14 +334,14 @@ std::vector<CourierSubpath> traveling_courier(
     
     // find closest delivery from depot
     bool found = false;
-    auto check_all_paths = all_paths_depot_deliv[starting_depot_idx];
-    for (auto itr = check_all_paths.begin(); itr != check_all_paths.end() && !found; ++itr){
+    for (auto itr = all_paths_depot_deliv.begin(); itr != all_paths_depot_deliv.end() && !found; ++itr){
         // check legality
         if (std::get<3>(itr -> second)){
             result_path       = std::get<0>(itr -> second);
             result_inter_idx  = std::get<1>(itr -> second);
             result_deliv_idx  = std::get<2>(itr -> second);
             result_deliv_stat = std::get<3>(itr -> second);
+            truck_inter_idx   = std::get<4>(itr -> second);
             result_inter_latlon = getIntersectionPosition(result_inter_idx);
             // update the final path
             CourierSubpath subpath;
@@ -365,7 +371,7 @@ std::vector<CourierSubpath> traveling_courier(
         // std::cout<<"hey2\n";
         // find the closest delivery from delivery
         found = false;
-        check_all_paths = all_paths_deliv_deliv.find(truck_inter_idx)->second;
+        auto check_all_paths = all_paths_deliv_deliv.find(truck_inter_idx)->second;
         for (auto itr = check_all_paths.begin(); itr != check_all_paths.end() && !found; ++itr){
             // check legality:
             int i = std::get<2>(itr -> second);
