@@ -27,3 +27,9 @@ std::vector<CourierSubpath> traveling_courier_a(
                             const std::vector<int>& depots, 
 		            const float turn_penalty, 
 		            const float truck_capacity);
+std::vector<CourierSubpath> traveling_courier_b(
+		            const std::vector<DeliveryInfo>& deliveries,
+                            const std::vector<int>& depots, 
+		            const float turn_penalty, 
+		            const float truck_capacity);
+double calculate_time_for_paths(std::vector<CourierSubpath> final_path, const float turn_penalty);
