@@ -536,19 +536,10 @@ std::vector<CourierSubpath> traveling_courier(
     // truck_pos_idx records the current position of the truck
     // Updates every time the truck moves from one point to another
     int                         truck_inter_idx;
-    // truck_pos_latlon records the current position of the truck
-    // Updates every time the truck moves from one point to another
-    LatLon                      truck_inter_latlon;
     
     // check_pos_idx temporarily records the position we are checking
     // Updates every time we are checking another point
     int             check_inter_idx;
-    // check_pos_latlon temporarily records the position we are checking
-    // Updates every time we are checking another point
-    LatLon          check_inter_latlon;
-    // check_length records the distance between truck and check
-    // Updates every time we are checking another point
-    int             check_length;
     // check_deliv_idx records the deliveries index we are checking
     // Updates every time we are checking another point
     /* this is the same thing as i inside for loop */
@@ -556,12 +547,6 @@ std::vector<CourierSubpath> traveling_courier(
     // result_inter_idx records the closest position we found
     // Updates every time we found another point with closer position
     int              result_inter_idx = -1;
-    // result_inter_latlon records the closest position we found
-    // Updates every time we found another point with closer position
-    LatLon           result_inter_latlon;
-    // result_length records the shortest distance we found
-    // Updates every time we found another point with closer position
-    int              result_length = 999999999;
     // result_deliv_idx records the deliveries index with shortest distance
     // Updates every time we found another point with closer position
     int              result_deliv_idx;
@@ -579,20 +564,25 @@ std::vector<CourierSubpath> traveling_courier(
     // final_path records the final path to return
     // Updates every time we found another path
     std::vector<CourierSubpath> final_path;
-     std::vector<CourierSubpath> best_path;
-    // find a random depot to begin with
-    double best_time= 99999999999; 
-    // find closest delivery from depot
-    std::cout << "\nsize:"<<all_paths_depot_pickup.size();
-    for (auto it = all_paths_depot_pickup.begin(); 
-              it != all_paths_depot_pickup.end(); 
-            ++it) {
+    double final_time = 0; 
+    std::vector<CourierSubpath> best_path;
+    double best_time = 99999999999; 
+    
+    // find top 2 closest delivery from depot
+    auto it_begin = all_paths_depot_pickup.begin();
+    auto it_end = it_begin;
+    if (all_paths_depot_pickup.size() < 3){
+        it_end = all_paths_depot_pickup.end();
+    }else{
+        std::advance(it_end, 2);
+    }
+    for (auto it = it_begin; it != it_end; ++it) {
+        final_time       += it -> first;
         result_path       = std::get<0>(it -> second);
         result_inter_idx  = std::get<1>(it -> second);
         result_deliv_idx  = std::get<2>(it -> second);
         result_deliv_stat = std::get<3>(it -> second);
         truck_inter_idx   = std::get<4>(it -> second);
-        result_inter_latlon = getIntersectionPosition(result_inter_idx);
         // update the final path
         // series of path along the path but ends earlier in the path
         CourierSubpath path_start;
@@ -611,7 +601,6 @@ std::vector<CourierSubpath> traveling_courier(
         pickUp_dropOff_flags[result_deliv_idx].first = true;
         // update the truck position
         truck_inter_idx = result_inter_idx;
-        truck_inter_latlon = result_inter_latlon;
     
         // keep picking up and dropping off until no more deliveries
         do{
@@ -635,11 +624,11 @@ std::vector<CourierSubpath> traveling_courier(
                 if (  is_delivery_spot &&
                     ((check_deliv_stat && !pickUp_dropOff_flags[i].first && (truck_deliv_weight + deliveries[i].itemWeight) < truck_capacity) ||
                     (!check_deliv_stat &&  pickUp_dropOff_flags[i].first && !pickUp_dropOff_flags[i].second))){
+                    final_time       += itr -> first;
                     result_path       = std::get<0>(itr -> second);
                     result_inter_idx  = std::get<1>(itr -> second);
                     result_deliv_idx  = std::get<2>(itr -> second);
                     result_deliv_stat = std::get<3>(itr -> second);
-                    result_inter_latlon = getIntersectionPosition(result_inter_idx);
                     // update the final path when it's actually moving
                     if (truck_inter_idx != result_inter_idx){
                         CourierSubpath subpath;
@@ -675,7 +664,6 @@ std::vector<CourierSubpath> traveling_courier(
                     }
                     // update the truck position
                     truck_inter_idx    = result_inter_idx;
-                    truck_inter_latlon = result_inter_latlon;
                     found = true;
                 }
 
@@ -689,6 +677,7 @@ std::vector<CourierSubpath> traveling_courier(
             // check legality: is not a delivery spot (== is a depot spot)
             bool is_delivery_spot = std::get<4>(itr -> second);
             if (!is_delivery_spot){
+                final_time       += itr -> first;
                 result_path       = std::get<0>(itr -> second);
                 result_inter_idx  = std::get<1>(itr -> second);
                 // update the final path
@@ -703,10 +692,10 @@ std::vector<CourierSubpath> traveling_courier(
         }   
     
         // update the best path
-        double temp_time =calculate_time_for_paths(final_path, turn_penalty);
-        if (best_time > temp_time) {
-            best_time =temp_time;
-            best_path= final_path;
+        //double temp_time =calculate_time_for_paths(final_path, turn_penalty);
+        if (best_time > final_time) {
+            best_time = final_time;
+            best_path = final_path;
         }
         
         // re-initialization
@@ -719,6 +708,7 @@ std::vector<CourierSubpath> traveling_courier(
         result_inter_idx = -1;
         result_path.clear();
         final_path.clear();
+        final_time = 0;
     }
     return best_path;
 }
