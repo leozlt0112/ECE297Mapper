@@ -225,6 +225,8 @@ std::vector<CourierSubpath> traveling_courier_a(
     // return the path
     return final_path;
 }*/
+
+
 /*
 std::vector<CourierSubpath> traveling_courier_b(
 		            const std::vector<DeliveryInfo>& deliveries,
@@ -310,7 +312,7 @@ std::vector<CourierSubpath> traveling_courier_b(
     int             check_length;
     // check_deliv_idx records the deliveries index we are checking
     // Updates every time we are checking another point
-    /* this is the same thing as i inside for loop 
+    // this is the same thing as i inside for loop 
     
     // result_inter_idx records the closest position we found
     // Updates every time we found another point with closer position
@@ -506,6 +508,7 @@ std::vector<CourierSubpath> traveling_courier(
                                                         depots, 
                                                         all_inter_pickups,
                                                         turn_penalty);
+    
     // // storing all the paths from delivery(pick up/dropoff) to any other delivery(pick up/ drop off) or depot(final dest)
     // all_paths_deliv_deliv stores all the paths from any delivery to any delivery/depot
     // unordered_map<start_inter_idx, multimap<time, tuple<path, end_inter_idx, end_deliv_idx, pORd, delivORdepot>>>
@@ -577,17 +580,13 @@ std::vector<CourierSubpath> traveling_courier(
     // Updates every time we found another path
     std::vector<CourierSubpath> final_path;
      std::vector<CourierSubpath> best_path;
-//    std::multimap<float, std::vector<CourierSubpath>> all_final_paths;
     // find a random depot to begin with
-    int starting_depot_idx = depots.size()/2;
-    truck_inter_idx    = depots[starting_depot_idx];
-    truck_inter_latlon = getIntersectionPosition(truck_inter_idx);
     double best_time= 99999999999; 
     // find closest delivery from depot
-     //std::vector<CourierSubpath> best_path;
-    for (int first=0; first<2; first++) {
-        auto it = all_paths_depot_pickup.begin();
-        std::advance(it, first);
+    std::cout << "\nsize:"<<all_paths_depot_pickup.size();
+    for (auto it = all_paths_depot_pickup.begin(); 
+              it != all_paths_depot_pickup.end(); 
+            ++it) {
         result_path       = std::get<0>(it -> second);
         result_inter_idx  = std::get<1>(it -> second);
         result_deliv_idx  = std::get<2>(it -> second);
@@ -602,7 +601,6 @@ std::vector<CourierSubpath> traveling_courier(
         path_start.subpath = result_path;
         path_start.pickUp_indices = start_intersection_pickups;
         start_intersection_pickups.clear();
-        final_path.clear();
         final_path.push_back(path_start);
         // update start_intersection_pickups
         start_intersection_pickups.push_back(result_deliv_idx);
@@ -683,7 +681,7 @@ std::vector<CourierSubpath> traveling_courier(
 
             }
         }while (result_inter_idx != -1);
-
+        
         // find a closest depot from delivery
         found = false;
         auto check_all_paths = all_paths_deliv_deliv.find(truck_inter_idx)->second;
@@ -704,20 +702,31 @@ std::vector<CourierSubpath> traveling_courier(
             }
         }   
     
-        // return the path
+        // update the best path
         double temp_time =calculate_time_for_paths(final_path, turn_penalty);
         if (best_time > temp_time) {
             best_time =temp_time;
             best_path= final_path;
         }
+        
+        // re-initialization
+        for (int i = 0; i < pickUp_dropOff_flags.size(); ++i){
+            pickUp_dropOff_flags[i] = std::make_pair(false,false);
+        }
+        start_intersection_pickups.clear();
+        truck_deliv_idxs.clear();
+        truck_deliv_weight = 0;
+        result_inter_idx = -1;
+        result_path.clear();
+        final_path.clear();
     }
-    return final_path;
+    return best_path;
 }
     
 double calculate_time_for_paths(std::vector<CourierSubpath> final_path, const float turn_penalty) {
-        double totaltime = 0.0;
-        for (auto it = final_path.begin(); it != final_path.end(); ++it) {
-            totaltime+= compute_path_travel_time((it->subpath), turn_penalty);
-        }
-        return totaltime;
+    double totaltime = 0.0;
+    for (auto it = final_path.begin(); it != final_path.end(); ++it) {
+        totaltime+= compute_path_travel_time((it->subpath), turn_penalty);
     }
+    return totaltime;
+}
