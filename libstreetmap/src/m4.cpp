@@ -536,10 +536,6 @@ std::vector<CourierSubpath> traveling_courier(
     // truck_pos_idx records the current position of the truck
     // Updates every time the truck moves from one point to another
     int                         truck_inter_idx;
-    
-    // check_pos_idx temporarily records the position we are checking
-    // Updates every time we are checking another point
-    int             check_inter_idx;
     // check_deliv_idx records the deliveries index we are checking
     // Updates every time we are checking another point
     /* this is the same thing as i inside for loop */
@@ -561,10 +557,15 @@ std::vector<CourierSubpath> traveling_courier(
     
     // start_intersection_pickups records the pickups of start_intersections
     std::vector<unsigned> start_intersection_pickups;
+    
     // final_path records the final path to return
-    // Updates every time we found another path
+    // final_time records the corresponding total time
+    // Updates every time we found another subpath
     std::vector<CourierSubpath> final_path;
     double final_time = 0; 
+    // best_path records the best final_path to return
+    // best_time records the corresponding total time
+    // Updates every time we found a better final_path
     std::vector<CourierSubpath> best_path;
     double best_time = 99999999999; 
     
@@ -666,7 +667,6 @@ std::vector<CourierSubpath> traveling_courier(
                     truck_inter_idx    = result_inter_idx;
                     found = true;
                 }
-
             }
         }while (result_inter_idx != -1);
         
