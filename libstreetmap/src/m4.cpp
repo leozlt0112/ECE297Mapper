@@ -466,6 +466,7 @@ std::vector<CourierSubpath> traveling_courier_b(
     return final_path;
 }
 */
+
 std::vector<CourierSubpath> traveling_courier(
 		            const std::vector<DeliveryInfo>& deliveries,
                             const std::vector<int>& depots, 
@@ -538,7 +539,7 @@ std::vector<CourierSubpath> traveling_courier(
     int                         truck_inter_idx;
     // check_deliv_idx records the deliveries index we are checking
     // Updates every time we are checking another point
-    /* this is the same thing as i inside for loop */
+    // this is the same thing as i inside for loop
     
     // result_inter_idx records the closest position we found
     // Updates every time we found another point with closer position
@@ -712,7 +713,7 @@ std::vector<CourierSubpath> traveling_courier(
     }
     return best_path;
 }
-    
+
 double calculate_time_for_paths(std::vector<CourierSubpath> final_path, const float turn_penalty) {
     double totaltime = 0.0;
     for (auto it = final_path.begin(); it != final_path.end(); ++it) {

@@ -15,6 +15,8 @@
 #include <map>
 #include <unordered_map>
 #include <unordered_set>
+#include <time.h>
+#include <stdlib.h>
 #include "structs_and_classes.h"
 #include "m1.h"
 #include "m2.h"
