@@ -590,9 +590,9 @@ std::multimap<float, std::tuple<std::vector<StreetSegmentIndex>,int,int,bool,int
             current_node.node->bestTime = current_node.travelTime;
             current_node.node->reachingEdge = current_node.edgeID;
             
-            // reach one destination. 
+            // reach one destination intersection. 
             if(ends_to_check.find(current_node.node->idx_pnt) != ends_to_check.end()){ 
-                // remove this end from ends_to_check because a path is found
+                // remove all ends with this inter_id from ends_to_check because a path is found
                 ends_to_check.erase(current_node.node->idx_pnt);
                 // traceback this path
                 std::tuple<std::vector<StreetSegmentIndex>,int,float> traceback_tuple
