@@ -42,8 +42,7 @@ std::vector<CourierSubpath> traveling_courier_c(
 		            const float turn_penalty, 
 		            const float truck_capacity);
 
-std::vector<Pick_Drop>perturb(const std::vector<Pick_Drop>& initial_solution, 
-                                int Temperature,
+std::vector<Pick_Drop>perturb_2opt(const std::vector<Pick_Drop>& initial_solution, 
                                 int idx1, int idx2);
 
 bool check_legality_for_simplified_paths(const std::vector<Pick_Drop>& solution, 
