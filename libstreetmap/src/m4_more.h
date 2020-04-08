@@ -50,16 +50,3 @@ bool check_legality_for_simplified_paths(const std::vector<Pick_Drop>& solution,
                                          const float truck_capacity);
 
 double calculate_time_for_paths(std::vector<CourierSubpath> final_path, const float turn_penalty);
-
-std::vector<CourierSubpath> traveling_courier_c_1(
-		            const std::vector<DeliveryInfo>& deliveries,
-                            const std::vector<int>& depots, 
-		            const float turn_penalty, 
-		            const float truck_capacity);
-std::pair<std::vector<CourierSubpath>, double> traveling_courier_c(
-        std::vector<CourierSubpath> best_path,
-        double best_time, const float turn_penalty, 
-	const float truck_capacity,
-        std::unordered_multimap<int, std::tuple<int,bool,bool>> all_inter_deliv_and_depot,
-        const std::vector<DeliveryInfo>& deliveries,
-        std::unordered_map<int,std::multimap<float, std::tuple<std::vector<StreetSegmentIndex>,int,int,bool,bool>>>all_paths_deliv_deliv);
