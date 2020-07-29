@@ -75,7 +75,7 @@ std::vector<Node> nodes_w;
 std::vector<Edge> edges_w;
 
 // the maximum speed_limit in the city
-float max_speed_limit;
+double max_speed_limit;
 
 bool load_map(std::string map_path) {
     //Indicates whether the map has loaded successfully
@@ -283,13 +283,13 @@ void pathFind_load(){
         //nodes[i].visited = false; 
     }
     
-    //find the max (float speedLimit)speed limit (in km/h) of the city 
+    //find the max (double speedLimit)speed limit (in km/h) of the city 
     //initialize max to the speed limit of streetseg[0]
     InfoStreetSegment this_info = getInfoStreetSegment(0);
     max_speed_limit = this_info.speedLimit;
     for(int i = 1; i < getNumStreetSegments(); ++i) { 
        InfoStreetSegment seg_info = getInfoStreetSegment(i);
-       float this_seg_speed_limit = seg_info.speedLimit;
+       double this_seg_speed_limit = seg_info.speedLimit;
        if(max_speed_limit < this_seg_speed_limit){
            max_speed_limit = this_seg_speed_limit;
        }

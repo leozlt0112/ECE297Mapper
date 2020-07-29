@@ -112,16 +112,32 @@ struct WaveElem{
 };
 
 //define comparison with travelTime in WaveElem for priority_queue
-    struct compareTravelTime{
-        bool operator()(const WaveElem& element_1, const WaveElem& element_2 )const{
-            return (element_1.travelTime >= element_2.travelTime);
-        }
-    };
+struct compareTravelTime{
+    bool operator()(const WaveElem& element_1, const WaveElem& element_2 )const{
+        return (element_1.travelTime >= element_2.travelTime);
+    }
+};
     
 //define comparison with estimateTravelTime in WaveElem for priority_queue
-    struct compareEstimateTravelTime{
-        bool operator()(const WaveElem& element_1, const WaveElem& element_2 )const{
-            return (element_1.estimateTravelTime >= element_2.estimateTravelTime);
-        }
-    };
+struct compareEstimateTravelTime{
+    bool operator()(const WaveElem& element_1, const WaveElem& element_2 )const{
+        return (element_1.estimateTravelTime >= element_2.estimateTravelTime);
+    }
+};
 
+
+/************ M 4 ***************/
+
+struct Pick_Drop{
+    //inter idx
+    int interIdx;
+    // deliv idx
+    int delivIdx;
+    // PickUp or DropOff
+    bool isPickUp;
+    // constructors
+    Pick_Drop(){
+        interIdx = -1; delivIdx = -1; isPickUp = false;}
+    Pick_Drop(int inter_idx, int deliv_idx, bool is_pickup){
+        interIdx = inter_idx; delivIdx = deliv_idx; isPickUp = is_pickup;}
+};

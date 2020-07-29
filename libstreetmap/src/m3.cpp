@@ -142,7 +142,7 @@ std::vector<StreetSegmentIndex> find_path_between_intersections(
             current_node.node->reachingEdge = current_node.edgeID;
             
             //reach destination
-            if(current_node.node->idx_pnt == intersect_id_end){           
+            if(current_node.node->idx_pnt == intersect_id_end){ 
                 return std::get<0>(path_search_result(intersect_id_end));     
             }
 
@@ -203,10 +203,10 @@ std::vector<StreetSegmentIndex> find_path_between_intersections(
 // the intersect_id_end.
 // The function returns the indicis of the street segments, the starting
 // point correlated to the path, and the total time of the path.
-std::tuple<std::vector<StreetSegmentIndex>,int,float> path_search_result(const IntersectionIndex intersect_id_end){
+std::tuple<std::vector<StreetSegmentIndex>,int,double> path_search_result(const IntersectionIndex intersect_id_end){
     std::vector<StreetSegmentIndex> path;
     Node* currentNode = &(nodes[intersect_id_end]);
-    float totalTime = currentNode -> bestTime;
+    double totalTime = currentNode -> bestTime;
     int pre_edge = currentNode->reachingEdge;
     int pre_seg;
     //transverse the path
@@ -407,7 +407,7 @@ std::pair<std::vector<StreetSegmentIndex>,int> find_path_between_intersections_m
             
             //reach destination
             if(current_node.node->idx_pnt == intersect_id_end){ 
-                std::tuple<std::vector<StreetSegmentIndex>,int,float> result_tuple = path_search_result(intersect_id_end);
+                std::tuple<std::vector<StreetSegmentIndex>,int,double> result_tuple = path_search_result(intersect_id_end);
                 return std::make_pair(std::get<0>(result_tuple), std::get<1>(result_tuple));     
             }
 
@@ -466,8 +466,8 @@ std::pair<std::vector<StreetSegmentIndex>,int> find_path_between_intersections_m
 
 // This function is similar to find_path_between_intersections() except it takes
 // multiple end points instead of one.
-// It returns a multimap of < a float, <a vector, an int, a float>>
-// The key float is the travel time of this path  
+// It returns a multimap of < a double, <a vector, an int, a double>>
+// The key double is the travel time of this path  
 // The vector in the tuple the shortest path (route) between all the start 
 // intersections and intersect_id_end
 // The first int in the tuple is the end intersection idx that correlated 
@@ -476,11 +476,11 @@ std::pair<std::vector<StreetSegmentIndex>,int> find_path_between_intersections_m
 // to the path returned
 // The bool in the tool is the indicator whether it is pickUp or dropOff
 // correlated to the path returned
-std::multimap<float, std::tuple<std::vector<StreetSegmentIndex>,int,int,bool,bool>> find_path_between_intersections_multi_ends(
+std::multimap<double, std::tuple<std::vector<StreetSegmentIndex>,int,int,bool,bool>> find_path_between_intersections_multi_ends(
                                                 const IntersectionIndex intersect_id_start, 
                                                 const std::unordered_multimap<int, std::tuple<int,bool,bool>> intersect_ids_end,
                                                 const double turn_penalty){
-   std::multimap<float, std::tuple<std::vector<StreetSegmentIndex>,int,int,bool,bool>>  result_paths;
+   std::multimap<double, std::tuple<std::vector<StreetSegmentIndex>,int,int,bool,bool>>  result_paths;
    std::unordered_multimap<int, std::tuple<int,bool,bool>> ends_to_check = intersect_ids_end;
    
     //reset all elements 
@@ -510,7 +510,7 @@ std::multimap<float, std::tuple<std::vector<StreetSegmentIndex>,int,int,bool,boo
                 // remove this end from ends_to_check because a path is found
                 ends_to_check.erase(current_node.node->idx_pnt);
                 // traceback this path
-                std::tuple<std::vector<StreetSegmentIndex>,int,float> traceback_tuple
+                std::tuple<std::vector<StreetSegmentIndex>,int,double> traceback_tuple
                                         = path_search_result(current_node.node->idx_pnt);
                 // push this path into result
                 auto range = intersect_ids_end.equal_range(current_node.node->idx_pnt);
@@ -559,11 +559,11 @@ std::multimap<float, std::tuple<std::vector<StreetSegmentIndex>,int,int,bool,boo
  }
 
 // multimap<travel_time, tuple<path, end_inter_idx, end_deliv_idx, pORd, start_inter_idx, delivORdepot>>
-std::multimap<float, std::tuple<std::vector<StreetSegmentIndex>,int,int,bool,int,bool>> find_path_between_intersections_multi_starts_ends(
+std::multimap<double, std::tuple<std::vector<StreetSegmentIndex>,int,int,bool,int,bool>> find_path_between_intersections_multi_starts_ends(
                                                 const std::vector<int> intersect_ids_start, 
                                                 const std::unordered_multimap<int, std::tuple<int,bool,bool>> intersect_ids_end,
                                                 const double turn_penalty){
-   std::multimap<float, std::tuple<std::vector<StreetSegmentIndex>,int,int,bool,int,bool>> result_paths;
+   std::multimap<double, std::tuple<std::vector<StreetSegmentIndex>,int,int,bool,int,bool>> result_paths;
    std::unordered_multimap<int, std::tuple<int,bool,bool>> ends_to_check = intersect_ids_end;
    
     //reset all elements 
@@ -590,12 +590,12 @@ std::multimap<float, std::tuple<std::vector<StreetSegmentIndex>,int,int,bool,int
             current_node.node->bestTime = current_node.travelTime;
             current_node.node->reachingEdge = current_node.edgeID;
             
-            // reach one destination. 
+            // reach one destination intersection. 
             if(ends_to_check.find(current_node.node->idx_pnt) != ends_to_check.end()){ 
-                // remove this end from ends_to_check because a path is found
+                // remove all ends with this inter_id from ends_to_check because a path is found
                 ends_to_check.erase(current_node.node->idx_pnt);
                 // traceback this path
-                std::tuple<std::vector<StreetSegmentIndex>,int,float> traceback_tuple
+                std::tuple<std::vector<StreetSegmentIndex>,int,double> traceback_tuple
                                         = path_search_result(current_node.node->idx_pnt);
                 // push this path into result
                 auto range = intersect_ids_end.equal_range(current_node.node->idx_pnt);

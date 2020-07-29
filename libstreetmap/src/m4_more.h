@@ -34,4 +34,19 @@ std::vector<CourierSubpath> traveling_courier_b(
                             const std::vector<int>& depots, 
 		            const float turn_penalty, 
 		            const float truck_capacity);
+
+std::vector<CourierSubpath> traveling_courier_c(
+		            const std::vector<DeliveryInfo>& deliveries,
+                            const std::vector<int>& depots, 
+		            const float turn_penalty, 
+		            const float truck_capacity);
+
+std::vector<Pick_Drop>perturb_2opt(const std::vector<Pick_Drop>& initial_solution, 
+                                int idx1, int idx2);
+
+bool check_legality_for_simplified_paths(const std::vector<Pick_Drop>& solution, 
+                                         const std::vector<DeliveryInfo>& deliveries,
+                                         const float truck_capacity);
+
 double calculate_time_for_paths(std::vector<CourierSubpath> final_path, const float turn_penalty);
+

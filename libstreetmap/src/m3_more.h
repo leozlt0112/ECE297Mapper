@@ -57,7 +57,7 @@ extern std::vector<segment_info> streetSegments;
 extern std::vector<double> streetSeg_time;
 
 // the maximum speed_limit in the city
-extern float max_speed_limit ;
+extern double max_speed_limit ;
 
 /************ These are functions called in program ***************/
 
@@ -74,9 +74,9 @@ std::pair<std::vector<StreetSegmentIndex>,int> find_path_between_intersections_m
 
 // This function is similar to find_path_between_intersections() except it takes
 // multiple end points instead of one.
-// It returns a multimap of < a float, <a vector, an int, a float>>
+// It returns a multimap of < a double, <a vector, an int, a double>>
 // multimap<travel_time, tuple<path, end_inter_idx, end_deliv_or_depot_idx, pORd, delivORdepot>>
-std::multimap<float, std::tuple<std::vector<StreetSegmentIndex>,int,int,bool,bool>> find_path_between_intersections_multi_ends(
+std::multimap<double, std::tuple<std::vector<StreetSegmentIndex>,int,int,bool,bool>> find_path_between_intersections_multi_ends(
                                                 const IntersectionIndex intersect_id_start, 
                                                 const std::unordered_multimap<int, std::tuple<int,bool,bool>> intersect_ids_end,
                                                 const double turn_penalty);
@@ -84,7 +84,7 @@ std::multimap<float, std::tuple<std::vector<StreetSegmentIndex>,int,int,bool,boo
 // This function is similar to find_path_between_intersections() except it takes
 // multiple start points end points instead of one.
 // multimap<travel_time, tuple<path, end_inter_idx, end_deliv_idx, pORd, start_inter_idx, delivORdepot>>
-std::multimap<float, std::tuple<std::vector<StreetSegmentIndex>,int,int,bool,int,bool>> find_path_between_intersections_multi_starts_ends(
+std::multimap<double, std::tuple<std::vector<StreetSegmentIndex>,int,int,bool,int,bool>> find_path_between_intersections_multi_starts_ends(
                                                 const std::vector<int> intersect_ids_start, 
                                                 const std::unordered_multimap<int, std::tuple<int,bool,bool>> intersect_ids_end,
                                                 const double turn_penalty);
@@ -93,7 +93,7 @@ std::multimap<float, std::tuple<std::vector<StreetSegmentIndex>,int,int,bool,int
 // the intersect_id_end.
 // The function returns the indicis of the street segments, the starting
 // point correlated to the path, and the total time of the path.
-std::tuple<std::vector<StreetSegmentIndex>,int,float> path_search_result(const IntersectionIndex intersect_id_end);
+std::tuple<std::vector<StreetSegmentIndex>,int,double> path_search_result(const IntersectionIndex intersect_id_end);
 
 // it traces back all the street segments that are walked through starting from 
 // the intersect_id_end.
